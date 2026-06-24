@@ -1,17 +1,4 @@
-# Python
-__pycache__/
-*.py[cod]
-.venv/
-venv/
-
-# OS
 .DS_Store
 Thumbs.db
-
-# Editor
 .vscode/
 .idea/
-
-# Secrets
-.env
-.env.*
