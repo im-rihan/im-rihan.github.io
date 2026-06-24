@@ -19,17 +19,28 @@ Personal portfolio website, resume, and GitHub profile README for **Rihan Mohamm
 
 This repo uses **GitHub Actions** to deploy automatically on every push to `main`.
 
-### One-time setup
+### One-time setup (required — fixes "Get Pages site failed")
 
-1. Go to **Settings → Pages** in your GitHub repo
-2. Under **Build and deployment → Source**, select **GitHub Actions**
-3. Push to `main` — the workflow deploys automatically
+1. Open **[Settings → Pages](https://github.com/im-rihan/developer-portfolio/settings/pages)**
+2. Under **Build and deployment → Source**, choose **GitHub Actions** (not "Deploy from branch")
+3. Open **[Settings → Actions → General](https://github.com/im-rihan/developer-portfolio/settings/actions)**
+4. Under **Workflow permissions**, select **Read and write permissions** → Save
+5. Go to **[Actions](https://github.com/im-rihan/developer-portfolio/actions)** → **Deploy Portfolio to GitHub Pages** → **Run workflow**
 
 Your site will be live at:
 
 ```
 https://im-rihan.github.io/developer-portfolio/
 ```
+
+### If it still fails
+
+| Problem | Fix |
+|---------|-----|
+| `Get Pages site failed` | Pages source is not set to **GitHub Actions** (step 2 above) |
+| Repo is **private** | GitHub Pages is free only for **public** repos — change visibility in Settings → General → Danger zone |
+| Workflow permission denied | Enable **Read and write permissions** for Actions (step 4 above) |
+| 404 after deploy | Wait 2–5 minutes, then hard-refresh the browser |
 
 ### Custom URL (optional)
 
