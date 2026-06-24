@@ -17,15 +17,17 @@ Personal portfolio website, resume, and GitHub profile README for **Rihan Mohamm
 
 ## GitHub Pages deployment
 
-This repo uses **GitHub Actions** to deploy automatically on every push to `main`.
+This repo deploys automatically on every push to `main` using the **`gh-pages`** branch.
 
-### One-time setup (required — fixes "Get Pages site failed")
+### One-time setup (fixes "Get Pages site failed")
 
 1. Open **[Settings → Pages](https://github.com/im-rihan/developer-portfolio/settings/pages)**
-2. Under **Build and deployment → Source**, choose **GitHub Actions** (not "Deploy from branch")
-3. Open **[Settings → Actions → General](https://github.com/im-rihan/developer-portfolio/settings/actions)**
-4. Under **Workflow permissions**, select **Read and write permissions** → Save
-5. Go to **[Actions](https://github.com/im-rihan/developer-portfolio/actions)** → **Deploy Portfolio to GitHub Pages** → **Run workflow**
+2. Under **Build and deployment → Source**, choose **Deploy from a branch**
+3. Set **Branch** to **`gh-pages`** and folder to **`/ (root)`**
+4. Save
+5. Push to `main` (or run the workflow manually from **Actions**)
+
+The workflow creates/updates the `gh-pages` branch automatically — you do **not** need "GitHub Actions" as the Pages source.
 
 Your site will be live at:
 
@@ -37,10 +39,12 @@ https://im-rihan.github.io/developer-portfolio/
 
 | Problem | Fix |
 |---------|-----|
-| `Get Pages site failed` | Pages source is not set to **GitHub Actions** (step 2 above) |
-| Repo is **private** | GitHub Pages is free only for **public** repos — change visibility in Settings → General → Danger zone |
-| Workflow permission denied | Enable **Read and write permissions** for Actions (step 4 above) |
-| 404 after deploy | Wait 2–5 minutes, then hard-refresh the browser |
+| `Get Pages site failed` / `Not Found` | Use **Deploy from a branch → gh-pages**, not GitHub Actions (see steps above) |
+| Repo is **private** | GitHub Pages is free only for **public** repos — change visibility in Settings → General |
+| Workflow permission denied | **[Settings → Actions → General](https://github.com/im-rihan/developer-portfolio/settings/actions)** → **Read and write permissions** → Save |
+| 404 after deploy | Wait 2–5 minutes after the workflow succeeds, then hard-refresh |
+
+> **Note:** The Node 20 deprecation warning comes from GitHub runner updates and does not cause this failure.
 
 ### Custom URL (optional)
 
