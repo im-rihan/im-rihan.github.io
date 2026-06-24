@@ -1,61 +1,65 @@
-# Fix GitHub Pages 404
+# Fix GitHub Pages 404 — READ THIS
 
-Your site files are deployed correctly. GitHub Pages is **not turned on** in repository settings yet.
+## Root cause
 
-## Enable Pages (2 minutes)
-
-1. Open: **https://github.com/im-rihan/developer-portfolio/settings/pages**
-
-2. Under **Build and deployment**:
-   - **Source:** `Deploy from a branch`
-   - **Branch:** `gh-pages`
-   - **Folder:** `/ (root)`
-
-3. Click **Save**
-
-4. Wait **2–5 minutes**. Refresh:
-   **https://im-rihan.github.io/developer-portfolio/**
+Your files are on GitHub, but **Pages is pointing at the wrong folder** OR you are opening the wrong URL.
 
 ---
 
-## Verify before enabling
+## Fix for `developer-portfolio` (5 minutes)
 
-| Check | Status |
-|-------|--------|
-| Repo is public | Yes |
-| `gh-pages` branch exists | Yes |
-| `index.html` on `gh-pages` | Yes |
-| Pages enabled in Settings | **No — you must do step above** |
+### Step 1 — Open Pages settings
+
+**https://github.com/im-rihan/developer-portfolio/settings/pages**
+
+### Step 2 — Set EXACTLY this
+
+| Setting | Value |
+|---------|-------|
+| **Source** | Deploy from a branch |
+| **Branch** | `main` |
+| **Folder** | **`/docs`** ← important |
+
+Click **Save**.
+
+### Step 3 — Wait and open
+
+Wait **5–10 minutes**, then open:
+
+**https://im-rihan.github.io/developer-portfolio/**
 
 ---
 
-## Alternative: deploy from `main` (no workflow needed)
+## Fix for `https://im-rihan.github.io` (root URL)
 
-If you prefer not to use the `gh-pages` branch:
+That URL needs a **separate repo** named **`im-rihan.github.io`**.
 
-1. **Settings → Pages**
-2. Source: **Deploy from a branch**
-3. Branch: **`main`** → **`/ (root)`**
-4. Save
+1. Create repo: **https://github.com/new** → name: `im-rihan.github.io` → Public
+2. Run in terminal:
 
-`index.html` is already on `main`, so the site works immediately.
-
----
-
-## Correct URL
-
-Project site (this repo):
-
-```
-https://im-rihan.github.io/developer-portfolio/
+```powershell
+cd "d:\HomeAbroad Main\code\im-rihan.github.io"
+git remote add origin https://github.com/im-rihan/im-rihan.github.io.git
+git push -u origin main
 ```
 
-NOT `https://im-rihan.github.io/` — that URL only works with a repo named **`im-rihan.github.io`**.
+3. **Settings → Pages** → Branch: **`main`** → Folder: **`/ (root)`** → Save
+4. Open: **https://im-rihan.github.io**
 
 ---
 
-## Still 404 after 10 minutes?
+## Which URL should you use?
 
-1. **Settings → Actions → General** → Workflow permissions → **Read and write**
-2. Re-run workflow: **Actions → Deploy Portfolio to GitHub Pages → Run workflow**
-3. Check **Settings → Pages** shows: *Your site is live at...*
+| URL | Repo | Pages setting |
+|-----|------|---------------|
+| `im-rihan.github.io/developer-portfolio/` | `developer-portfolio` | `main` → **`/docs`** |
+| `im-rihan.github.io` | `im-rihan.github.io` | `main` → **`/ (root)`** |
+
+---
+
+## Still 404?
+
+1. Confirm **Settings → Pages** shows: *"Your site is live at https://..."*
+2. Do **not** use "GitHub Actions" as source — use **Deploy from a branch**
+3. Hard refresh: `Ctrl + Shift + R`
+4. Check repo is **Public**
