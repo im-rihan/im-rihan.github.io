@@ -50,17 +50,15 @@
       width: 88px;
       height: 88px;
       border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid var(--accent);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
       margin-bottom: 16px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
+      letter-spacing: -1px;
     }
 
     .sidebar h1 {
@@ -314,9 +312,7 @@
 <body>
   <div class="page">
     <aside class="sidebar">
-      <div class="avatar">
-        <img src="assets/imgs/avtar.jpg" alt="Rihan Mohammed" width="88" height="88" />
-      </div>
+      <div class="avatar">RM</div>
       <h1>Rihan Mohammed</h1>
       <p class="title">Full Stack Developer</p>
 

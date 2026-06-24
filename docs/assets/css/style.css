@@ -251,46 +251,7 @@ ul { list-style: none; }
 
 .hero-visual {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-}
-
-.hero-avatar-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 28px;
-}
-
-.hero-avatar {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--primary-light);
-  box-shadow:
-    0 0 0 4px rgba(15, 118, 110, 0.15),
-    0 20px 40px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease;
-}
-
-.hero-avatar:hover {
-  transform: scale(1.03);
-}
-
-.about-avatar-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 24px;
-}
-
-.about-avatar {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid var(--primary-light);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
 .code-card {

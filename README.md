@@ -20,8 +20,7 @@ developer-portfolio/
 │   ├── .nojekyll            ← disables Jekyll (required)
 │   └── assets/
 │       ├── css/style.css
-│       ├── js/main.js
-│       └── imgs/avtar.jpg
+│       └── js/main.js
 └── README.md
 ```
 
@@ -71,7 +70,6 @@ Change files inside **`docs/`** only:
 | `docs/index.html` | Portfolio content, sections, links |
 | `docs/assets/css/style.css` | Colors, layout, styling |
 | `docs/assets/js/main.js` | Menu, scroll animations |
-| `docs/assets/imgs/avtar.jpg` | Profile photo |
 | `docs/resume.html` | Resume layout |
 | `docs/resume.pdf` / `.docx` | Replace when resume updates |
 
