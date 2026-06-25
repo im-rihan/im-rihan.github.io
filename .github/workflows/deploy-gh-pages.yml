@@ -1,13 +1,11 @@
-name: Deploy docs to gh-pages
+name: Deploy Next.js to gh-pages
 
-# Fast deploy: copies docs/ → gh-pages branch (no deploy-pages, no Jekyll queue).
+# Builds static export (out/) and publishes to gh-pages branch.
 # Pages setting: Deploy from branch → gh-pages → / (root)
 
 on:
   push:
     branches: [main]
-    paths:
-      - 'docs/**'
   workflow_dispatch:
 
 permissions:
@@ -23,10 +21,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Push docs to gh-pages branch
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static export
+        run: npm run build
+
+      - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: docs
+          publish_dir: out
           force_orphan: true

@@ -1,0 +1,219 @@
+.section {
+    border-top: 1px solid var(--border);
+    background: linear-gradient(180deg, transparent 0%, rgba(15, 118, 110, 0.04) 100%);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.intro {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 20px 24px;
+    border-radius: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+.introIcon {
+    flex-shrink: 0;
+    color: var(--primary-light);
+    margin-top: 2px;
+}
+
+.intro h3 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.intro p {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    line-height: 1.65;
+}
+
+.methods {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.methodCard {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+
+a.methodCard:hover {
+    transform: translateX(4px);
+    border-color: rgba(20, 184, 166, 0.35);
+    box-shadow: var(--shadow), 0 0 30px rgba(20, 184, 166, 0.06);
+}
+
+.methodIcon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.2), rgba(245, 158, 11, 0.1));
+    color: var(--primary-light);
+    border: 1px solid rgba(20, 184, 166, 0.2);
+}
+
+.methodBody {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.methodLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+}
+
+.methodValue {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    word-break: break-word;
+}
+
+a.methodCard:hover .methodValue {
+    color: var(--primary-light);
+}
+
+.socialBlock {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+    padding-top: 8px;
+}
+
+.socialLabel {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+}
+
+.side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.resumeCard {
+    padding: 32px 28px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.resumeIcon {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--gradient);
+    color: #fff;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 24px var(--glow);
+}
+
+.resumeCard h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.resumeCard p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+    max-width: 280px;
+}
+
+.dlBtn {
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 10px;
+}
+
+.dlBtn:last-child {
+    margin-bottom: 0;
+}
+
+.availability {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+}
+
+.availDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #22c55e;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.2);
+    animation: pulse 2s infinite;
+}
+
+.availability strong {
+    display: block;
+    font-size: 0.92rem;
+    margin-bottom: 2px;
+}
+
+.availability p {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .intro {
+        flex-direction: column;
+    }
+}

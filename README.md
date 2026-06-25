@@ -1,62 +1,80 @@
 # Rihan Mohammed — Portfolio
 
-**Live site:** [im-rihan.github.io/developer-portfolio](https://im-rihan.github.io/developer-portfolio)
+**Live site:** [im-rihan.github.io](https://im-rihan.github.io)
+
+Next.js 15 static export with 3D UI, dark/light theme, and GitHub Pages deployment.
 
 ---
 
-## Fastest deploy (recommended — ~1–3 min, no Actions queue)
-
-**Stop using GitHub Actions as Pages source.** That causes slow `deploy-pages` / `deployment_queued` loops.
-
-1. **[Settings → Pages](https://github.com/im-rihan/developer-portfolio/settings/pages)**
-2. Source: **Deploy from a branch**
-3. Branch: **`main`** → Folder: **`/docs`**
-4. Save
-
-Push to `main` → site updates in **1–3 minutes**. No workflow runs.
-
----
-
-## Alternative: gh-pages branch (~2–4 min)
-
-If you prefer a separate publish branch:
-
-1. **Settings → Pages** → **Deploy from a branch** → **`gh-pages`** → **`/ (root)`**
-2. **Settings → Actions → General** → **Read and write permissions**
-3. Push to `main` — workflow copies `docs/` → `gh-pages` automatically
-
-Uses `peaceiris/actions-gh-pages` — **not** `deploy-pages` (no queue).
-
----
-
-## Do NOT use
-
-| Method | Problem |
-|--------|---------|
-| **GitHub Actions** as Pages source | Triggers `deploy-pages`, `deployment_queued`, slow |
-| **Jekyll** build | Breaks plain HTML/CSS site |
-| **`main` → `/docs`** AND **gh-pages** at same time | Pick one source only |
-
----
-
-## Structure
-
-```
-docs/          ← edit website here
-├── index.html
-├── resume.*
-├── .nojekyll
-└── assets/
-```
-
----
-
-## Local preview
+## Local development
 
 ```powershell
-cd docs
-python -m http.server 8080
+cd im-rihan.github.io
+npm install
+npm run dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000)
+
+---
+
+## Build
+
+```powershell
+npm run build
+```
+
+Output goes to `out/` — ready for static hosting.
+
+---
+
+## Deploy (GitHub Pages — user site)
+
+This repo is **`im-rihan.github.io`** on GitHub — the site is served at the root URL.
+
+1. **[Settings → Pages](https://github.com/im-rihan/im-rihan.github.io/settings/pages)**
+2. Source: **Deploy from a branch** → **`gh-pages`** → **`/ (root)`**
+3. **Settings → Actions → General** → **Read and write permissions**
+
+Push to `main` — the workflow runs `npm ci`, `npm run build`, and publishes `out/` to `gh-pages`.
+
+---
+
+## Routes
+
+| Route | Description |
+|-------|-------------|
+| `/` | Home — hero, skills, experience, projects, certifications |
+| `/chat` | Rihan-only FAQ chat (client knowledge base) |
+| `/github` | Contribution graph + suggestions |
+| `/gallery` | Personal gallery (placeholder tiles) |
+| `/status` | Portfolio stats + link health |
+
+---
+
+## Project structure
+
+```
+src/
+├── app/           # App Router pages
+├── components/    # UI, sections, effects
+├── data/          # Profile, certs, chat knowledge
+└── lib/           # Chat engine, GitHub API, status checks
+public/            # Resume files, .nojekyll
+```
+
+---
+
+## Resume sync
+
+Regenerate resume exports from the sibling `resume/` project:
+
+```powershell
+cd ..\resume
+python generate_resume.py
+```
+
+Outputs to `im-rihan.github.io/docs/` and `im-rihan.github.io/public/`.
 
 ---
 

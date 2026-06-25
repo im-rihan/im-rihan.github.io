@@ -1,0 +1,24 @@
+.glow {
+    position: fixed;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+    opacity: 0.5;
+    transition: opacity 0.3s;
+}
+
+@media (max-width: 768px) {
+    .glow {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .glow {
+        display: none;
+    }
+}

@@ -1,0 +1,118 @@
+.wrapper {
+    display: grid;
+    gap: 24px;
+    max-width: 960px;
+    margin: 0 auto 80px;
+}
+
+.statsCard, .linksCard {
+    padding: 28px;
+}
+
+.statsCard h2, .linksCard h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--primary-light);
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.stat {
+    text-align: center;
+    padding: 20px;
+    background: var(--bg-elevated);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.num {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat span:last-child {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.buildNote {
+    margin-top: 20px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.checking {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+}
+
+.linkList li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.linkList li:last-child {
+    border-bottom: none;
+}
+
+.linkInfo a {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.linkInfo a:hover {
+    color: var(--primary-light);
+}
+
+.note {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.linkMeta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.online { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+.slow { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.offline { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+.unknown { background: var(--bg-elevated); color: var(--text-muted); }
+
+.ms {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono), monospace;
+}
+
+@media (max-width: 480px) {
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,133 @@
+.glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 520px;
+    height: 520px;
+    margin-left: -260px;
+    margin-top: -260px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9996;
+    background: radial-gradient(
+        circle,
+        rgba(20, 184, 166, 0.22) 0%,
+        rgba(245, 158, 11, 0.06) 35%,
+        transparent 70%
+    );
+    mix-blend-mode: screen;
+}
+
+.dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
+    margin-top: -4px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    background: var(--primary-light);
+    box-shadow: 0 0 12px var(--primary-light), 0 0 24px rgba(20, 184, 166, 0.4);
+    transition: width 0.25s, height 0.25s, margin 0.25s, background 0.25s, opacity 0.25s;
+}
+
+.ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40px;
+    height: 40px;
+    margin-left: -20px;
+    margin-top: -20px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    border: 1.5px solid rgba(20, 184, 166, 0.65);
+    transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        margin 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 0.25s,
+        background 0.25s,
+        opacity 0.25s;
+}
+
+.dot.pointer,
+.ring.pointer {
+    border-color: var(--accent);
+}
+
+.dot.card,
+.ring.card {
+    border-color: rgba(245, 158, 11, 0.8);
+}
+
+.dot.text {
+    width: 4px;
+    height: 18px;
+    margin-left: -2px;
+    margin-top: -9px;
+    border-radius: 2px;
+    background: var(--primary-light);
+}
+
+.ring.text {
+    width: 24px;
+    height: 24px;
+    margin-left: -12px;
+    margin-top: -12px;
+    opacity: 0.4;
+}
+
+.dot.pointer {
+    width: 6px;
+    height: 6px;
+    margin-left: -3px;
+    margin-top: -3px;
+    background: var(--accent);
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.6);
+}
+
+.ring.pointer {
+    width: 56px;
+    height: 56px;
+    margin-left: -28px;
+    margin-top: -28px;
+    border-color: rgba(245, 158, 11, 0.55);
+    background: rgba(245, 158, 11, 0.06);
+}
+
+.dot.card {
+    opacity: 0;
+}
+
+.ring.card {
+    width: 64px;
+    height: 64px;
+    margin-left: -32px;
+    margin-top: -32px;
+    border-color: rgba(20, 184, 166, 0.5);
+    background: rgba(20, 184, 166, 0.08);
+    border-width: 2px;
+}
+
+.dot.clicking {
+    transform: scale(0.75);
+}
+
+.ring.clicking {
+    width: 32px !important;
+    height: 32px !important;
+    margin-left: -16px !important;
+    margin-top: -16px !important;
+    border-color: var(--primary-light);
+    background: rgba(20, 184, 166, 0.15);
+}
+
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+    .glow, .dot, .ring {
+        display: none;
+    }
+}

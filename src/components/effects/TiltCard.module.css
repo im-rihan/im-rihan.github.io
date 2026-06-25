@@ -1,0 +1,16 @@
+.card {
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card {
+        transform: none !important;
+    }
+}
+
+@media (pointer: coarse) {
+    .card {
+        transform: none !important;
+    }
+}

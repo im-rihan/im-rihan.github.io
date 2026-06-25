@@ -1,0 +1,19 @@
+.wrapper {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.72;
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        opacity: 0.35;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .wrapper {
+        display: none;
+    }
+}

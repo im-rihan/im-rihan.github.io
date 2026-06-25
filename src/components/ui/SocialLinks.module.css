@@ -1,0 +1,104 @@
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    transition: transform 0.25s, border-color 0.25s, color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+
+.link:hover {
+    transform: translateY(-3px);
+}
+
+.iconWrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.link:hover .tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Sizes */
+.sm .link {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+}
+
+.md .link {
+    width: 44px;
+    height: 44px;
+}
+
+.lg .link {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+}
+
+/* Brand hovers */
+.github:hover {
+    color: #f1f5f9;
+    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(36, 41, 46, 0.85);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.linkedin:hover {
+    color: #fff;
+    border-color: rgba(10, 102, 194, 0.5);
+    background: rgba(10, 102, 194, 0.85);
+    box-shadow: 0 8px 24px rgba(10, 102, 194, 0.35);
+}
+
+.twitter:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(15, 15, 15, 0.9);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.email:hover {
+    color: #fff;
+    border-color: rgba(20, 184, 166, 0.5);
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    box-shadow: 0 8px 24px var(--glow);
+}
+
+.light .github:hover {
+    background: #24292e;
+}
+
+.light .twitter:hover {
+    background: #0f0f0f;
+}

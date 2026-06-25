@@ -1,0 +1,215 @@
+.eduCard {
+    padding: 28px;
+    max-width: 640px;
+    margin-bottom: 48px;
+}
+
+.eduCard h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 20px;
+}
+
+.eduItem {
+    margin-bottom: 20px;
+}
+
+.eduItem:last-child {
+    margin-bottom: 0;
+}
+
+.eduItem :global(.degree) {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 4px;
+}
+
+.school {
+    color: var(--primary-light);
+    font-size: 0.88rem;
+}
+
+.campus, .year {
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-top: 2px;
+}
+
+.certsBlock {
+    margin-top: 8px;
+}
+
+.certsHeader {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.certsHeader h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.certsHeader p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filters button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.filters button span {
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--bg-elevated);
+    font-size: 0.68rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filters button.active {
+    background: rgba(15, 118, 110, 0.2);
+    border-color: var(--primary-light);
+    color: var(--primary-light);
+}
+
+.certGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+.certCard {
+    position: relative;
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+    color: inherit;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+
+.certCard.linked {
+    cursor: pointer;
+}
+
+.certCard.linked:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow);
+}
+
+.accent {
+    height: 3px;
+}
+
+.accent.udemy { background: linear-gradient(90deg, #a855f7, #ec4899); }
+.accent.fcc { background: linear-gradient(90deg, #16a34a, #4ade80); }
+.accent.institute { background: var(--gradient); }
+
+.inner {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    min-height: 168px;
+}
+
+.certHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon.udemy { background: rgba(168, 85, 247, 0.14); color: #a855f7; }
+.icon.fcc { background: rgba(34, 197, 94, 0.14); color: #22c55e; }
+.icon.institute { background: rgba(20, 184, 166, 0.14); color: var(--primary-light); }
+
+.issuer {
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.issuer.udemy { background: rgba(168, 85, 247, 0.14); color: #a855f7; }
+.issuer.fcc { background: rgba(34, 197, 94, 0.14); color: #22c55e; }
+.issuer.institute { background: rgba(20, 184, 166, 0.14); color: var(--primary-light); }
+
+.inner h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: auto;
+    padding-bottom: 16px;
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.date {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.link {
+    font-weight: 600;
+    color: var(--primary-light);
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .certGrid { grid-template-columns: 1fr; }
+    .certsHeader { flex-direction: column; align-items: flex-start; }
+}

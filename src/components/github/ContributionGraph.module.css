@@ -1,0 +1,92 @@
+.wrapper {
+    display: grid;
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto 80px;
+}
+
+.loading, .error {
+    text-align: center;
+    padding: 48px;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 80px;
+}
+
+.error a {
+    color: var(--primary-light);
+}
+
+.graphCard {
+    padding: 28px;
+    overflow-x: auto;
+}
+
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.header span {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.grid {
+    display: flex;
+    gap: 3px;
+}
+
+.week {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background: var(--bg-elevated);
+}
+
+.l0 { background: var(--bg-elevated); }
+.l1 { background: rgba(20, 184, 166, 0.3); }
+.l2 { background: rgba(20, 184, 166, 0.5); }
+.l3 { background: rgba(20, 184, 166, 0.75); }
+.l4 { background: #14b8a6; }
+
+.insights {
+    padding: 28px;
+}
+
+.insights h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    margin-bottom: 16px;
+}
+
+.insights li {
+    position: relative;
+    padding-left: 16px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+}
+
+.insights li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--primary-light);
+}
