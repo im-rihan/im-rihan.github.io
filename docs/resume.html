@@ -266,28 +266,111 @@
     .edu-item .school { font-size: 10px; color: var(--primary); }
     .edu-item .year { font-size: 9.5px; color: var(--text-muted); }
 
+    .cert-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 16px;
+    }
+
+    .cert-item {
+      font-size: 9px;
+      line-height: 1.4;
+      color: var(--text);
+      padding-left: 10px;
+      position: relative;
+    }
+
+    .cert-item::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 8px;
+    }
+
     @media print {
-      body { background: #fff; }
+      html, body {
+        width: 210mm;
+        height: 297mm;
+        overflow: hidden;
+      }
+
+      body {
+        background: #fff;
+        font-size: 8pt;
+        line-height: 1.32;
+      }
+
       .page {
         margin: 0;
         box-shadow: none;
         max-width: 100%;
-        width: 100%;
+        width: 210mm;
+        height: 297mm;
         display: grid;
-        grid-template-columns: 280px 1fr;
+        grid-template-columns: 220px 1fr;
         min-height: auto;
-      }
-      .sidebar {
-        break-inside: avoid;
+        overflow: hidden;
+        page-break-after: avoid;
         page-break-inside: avoid;
-        padding: 24px 28px;
       }
-      .main {
-        padding: 24px 32px;
+
+      .sidebar {
+        padding: 14px 16px;
+        break-inside: auto;
+        page-break-inside: auto;
       }
-      .job { break-inside: avoid; page-break-inside: avoid; }
-      .project-card { break-inside: avoid; page-break-inside: avoid; }
-      .section { break-inside: auto; }
+
+      .sidebar h1 { font-size: 17px; margin-bottom: 2px; }
+      .sidebar .title { font-size: 9px; margin-bottom: 14px; }
+      .sidebar-section { margin-bottom: 12px; }
+      .sidebar-section h2 { font-size: 7.5px; margin-bottom: 6px; padding-bottom: 4px; }
+      .contact-item { margin-bottom: 5px; font-size: 8px; gap: 6px; }
+      .skill-group { margin-bottom: 8px; }
+      .skill-group h3 { font-size: 8px; margin-bottom: 3px; }
+      .skill-tag { font-size: 7px; padding: 2px 5px; }
+
+      .main { padding: 14px 18px 10px 16px; }
+
+      .summary {
+        font-size: 8px;
+        line-height: 1.45;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
+      }
+
+      .section { margin-bottom: 10px; }
+      .section-header { margin-bottom: 8px; gap: 6px; }
+      .section-header h2 { font-size: 10px; }
+
+      .job { margin-bottom: 8px; break-inside: auto; page-break-inside: auto; }
+      .job-title { font-size: 10px; }
+      .job-company { font-size: 9px; }
+      .job-meta { font-size: 8px; }
+      .job-desc { font-size: 8px; margin: 3px 0 4px; }
+      .job ul li { margin-bottom: 2px; font-size: 7.8px; line-height: 1.35; padding-left: 11px; }
+
+      .projects-grid { gap: 5px; }
+      .project-card {
+        padding: 5px 7px;
+        break-inside: auto;
+        page-break-inside: auto;
+      }
+      .project-card h3 { font-size: 8.5px; margin-bottom: 2px; }
+      .project-card .stack { font-size: 6.5px; margin-bottom: 3px; }
+      .project-card p { font-size: 7.2px; line-height: 1.35; }
+
+      .edu-item .degree { font-size: 9px; }
+      .edu-item .school { font-size: 8px; }
+
+      .cert-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1px 8px;
+      }
+
+      .cert-item { font-size: 6.8px; line-height: 1.28; padding-left: 8px; }
+      .cert-item::before { font-size: 6.5px; }
     }
 
     @page {
@@ -514,24 +597,22 @@
 
       <section class="section">
         <div class="section-header"><h2>Certifications</h2><div class="line"></div></div>
-        <ul style="list-style: none; padding: 0;">
-          <li style="position: relative; padding-left: 14px; margin-bottom: 6px; font-size: 10px; color: var(--text);">
-            <span style="position: absolute; left: 0; color: var(--primary); font-weight: 700;">▸</span>
-            Practical Database Course for Beginners: 6 courses in 1
-          </li>
-          <li style="position: relative; padding-left: 14px; margin-bottom: 6px; font-size: 10px; color: var(--text);">
-            <span style="position: absolute; left: 0; color: var(--primary); font-weight: 700;">▸</span>
-            Build an Amazon Affiliate E-Commerce Store from Scratch
-          </li>
-          <li style="position: relative; padding-left: 14px; margin-bottom: 6px; font-size: 10px; color: var(--text);">
-            <span style="position: absolute; left: 0; color: var(--primary); font-weight: 700;">▸</span>
-            Introduction to Programming Using HTML and CSS
-          </li>
-          <li style="position: relative; padding-left: 14px; margin-bottom: 6px; font-size: 10px; color: var(--text);">
-            <span style="position: absolute; left: 0; color: var(--primary); font-weight: 700;">▸</span>
-            JavaScript Algorithms and Data Structures
-          </li>
-        </ul>
+        <div class="cert-grid">
+          <span class="cert-item">Web Development Masterclass — Udemy</span>
+          <span class="cert-item">Python 3 Ultimate Guide — Udemy</span>
+          <span class="cert-item">React Complete Guide (Hooks &amp; Redux) — Udemy</span>
+          <span class="cert-item">Practical Database Course (6 in 1) — Udemy</span>
+          <span class="cert-item">Amazon Affiliate E-Commerce Store — Udemy</span>
+          <span class="cert-item">Practical MongoDB + PHP — Udemy</span>
+          <span class="cert-item">Complete NodeJS (Express, Socket.io, MongoDB) — Udemy</span>
+          <span class="cert-item">PGDCA — Survey Institute Gulf Training</span>
+          <span class="cert-item">JavaScript, Bootstrap &amp; PHP — Udemy</span>
+          <span class="cert-item">Javascript &amp; JQuery — Udemy</span>
+          <span class="cert-item">Adobe Photoshop CC 2015 — Udemy</span>
+          <span class="cert-item">HTML &amp; CSS Programming — Udemy</span>
+          <span class="cert-item">JS Algorithms &amp; Data Structures — freeCodeCamp</span>
+          <span class="cert-item">Responsive Web Design — freeCodeCamp</span>
+        </div>
       </section>
     </main>
   </div>
