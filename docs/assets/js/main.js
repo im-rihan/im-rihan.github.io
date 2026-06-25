@@ -38,6 +38,32 @@
 
   document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
 
+  // Certification filters
+  const certFilters = document.querySelectorAll('.cert-filter');
+  const certCards = document.querySelectorAll('.cert-card');
+
+  certFilters.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter;
+
+      certFilters.forEach((b) => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+      });
+
+      certCards.forEach((card) => {
+        const issuer = card.dataset.issuer;
+        const show = filter === 'all' || issuer === filter;
+        card.classList.toggle('is-hidden', !show);
+      });
+    });
+  });
+
+  certFilters.forEach((btn, i) => {
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+  });
+
   // Active nav link on scroll
   const sections = document.querySelectorAll('section[id]');
   const navAnchors = document.querySelectorAll('.nav-links a[href^="#"]');
