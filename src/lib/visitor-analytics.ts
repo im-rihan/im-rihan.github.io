@@ -1,4 +1,6 @@
 import { countryNames } from "@/data/country-coordinates";
+import { isSupabaseEnvConfigured } from "@/utils/supabase/env";
+import { getBrowserClient } from "@/utils/supabase/client";
 
 export interface VisitRecord {
     id: string;
@@ -39,12 +41,32 @@ const STORAGE_KEY = "rm-portfolio-visits";
 const SESSION_KEY = "rm-portfolio-tracked";
 const SEEN_COUNTRIES_KEY = "rm-seen-countries";
 const COUNTAPI_NS = "im-rihan-portfolio";
+const FETCH_TIMEOUT_MS = 5000;
+const COUNTAPI_TIMEOUT_MS = 3000;
 
 export const VISITOR_UPDATE_EVENT = "rm-visitor-update";
 
+async function fetchWithTimeout(
+    input: RequestInfo | URL,
+    init: RequestInit = {},
+    timeoutMs = FETCH_TIMEOUT_MS
+): Promise<Response> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        return await fetch(input, { ...init, signal: controller.signal });
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 async function countApiHit(key: string): Promise<void> {
     try {
-        await fetch(`https://api.countapi.xyz/hit/${COUNTAPI_NS}/${key}`);
+        await fetchWithTimeout(
+            `https://api.countapi.xyz/hit/${COUNTAPI_NS}/${key}`,
+            {},
+            COUNTAPI_TIMEOUT_MS
+        );
     } catch {
         /* optional */
     }
@@ -52,7 +74,11 @@ async function countApiHit(key: string): Promise<void> {
 
 async function countApiGet(key: string): Promise<number> {
     try {
-        const res = await fetch(`https://api.countapi.xyz/get/${COUNTAPI_NS}/${key}`);
+        const res = await fetchWithTimeout(
+            `https://api.countapi.xyz/get/${COUNTAPI_NS}/${key}`,
+            {},
+            COUNTAPI_TIMEOUT_MS
+        );
         if (!res.ok) return 0;
         const data = (await res.json()) as { value?: number };
         return data.value ?? 0;
@@ -132,7 +158,7 @@ function writeVisits(visits: VisitRecord[]): void {
 
 async function fetchGeo(): Promise<GeoResponse | null> {
     try {
-        const res = await fetch("https://ipwho.is/", { cache: "no-store" });
+        const res = await fetchWithTimeout("https://ipwho.is/", { cache: "no-store" }, 6000);
         if (!res.ok) return null;
         const data = (await res.json()) as GeoResponse;
         return data.success === false ? null : data;
@@ -141,13 +167,8 @@ async function fetchGeo(): Promise<GeoResponse | null> {
     }
 }
 
-function getSupabaseConfig(): { url: string; key: string } | null {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key =
-        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (!url || !key) return null;
-    return { url, key };
+export function isSupabaseConfigured(): boolean {
+    return isSupabaseEnvConfigured();
 }
 
 export interface SupabaseProbeResult {
@@ -156,49 +177,34 @@ export interface SupabaseProbeResult {
     message: string;
 }
 
-function supabaseHeaders(key: string): HeadersInit {
-    return {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-    };
-}
-
-function parseSupabaseError(status: number, body: string): string {
-    try {
-        const json = JSON.parse(body) as { code?: string; message?: string };
-        if (json.code === "PGRST205") {
-            return "Table public.visits is missing. Run supabase/visits.sql in Supabase → SQL Editor.";
-        }
-        if (status === 401 || status === 403) {
-            return "Auth failed — check NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (or anon key) in .env.local.";
-        }
-        return json.message ?? body;
-    } catch {
-        return body || `HTTP ${status}`;
+function parseClientError(error: { code?: string; message?: string } | null): string {
+    if (!error) return "Unknown Supabase error";
+    if (error.code === "PGRST205") {
+        return "Table public.visits is missing. Run supabase/visits.sql in Supabase → SQL Editor.";
     }
+    if (error.message?.includes("JWT")) {
+        return "Auth failed — check NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY in .env.local.";
+    }
+    return error.message ?? "Supabase request failed";
 }
 
 /** Health check for Supabase analytics backend. */
 export async function probeSupabase(): Promise<SupabaseProbeResult> {
-    const config = getSupabaseConfig();
-    if (!config) {
+    if (!isSupabaseEnvConfigured()) {
         return { configured: false, ok: false, message: "Supabase env vars not set" };
     }
 
+    const supabase = getBrowserClient();
+    if (!supabase) {
+        return { configured: false, ok: false, message: "Supabase client unavailable" };
+    }
+
     try {
-        const res = await fetch(
-            `${config.url}/rest/v1/visits?select=id&limit=1`,
-            { headers: supabaseHeaders(config.key), cache: "no-store" }
-        );
-        if (res.ok) {
+        const { error } = await supabase.from("visits").select("id").limit(1);
+        if (!error) {
             return { configured: true, ok: true, message: "Connected — public.visits table ready" };
         }
-        const body = await res.text();
-        return {
-            configured: true,
-            ok: false,
-            message: parseSupabaseError(res.status, body),
-        };
+        return { configured: true, ok: false, message: parseClientError(error) };
     } catch (err) {
         const msg = err instanceof Error ? err.message : "Network error";
         return { configured: true, ok: false, message: msg };
@@ -206,26 +212,22 @@ export async function probeSupabase(): Promise<SupabaseProbeResult> {
 }
 
 async function fetchSupabaseVisits(): Promise<VisitRecord[] | null> {
-    const config = getSupabaseConfig();
-    if (!config) return null;
-    const { url, key } = config;
+    const supabase = getBrowserClient();
+    if (!supabase) return null;
 
     try {
-        const res = await fetch(
-            `${url}/rest/v1/visits?select=*&order=timestamp.desc&limit=200`,
-            {
-                headers: supabaseHeaders(key),
-                cache: "no-store",
-            }
-        );
-        if (!res.ok) {
-            const body = await res.text();
+        const { data, error } = await supabase
+            .from("visits")
+            .select("*")
+            .order("timestamp", { ascending: false })
+            .limit(200);
+        if (error) {
             if (process.env.NODE_ENV === "development") {
-                console.warn("[analytics] Supabase read failed:", parseSupabaseError(res.status, body));
+                console.warn("[analytics] Supabase read failed:", parseClientError(error));
             }
             return null;
         }
-        return (await res.json()) as VisitRecord[];
+        return (data ?? []) as VisitRecord[];
     } catch (err) {
         if (process.env.NODE_ENV === "development") {
             console.warn("[analytics] Supabase read error:", err);
@@ -235,24 +237,14 @@ async function fetchSupabaseVisits(): Promise<VisitRecord[] | null> {
 }
 
 async function pushSupabaseVisit(visit: VisitRecord): Promise<boolean> {
-    const config = getSupabaseConfig();
-    if (!config) return false;
-    const { url, key } = config;
+    const supabase = getBrowserClient();
+    if (!supabase) return false;
 
     try {
-        const res = await fetch(`${url}/rest/v1/visits`, {
-            method: "POST",
-            headers: {
-                ...supabaseHeaders(key),
-                "Content-Type": "application/json",
-                Prefer: "return=minimal",
-            },
-            body: JSON.stringify(visit),
-        });
-        if (!res.ok) {
-            const body = await res.text();
+        const { error } = await supabase.from("visits").insert(visit);
+        if (error) {
             if (process.env.NODE_ENV === "development") {
-                console.warn("[analytics] Supabase insert failed:", parseSupabaseError(res.status, body));
+                console.warn("[analytics] Supabase insert failed:", parseClientError(error));
             }
             return false;
         }
@@ -334,41 +326,42 @@ async function fetchGlobalStats(localVisits: VisitRecord[]): Promise<{
     countries: CountryStat[];
     devices: DeviceStat[];
 }> {
-    const globalTotal = await countApiGet("visits");
-    const seenCodes = new Set([
+    const seenCodes = [...new Set([
         ...getSeenCountries(),
         ...localVisits.map((v) => v.countryCode),
-    ]);
+    ])].slice(0, 12);
 
-    const countryStats: CountryStat[] = [];
-    for (const code of seenCodes) {
-        const count = await countApiGet(`country-${code.toLowerCase()}`);
-        if (count > 0) {
+    const deviceTypes = ["desktop", "mobile", "tablet", "unknown"] as const;
+
+    const [globalTotal, ...rest] = await Promise.all([
+        countApiGet("visits"),
+        ...seenCodes.map(async (code) => {
+            const count = await countApiGet(`country-${code.toLowerCase()}`);
+            if (count <= 0) return null;
             const name =
                 localVisits.find((v) => v.countryCode === code)?.countryName ??
                 countryNames[code.toUpperCase()] ??
                 code;
-            countryStats.push({ code, name, count });
-        }
-    }
-
-    const deviceTypes = ["desktop", "mobile", "tablet", "unknown"] as const;
-    const deviceStats: DeviceStat[] = [];
-    for (const type of deviceTypes) {
-        const count = await countApiGet(`device-${type}`);
-        if (count > 0) {
+            return { code, name, count } satisfies CountryStat;
+        }),
+        ...deviceTypes.map(async (type) => {
+            const count = await countApiGet(`device-${type}`);
+            if (count <= 0) return null;
             const label =
                 type === "mobile" ? "Mobile" :
                 type === "tablet" ? "Tablet" :
                 type === "desktop" ? "Desktop" : "Unknown";
-            deviceStats.push({ type, label, count });
-        }
-    }
+            return { type, label, count } satisfies DeviceStat;
+        }),
+    ]);
+
+    const countryResults = rest.slice(0, seenCodes.length) as (CountryStat | null)[];
+    const deviceResults = rest.slice(seenCodes.length) as (DeviceStat | null)[];
 
     return {
         globalTotal: globalTotal > 0 ? globalTotal : null,
-        countries: countryStats.sort((a, b) => b.count - a.count),
-        devices: deviceStats.sort((a, b) => b.count - a.count),
+        countries: countryResults.filter((c): c is CountryStat => c !== null).sort((a, b) => b.count - a.count),
+        devices: deviceResults.filter((d): d is DeviceStat => d !== null).sort((a, b) => b.count - a.count),
     };
 }
 
@@ -440,21 +433,37 @@ export async function getVisitorStats(_forceRefresh = false): Promise<
         return getDemoVisitorStats();
     }
 
-    const supabase = await probeSupabase();
     const local = readVisits();
-    const remoteVisits = supabase.ok ? await fetchSupabaseVisits() : null;
+    const current = local[local.length - 1] ?? null;
 
-    const visits = remoteVisits && remoteVisits.length > 0 ? remoteVisits : local;
-    const current = local[local.length - 1] ?? visits[visits.length - 1] ?? null;
-    const localAgg = aggregate(visits.length > 0 ? visits : local, current);
-    const global = await fetchGlobalStats(local.length > 0 ? local : visits);
+    const [supabase, remoteVisits, global] = await Promise.all([
+        probeSupabase(),
+        isSupabaseEnvConfigured() ? fetchSupabaseVisits() : Promise.resolve(null),
+        fetchGlobalStats(local),
+    ]);
 
-    const countries = mergeCountryStats(localAgg.countries, global.countries);
-    const devices = global.devices.length > 0 ? global.devices : localAgg.devices;
-    const total = global.globalTotal ?? Math.max(localAgg.total, visits.length);
+    const visitSource =
+        supabase.ok && remoteVisits && remoteVisits.length > 0 ? remoteVisits : local;
+    const localAgg = aggregate(visitSource, current);
+
+    const countries =
+        localAgg.countries.length > 0
+            ? mergeCountryStats(localAgg.countries, global.countries)
+            : global.countries;
+    const devices =
+        localAgg.devices.length > 0 && global.devices.length === 0
+            ? localAgg.devices
+            : global.devices.length > 0
+              ? mergeDeviceStats(localAgg.devices, global.devices)
+              : localAgg.devices;
+
+    const total =
+        supabase.ok && remoteVisits && remoteVisits.length > 0
+            ? Math.max(remoteVisits.length, global.globalTotal ?? 0)
+            : global.globalTotal ?? Math.max(localAgg.total, visitSource.length);
 
     const source =
-        remoteVisits && remoteVisits.length > 0
+        supabase.ok && remoteVisits && remoteVisits.length > 0
             ? global.globalTotal
                 ? "merged"
                 : "supabase"
@@ -470,8 +479,25 @@ export async function getVisitorStats(_forceRefresh = false): Promise<
         recent: localAgg.recent,
         current,
         source,
-        supabase: supabase.configured ? supabase : undefined,
+        supabase: isSupabaseEnvConfigured()
+            ? supabase
+            : {
+                  configured: false,
+                  ok: false,
+                  message:
+                      "Supabase not in production build — add NEXT_PUBLIC_SUPABASE_* GitHub Actions secrets and redeploy.",
+              },
     };
+}
+
+function mergeDeviceStats(local: DeviceStat[], global: DeviceStat[]): DeviceStat[] {
+    const map = new Map<string, DeviceStat>();
+    for (const d of [...local, ...global]) {
+        const existing = map.get(d.type);
+        if (existing) existing.count = Math.max(existing.count, d.count);
+        else map.set(d.type, { ...d });
+    }
+    return [...map.values()].sort((a, b) => b.count - a.count);
 }
 
 function mergeCountryStats(local: CountryStat[], global: CountryStat[]): CountryStat[] {
