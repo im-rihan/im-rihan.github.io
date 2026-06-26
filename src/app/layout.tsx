@@ -21,7 +21,7 @@ export const metadata = rootMetadata;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
             <body className={`${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
                 <Providers>
                     <AppShell>{children}</AppShell>

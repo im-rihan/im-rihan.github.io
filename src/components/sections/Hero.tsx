@@ -6,6 +6,7 @@ import { assetPath } from "@/lib/paths";
 import { FadeIn } from "@/components/effects/FadeIn";
 import { TiltCard } from "@/components/effects/TiltCard";
 import { SocialLinks } from "@/components/ui/SocialLinks";
+import { LogoMark } from "@/components/layout/LogoMark";
 import styles from "./Hero.module.css";
 
 function HeroCodeSnippet() {
@@ -107,6 +108,9 @@ export function Hero() {
                                 <span className={styles.red} />
                                 <span className={styles.yellow} />
                                 <span className={styles.green} />
+                                <span className={styles.codeLogo} aria-hidden>
+                                    <LogoMark size="sm" />
+                                </span>
                                 <span className={styles.codeTitle}>rihan.ts</span>
                             </div>
                             <HeroCodeSnippet />

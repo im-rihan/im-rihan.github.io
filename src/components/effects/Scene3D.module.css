@@ -29,8 +29,7 @@
     inset: 0;
     pointer-events: none;
     background:
-        radial-gradient(ellipse 90% 75% at 50% 45%, transparent 35%, rgba(3, 7, 18, 0.35) 100%),
-        linear-gradient(180deg, rgba(3, 7, 18, 0.12) 0%, transparent 30%, transparent 70%, rgba(3, 7, 18, 0.25) 100%);
+        radial-gradient(ellipse 92% 78% at 50% 44%, transparent 38%, rgba(3, 7, 18, 0.32) 100%);
 }
 
 :global(html.light) .wrapper {
@@ -50,8 +49,7 @@
 
     .wrapper::after {
         background:
-            radial-gradient(ellipse 95% 80% at 50% 42%, transparent 42%, rgba(3, 7, 18, 0.22) 100%),
-            linear-gradient(180deg, rgba(3, 7, 18, 0.08) 0%, transparent 28%, transparent 72%, rgba(3, 7, 18, 0.18) 100%);
+            radial-gradient(ellipse 96% 82% at 50% 42%, transparent 44%, rgba(3, 7, 18, 0.2) 100%);
     }
 
     :global(html.light) .wrapper {

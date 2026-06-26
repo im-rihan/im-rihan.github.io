@@ -21,8 +21,216 @@
     pointer-events: none;
     z-index: 9995;
     border: 1px dashed rgba(20, 184, 166, 0.25);
-    transition: width 0.35s, height 0.35s, margin 0.35s, opacity 0.25s;
+    transition: width 0.35s, height 0.35s, margin 0.35s, opacity 0.25s, box-shadow 0.25s;
     animation: orbitSpin 8s linear infinite;
+}
+
+.orbit.charging {
+    border-color: rgba(245, 158, 11, 0.55);
+    box-shadow: 0 0 24px rgba(245, 158, 11, 0.25), inset 0 0 12px rgba(20, 184, 166, 0.15);
+}
+
+.orbit.idle {
+    animation: orbitSpin 12s linear infinite, idleBreath 3s ease-in-out infinite;
+}
+
+@keyframes idleBreath {
+    0%, 100% { opacity: 0.75; }
+    50% { opacity: 1; }
+}
+
+.paintCanvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9992;
+}
+
+.playHint {
+    position: fixed;
+    left: 50%;
+    bottom: 1.35rem;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 9990;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(20, 184, 166, 0.85);
+    background: rgba(3, 7, 18, 0.55);
+    border: 1px solid rgba(20, 184, 166, 0.35);
+    border-radius: 999px;
+    padding: 0.35rem 0.65rem;
+    backdrop-filter: blur(8px);
+    animation: hintFade 6s ease forwards;
+    white-space: nowrap;
+}
+
+@keyframes hintFade {
+    0%, 12% { opacity: 0; transform: translateY(4px); }
+    20%, 75% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-2px); }
+}
+
+.crosshair {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    z-index: 9997;
+}
+
+.crossH,
+.crossV {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.55), transparent);
+    border-radius: 2px;
+}
+
+.crossH {
+    height: 1px;
+    margin-left: -50%;
+    margin-top: -0.5px;
+}
+
+.crossV {
+    width: 1px;
+    margin-left: -0.5px;
+    margin-top: -50%;
+    background: linear-gradient(180deg, transparent, rgba(20, 184, 166, 0.55), transparent);
+}
+
+.ringOuter {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 88px;
+    height: 88px;
+    margin-left: -44px;
+    margin-top: -44px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9994;
+    border: 1px solid rgba(34, 211, 238, 0.22);
+    animation: orbitSpinReverse 14s linear infinite;
+}
+
+.ringOuter.charging {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 18px rgba(245, 158, 11, 0.2);
+}
+
+@keyframes orbitSpinReverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+.idlePulse {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 72px;
+    height: 72px;
+    margin-left: -36px;
+    margin-top: -36px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9993;
+    border: 1px solid rgba(20, 184, 166, 0.35);
+    animation: idlePulseRing 2.4s ease-out infinite;
+}
+
+@keyframes idlePulseRing {
+    0% { opacity: 0.6; transform: scale(0.85); }
+    100% { opacity: 0; transform: scale(1.45); }
+}
+
+.satellite {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    margin: -2.5px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--primary-light), transparent 70%);
+    box-shadow: 0 0 8px rgba(20, 184, 166, 0.7);
+    animation: satelliteOrbit 3.2s linear infinite;
+    animation-delay: calc(var(--sat-i) * -0.8s);
+    transform-origin: 0 0;
+}
+
+@keyframes satelliteOrbit {
+    from {
+        transform: rotate(calc(var(--sat-i) * 90deg)) translateX(34px) rotate(calc(var(--sat-i) * -90deg));
+    }
+    to {
+        transform: rotate(calc(var(--sat-i) * 90deg + 360deg)) translateX(34px) rotate(calc(var(--sat-i) * -90deg - 360deg));
+    }
+}
+
+.ripple {
+    position: fixed;
+    width: calc(24px + var(--ripple-power, 0.4) * 48px);
+    height: calc(24px + var(--ripple-power, 0.4) * 48px);
+    margin-left: calc(-12px - var(--ripple-power, 0.4) * 24px);
+    margin-top: calc(-12px - var(--ripple-power, 0.4) * 24px);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9994;
+    border: 1.5px solid rgba(20, 184, 166, 0.55);
+    animation: rippleExpand 0.7s ease-out forwards;
+}
+
+@keyframes rippleExpand {
+    from {
+        opacity: 0.75;
+        transform: scale(0.35);
+    }
+    to {
+        opacity: 0;
+        transform: scale(2.2);
+    }
+}
+
+.spark {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    margin: -2px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9993;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+}
+
+.chargeArc {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 56px;
+    height: 56px;
+    margin-left: -28px;
+    margin-top: -28px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    border: 2px solid transparent;
+    border-top-color: rgba(245, 158, 11, 0.85);
+    border-right-color: rgba(20, 184, 166, 0.45);
+    opacity: 0.85;
+}
+
+.ring.charged {
+    border-color: rgba(245, 158, 11, 0.75);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
 }
 
 .orbit.pointer {
@@ -207,8 +415,74 @@
     background: rgba(20, 184, 166, 0.15);
 }
 
+.cometTail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 28px;
+    height: 3px;
+    margin-left: -14px;
+    margin-top: -1.5px;
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 9996;
+    transform-origin: center center;
+    background: linear-gradient(90deg, transparent 0%, rgba(20, 184, 166, 0.15) 35%, rgba(34, 211, 238, 0.75) 100%);
+    filter: blur(0.5px);
+}
+
+.hexRing {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 58px;
+    height: 58px;
+    margin-left: -29px;
+    margin-top: -29px;
+    pointer-events: none;
+    z-index: 9994;
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    border: 1px solid rgba(20, 184, 166, 0.22);
+    background: rgba(20, 184, 166, 0.04);
+    box-shadow: inset 0 0 12px rgba(20, 184, 166, 0.08);
+    transition: border-color 0.25s, background 0.25s;
+}
+
+.hexRing.hexCharged {
+    border-color: rgba(245, 158, 11, 0.45);
+    background: rgba(245, 158, 11, 0.06);
+    box-shadow: inset 0 0 16px rgba(245, 158, 11, 0.12);
+}
+
+.chargeTicks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 52px;
+    height: 52px;
+    margin-left: -26px;
+    margin-top: -26px;
+    pointer-events: none;
+    z-index: 9997;
+}
+
+.chargeTick {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    margin: -2px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.65);
+    transform: rotate(calc(var(--tick-i) * 45deg)) translateY(-24px);
+    transition: opacity 0.12s ease-out;
+}
+
 @media (max-width: 768px), (prefers-reduced-motion: reduce) {
-    .glow, .dot, .ring, .trail, .orbit {
+    .glow, .dot, .ring, .trail, .orbit, .ripple, .spark, .chargeArc, .satellite,
+    .paintCanvas, .playHint, .crosshair, .ringOuter, .idlePulse, .cometTail, .hexRing, .chargeTicks, .chargeTick {
         display: none;
     }
 }

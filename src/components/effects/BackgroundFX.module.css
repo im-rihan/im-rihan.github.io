@@ -76,17 +76,18 @@
 
 .horizon {
     position: absolute;
-    left: -10%;
-    right: -10%;
-    bottom: -2%;
-    height: 38%;
-    background: linear-gradient(
-        180deg,
-        transparent 0%,
-        rgba(15, 118, 110, 0.04) 45%,
-        rgba(20, 184, 166, 0.08) 100%
+    left: -12%;
+    right: -12%;
+    bottom: -6%;
+    height: 34%;
+    background: radial-gradient(
+        ellipse 120% 90% at 50% 100%,
+        rgba(20, 184, 166, 0.06) 0%,
+        rgba(15, 118, 110, 0.03) 42%,
+        transparent 72%
     );
-    mask-image: linear-gradient(180deg, transparent, black 55%);
+    mask-image: radial-gradient(ellipse 95% 80% at 50% 100%, black 18%, transparent 78%);
+    opacity: 0.72;
 }
 
 .gridPulse {
@@ -106,11 +107,12 @@
     background: repeating-linear-gradient(
         0deg,
         transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.028) 2px,
-        rgba(0, 0, 0, 0.028) 4px
+        transparent 3px,
+        rgba(0, 0, 0, 0.014) 3px,
+        rgba(0, 0, 0, 0.014) 5px
     );
-    opacity: 0.32;
+    opacity: 0.18;
+    mask-image: radial-gradient(ellipse 88% 74% at 50% 46%, black 10%, transparent 82%);
     animation: scanFlicker 10s ease-in-out infinite;
 }
 
@@ -126,8 +128,7 @@
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse 72% 68% at 50% 48%, transparent 38%, rgba(3, 7, 18, 0.62) 100%),
-        linear-gradient(180deg, rgba(3, 7, 18, 0.15) 0%, transparent 22%, transparent 78%, rgba(3, 7, 18, 0.35) 100%);
+        radial-gradient(ellipse 76% 70% at 50% 48%, transparent 40%, rgba(3, 7, 18, 0.55) 100%);
 }
 
 .interactiveGlow {
@@ -197,8 +198,7 @@
 
 :global(html.light) .vignette {
     background:
-        radial-gradient(ellipse 72% 68% at 50% 48%, transparent 42%, rgba(248, 250, 252, 0.55) 100%),
-        linear-gradient(180deg, rgba(248, 250, 252, 0.2) 0%, transparent 22%, transparent 78%, rgba(241, 245, 249, 0.35) 100%);
+        radial-gradient(ellipse 76% 70% at 50% 48%, transparent 44%, rgba(248, 250, 252, 0.48) 100%);
 }
 
 :global(html.light) .noise {
@@ -232,14 +232,12 @@
 
     .vignette {
         background:
-            radial-gradient(ellipse 88% 78% at 50% 46%, transparent 44%, rgba(3, 7, 18, 0.34) 100%),
-            linear-gradient(180deg, rgba(3, 7, 18, 0.1) 0%, transparent 24%, transparent 76%, rgba(3, 7, 18, 0.22) 100%);
+            radial-gradient(ellipse 90% 80% at 50% 46%, transparent 46%, rgba(3, 7, 18, 0.3) 100%);
     }
 
     :global(html.light) .vignette {
         background:
-            radial-gradient(ellipse 88% 78% at 50% 46%, transparent 48%, rgba(248, 250, 252, 0.38) 100%),
-            linear-gradient(180deg, rgba(248, 250, 252, 0.12) 0%, transparent 24%, transparent 76%, rgba(241, 245, 249, 0.22) 100%);
+            radial-gradient(ellipse 90% 80% at 50% 46%, transparent 50%, rgba(248, 250, 252, 0.34) 100%);
     }
 
     .interactiveGlow {
@@ -249,8 +247,8 @@
     }
 
     .horizon {
-        opacity: 0.72;
-        height: 42%;
+        opacity: 0.48;
+        height: 36%;
     }
 }
 
