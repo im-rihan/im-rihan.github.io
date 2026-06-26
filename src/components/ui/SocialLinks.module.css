@@ -95,10 +95,10 @@
     box-shadow: 0 8px 24px var(--glow);
 }
 
-.light .github:hover {
+:global(html.light) .github:hover {
     background: #24292e;
 }
 
-.light .twitter:hover {
+:global(html.light) .twitter:hover {
     background: #0f0f0f;
 }

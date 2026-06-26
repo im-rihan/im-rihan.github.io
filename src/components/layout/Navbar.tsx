@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { ChevronDown, Mail } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, Mail, ArrowUpRight, Terminal } from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { siteMeta } from "@/data/profile";
@@ -18,12 +19,12 @@ const pageLinks = [
 ];
 
 const sectionLinks = [
-    { href: "/#about", label: "About" },
-    { href: "/#skills", label: "Skills" },
-    { href: "/#experience", label: "Experience" },
-    { href: "/#projects", label: "Projects" },
-    { href: "/#education", label: "Education" },
-    { href: "/#contact", label: "Contact" },
+    { id: "about", label: "About", file: "about.md" },
+    { id: "skills", label: "Skills", file: "skills.json" },
+    { id: "experience", label: "Experience", file: "experience.ts" },
+    { id: "projects", label: "Projects", file: "projects/" },
+    { id: "education", label: "Education", file: "education.md" },
+    { id: "contact", label: "Contact", file: "contact.sh" },
 ];
 
 function normalizePath(path: string): string {
@@ -31,11 +32,52 @@ function normalizePath(path: string): string {
     return path;
 }
 
+function NavLink({
+    href,
+    label,
+    active,
+    onClick,
+}: {
+    href: string;
+    label: string;
+    active: boolean;
+    onClick: () => void;
+}) {
+    return (
+        <Link
+            href={href}
+            className={`${styles.navLink} ${active ? styles.activeLink : ""}`}
+            onClick={onClick}
+            data-cursor="nav"
+        >
+            {active && (
+                <motion.span
+                    layoutId="navActivePill"
+                    className={styles.activePill}
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+            )}
+            <span className={styles.navPrefix} aria-hidden>{">"}</span>
+            <span className={styles.navLinkText}>{label}</span>
+            <span className={styles.navUnderline} aria-hidden />
+        </Link>
+    );
+}
+
 export function Navbar() {
     const pathname = normalizePath(usePathname());
+    const router = useRouter();
     const [open, setOpen] = useState(false);
     const [exploreOpen, setExploreOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const exploreRef = useRef<HTMLLIElement>(null);
+
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 16);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
 
     useEffect(() => {
         const onClick = (e: MouseEvent) => {
@@ -47,6 +89,17 @@ export function Navbar() {
         return () => document.removeEventListener("click", onClick);
     }, []);
 
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                setOpen(false);
+                setExploreOpen(false);
+            }
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, []);
+
     const closeAll = () => {
         setOpen(false);
         setExploreOpen(false);
@@ -55,8 +108,22 @@ export function Navbar() {
     const isActive = (href: string) =>
         href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
+    const goToSection = (id: string) => {
+        closeAll();
+        if (pathname === "/") {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth" });
+                window.history.replaceState(null, "", `/#${id}`);
+            }
+            return;
+        }
+        router.push(`/#${id}`);
+    };
+
     return (
-        <nav className={styles.navbar}>
+        <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`} data-cursor="nav">
+            <div className={styles.scanBar} aria-hidden />
             <div className={styles.inner}>
                 <Logo onNavigate={closeAll} />
 
@@ -64,13 +131,12 @@ export function Navbar() {
                     <ul className={`${styles.links} ${open ? styles.open : ""}`}>
                         {pageLinks.map((link) => (
                             <li key={link.href}>
-                                <Link
+                                <NavLink
                                     href={link.href}
-                                    className={isActive(link.href) ? styles.activeLink : undefined}
+                                    label={link.label}
+                                    active={isActive(link.href)}
                                     onClick={closeAll}
-                                >
-                                    {link.label}
-                                </Link>
+                                />
                             </li>
                         ))}
                         <li className={styles.exploreItem} ref={exploreRef}>
@@ -82,24 +148,65 @@ export function Navbar() {
                                     setExploreOpen(!exploreOpen);
                                 }}
                                 aria-expanded={exploreOpen}
+                                aria-haspopup="true"
+                                data-cursor="nav"
                             >
-                                Sections
+                                <span className={styles.navPrefix} aria-hidden>{">"}</span>
+                                <span className={styles.navLinkText}>Sections</span>
                                 <ChevronDown size={14} className={styles.chevron} />
+                                <span className={styles.navUnderline} aria-hidden />
                             </button>
-                            {exploreOpen && (
-                                <div className={styles.dropdown}>
-                                    {sectionLinks.map((link) => (
-                                        <Link
-                                            key={link.href}
-                                            href={link.href}
-                                            className={styles.dropdownLink}
-                                            onClick={closeAll}
-                                        >
-                                            {link.label}
-                                        </Link>
-                                    ))}
-                                </div>
-                            )}
+
+                            <AnimatePresence>
+                                {exploreOpen && (
+                                    <motion.div
+                                        className={styles.dropdownWrap}
+                                        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                                        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                                    >
+                                        <div className={styles.dropdown} role="menu">
+                                            <div className={styles.dropdownHeader}>
+                                                <div className={styles.windowDots}>
+                                                    <span className={styles.dotRed} />
+                                                    <span className={styles.dotYellow} />
+                                                    <span className={styles.dotGreen} />
+                                                </div>
+                                                <Terminal size={13} />
+                                                <code>~/portfolio/sections</code>
+                                            </div>
+                                            <p className={styles.dropdownCmd}>
+                                                <span className={styles.prompt}>$</span> ls -la sections/
+                                            </p>
+                                            <div className={styles.dropdownGrid}>
+                                                {sectionLinks.map((link, i) => (
+                                                    <motion.button
+                                                        key={link.id}
+                                                        type="button"
+                                                        role="menuitem"
+                                                        className={styles.dropdownItem}
+                                                        onClick={() => goToSection(link.id)}
+                                                        initial={{ opacity: 0, y: 6 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ delay: i * 0.04 }}
+                                                        data-cursor="nav"
+                                                    >
+                                                        <span className={styles.itemIndex}>
+                                                            {String(i + 1).padStart(2, "0")}
+                                                        </span>
+                                                        <span className={styles.itemBody}>
+                                                            <span className={styles.itemLabel}>{link.label}</span>
+                                                            <span className={styles.itemFile}>{link.file}</span>
+                                                        </span>
+                                                        <ArrowUpRight size={14} className={styles.itemArrow} />
+                                                    </motion.button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </li>
                     </ul>
                 </div>
@@ -116,12 +223,13 @@ export function Navbar() {
                     <ThemeToggle />
                     <button
                         type="button"
-                        className={styles.menuBtn}
+                        className={`${styles.menuBtn} ${open ? styles.menuOpen : ""}`}
                         onClick={() => setOpen(!open)}
                         aria-label="Toggle menu"
                         aria-expanded={open}
+                        data-cursor="pointer"
                     >
-                        {open ? "✕" : "☰"}
+                        <span /><span /><span />
                     </button>
                 </div>
             </div>

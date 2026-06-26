@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoMark } from "./LogoMark";
 import styles from "./Logo.module.css";
 
 interface LogoProps {
@@ -8,9 +9,9 @@ interface LogoProps {
 
 export function Logo({ compact = false, onNavigate }: LogoProps) {
     return (
-        <Link href="/" className={styles.logo} aria-label="Rihan Mohammed — Home" onClick={onNavigate}>
-            <span className={styles.mark} aria-hidden>
-                <span className={styles.monogram}>RM</span>
+        <Link href="/" className={styles.logo} aria-label="Rihan Mohammed — Home" onClick={onNavigate} data-cursor="nav">
+            <span className={styles.mark}>
+                <LogoMark />
             </span>
             {!compact && (
                 <span className={styles.wordmark}>

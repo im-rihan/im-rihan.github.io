@@ -102,6 +102,39 @@
         opacity 0.25s;
 }
 
+.orbit.nav {
+    border-color: rgba(20, 184, 166, 0.5);
+    width: 52px;
+    height: 52px;
+    margin-left: -26px;
+    margin-top: -26px;
+    animation: orbitSpin 4s linear infinite;
+}
+
+.dot.nav,
+.ring.nav {
+    border-color: rgba(20, 184, 166, 0.75);
+}
+
+.dot.nav {
+    width: 5px;
+    height: 5px;
+    margin-left: -2.5px;
+    margin-top: -2.5px;
+    background: var(--primary-light);
+    box-shadow: 0 0 16px rgba(20, 184, 166, 0.7);
+}
+
+.ring.nav {
+    width: 36px;
+    height: 36px;
+    margin-left: -18px;
+    margin-top: -18px;
+    border-color: rgba(20, 184, 166, 0.6);
+    background: rgba(20, 184, 166, 0.1);
+    border-width: 1.5px;
+}
+
 .dot.pointer,
 .ring.pointer {
     border-color: var(--accent);

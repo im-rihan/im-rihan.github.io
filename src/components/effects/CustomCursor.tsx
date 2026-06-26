@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, useSpring } from "framer-motion";
 import styles from "./CustomCursor.module.css";
 
-type CursorMode = "default" | "pointer" | "card" | "text";
+type CursorMode = "default" | "pointer" | "card" | "text" | "nav";
 
 interface TrailDot {
     id: string;
@@ -14,6 +14,7 @@ interface TrailDot {
 
 const TRAIL_LENGTH = 12;
 const MAGNETIC_SELECTOR = "a, button, .btn, .glass-card, [data-tilt-card], [data-cursor]";
+const NAV_SELECTOR = "[data-cursor='nav']";
 
 export function CustomCursor() {
     const [enabled, setEnabled] = useState(false);
@@ -44,6 +45,19 @@ export function CustomCursor() {
 
     const resolveMagneticOffset = useCallback((target: EventTarget | null, clientX: number, clientY: number, cursorMode: CursorMode) => {
         if (!(target instanceof Element)) return { x: 0, y: 0 };
+        const navEl = target.closest(NAV_SELECTOR) as HTMLElement | null;
+        if (navEl && cursorMode === "nav") {
+            const rect = navEl.getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = cx - clientX;
+            const dy = cy - clientY;
+            const dist = Math.hypot(dx, dy);
+            if (dist > 120) return { x: 0, y: 0 };
+            const pull = Math.min(18, dist * 0.35);
+            const angle = Math.atan2(dy, dx);
+            return { x: Math.cos(angle) * pull, y: Math.sin(angle) * pull };
+        }
         const el = target.closest(MAGNETIC_SELECTOR) as HTMLElement | null;
         if (!el) return { x: 0, y: 0 };
         const rect = el.getBoundingClientRect();
@@ -52,7 +66,7 @@ export function CustomCursor() {
         const dx = cx - clientX;
         const dy = cy - clientY;
         const dist = Math.hypot(dx, dy);
-        const strength = cursorMode === "pointer" ? 0.45 : cursorMode === "card" ? 0.28 : 0.15;
+        const strength = cursorMode === "pointer" ? 0.45 : cursorMode === "nav" ? 0.38 : cursorMode === "card" ? 0.28 : 0.15;
         const maxPull = 56;
         if (dist > 180) return { x: 0, y: 0 };
         const pull = Math.min(maxPull, dist * strength);
@@ -131,6 +145,7 @@ export function CustomCursor() {
 
     const modeClass =
         mode === "pointer" ? styles.pointer :
+        mode === "nav" ? styles.nav :
         mode === "card" ? styles.card :
         mode === "text" ? styles.text :
         styles.default;

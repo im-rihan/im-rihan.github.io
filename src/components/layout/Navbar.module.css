@@ -4,79 +4,192 @@
     left: 50%;
     transform: translateX(-50%);
     width: calc(100% - 32px);
-    max-width: 1140px;
-    height: calc(var(--nav-h) - 8px);
+    max-width: 1160px;
+    height: calc(var(--nav-h) - 6px);
     z-index: 1000;
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    background: var(--nav-glass);
+    backdrop-filter: blur(22px) saturate(1.25);
+    -webkit-backdrop-filter: blur(22px) saturate(1.25);
+    border: 1px solid var(--nav-border);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    transition: top 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    overflow: visible;
+}
+
+.navbar.scrolled {
+    top: 8px;
+    border-color: rgba(20, 184, 166, 0.22);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(20, 184, 166, 0.06);
+}
+
+.scanBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.6), transparent);
+    animation: scanBarMove 4s ease-in-out infinite;
+    pointer-events: none;
+    border-radius: 12px 12px 0 0;
+}
+
+@keyframes scanBarMove {
+    0%, 100% { opacity: 0.3; transform: scaleX(0.4); }
+    50% { opacity: 1; transform: scaleX(1); }
 }
 
 .inner {
+    position: relative;
     height: 100%;
-    padding: 0 16px 0 18px;
+    padding: 0 14px 0 16px;
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
 }
 
 .navCenter {
     display: flex;
     justify-content: center;
     min-width: 0;
+    overflow: visible;
 }
 
 .links {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     list-style: none;
     margin: 0;
     padding: 4px;
-    background: var(--bg-elevated);
-    border-radius: 12px;
-    border: 1px solid var(--border);
+    background: rgba(8, 12, 22, 0.55);
+    border-radius: 10px;
+    border: 1px solid rgba(20, 184, 166, 0.12);
+    overflow: visible;
 }
 
-.links a,
+:global(html.light) .links {
+    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(15, 118, 110, 0.16);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+:global(html.light) .navbar {
+    box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+}
+
+:global(html.light) .navbar.scrolled {
+    border-color: rgba(15, 118, 110, 0.22);
+    box-shadow: 0 12px 40px rgba(15, 23, 42, 0.1), 0 0 0 1px rgba(15, 118, 110, 0.08);
+}
+
+:global(html.light) .scanBar {
+    background: linear-gradient(90deg, transparent, rgba(15, 118, 110, 0.45), transparent);
+}
+
+:global(html.light) .activePill {
+    background: rgba(15, 118, 110, 0.08);
+    box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.22);
+}
+
+:global(html.light) .exploreBtn.exploreOpen {
+    background: rgba(15, 118, 110, 0.08);
+}
+
+:global(html.light) .menuBtn {
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.navLink,
 .exploreBtn {
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     padding: 8px 14px;
-    border-radius: 9px;
+    border-radius: 8px;
     font-size: 0.82rem;
     font-weight: 600;
+    font-family: var(--font-mono), monospace;
+    letter-spacing: 0.02em;
     color: var(--text-muted);
-    transition: color 0.2s, background 0.2s;
+    transition: color 0.25s ease, text-shadow 0.25s ease;
     white-space: nowrap;
     text-decoration: none;
     border: none;
     background: none;
-    font-family: inherit;
     cursor: pointer;
+    overflow: hidden;
 }
 
-.links a:hover,
-.exploreBtn:hover,
-.links a.activeLink {
-    color: var(--text);
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.links a.activeLink {
+.navPrefix {
     color: var(--primary-light);
-    background: rgba(20, 184, 166, 0.12);
-    box-shadow: inset 0 0 0 1px rgba(20, 184, 166, 0.25);
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    font-weight: 700;
+    margin-right: -2px;
 }
 
-.light .links a:hover,
-.light .links a.activeLink {
-    background: rgba(15, 118, 110, 0.08);
+.navLink:hover .navPrefix,
+.exploreBtn:hover .navPrefix,
+.exploreOpen .navPrefix {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.navUnderline {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 5px;
+    height: 1px;
+    background: var(--primary-light);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 0 8px rgba(20, 184, 166, 0.5);
+}
+
+.navLink:hover .navUnderline,
+.exploreBtn:hover .navUnderline,
+.exploreOpen .navUnderline {
+    transform: scaleX(1);
+}
+
+.activePill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(20, 184, 166, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(20, 184, 166, 0.3);
+    z-index: 0;
+}
+
+.navLinkText {
+    position: relative;
+    z-index: 1;
+}
+
+.navLink:hover,
+.exploreBtn:hover {
+    color: var(--primary-light);
+    text-shadow: 0 0 20px rgba(20, 184, 166, 0.25);
+}
+
+.navLink.activeLink {
+    color: var(--primary-light);
+}
+
+.navLink.activeLink .navPrefix {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.navLink.activeLink .navUnderline {
+    transform: scaleX(1);
 }
 
 .exploreItem {
@@ -85,45 +198,189 @@
 
 .exploreBtn.exploreOpen {
     color: var(--primary-light);
-    background: rgba(20, 184, 166, 0.1);
+    background: rgba(20, 184, 166, 0.08);
 }
 
 .chevron {
-    transition: transform 0.2s;
+    transition: transform 0.25s ease;
+    position: relative;
+    z-index: 1;
+    margin-left: 2px;
 }
 
 .exploreOpen .chevron {
     transform: rotate(180deg);
 }
 
-.dropdown {
+/* ── Sections terminal dropdown ── */
+.dropdownWrap {
     position: absolute;
-    top: calc(100% + 8px);
-    left: 50%;
-    transform: translateX(-50%);
-    min-width: 180px;
-    padding: 8px;
-    background: var(--glass);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border);
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 1100;
+    width: min(420px, calc(100vw - 32px));
+}
+
+.dropdown {
+    background: rgba(8, 12, 22, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(20, 184, 166, 0.22);
     border-radius: 12px;
-    box-shadow: var(--shadow);
-    z-index: 10;
+    box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(20, 184, 166, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    overflow: hidden;
 }
 
-.dropdownLink {
-    display: block;
+:global(html.light) .dropdown {
+    background: rgba(255, 255, 255, 0.97);
+    border-color: rgba(15, 118, 110, 0.2);
+    box-shadow:
+        0 24px 64px rgba(15, 23, 42, 0.12),
+        0 0 0 1px rgba(15, 118, 110, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+:global(html.light) .dropdownHeader {
+    background: rgba(15, 118, 110, 0.05);
+    border-bottom-color: rgba(15, 118, 110, 0.12);
+}
+
+:global(html.light) .dropdownCmd {
+    border-bottom-color: rgba(15, 118, 110, 0.12);
+}
+
+:global(html.light) .dropdownItem {
+    background: rgba(15, 118, 110, 0.04);
+}
+
+:global(html.light) .dropdownItem:hover {
+    background: rgba(15, 118, 110, 0.1);
+    border-color: rgba(15, 118, 110, 0.22);
+    box-shadow: 0 4px 16px rgba(15, 118, 110, 0.1);
+}
+
+.dropdownHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 500;
+    border-bottom: 1px solid rgba(20, 184, 166, 0.12);
+    background: rgba(20, 184, 166, 0.04);
     color: var(--text-muted);
-    transition: background 0.2s, color 0.2s;
 }
 
-.dropdownLink:hover {
-    background: rgba(20, 184, 166, 0.1);
+.dropdownHeader code {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.72rem;
     color: var(--primary-light);
+}
+
+.windowDots {
+    display: flex;
+    gap: 5px;
+    margin-right: 4px;
+}
+
+.windowDots span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.dotRed { background: #ef4444; }
+.dotYellow { background: #f59e0b; }
+.dotGreen { background: #22c55e; }
+
+.dropdownCmd {
+    padding: 10px 14px 6px;
+    font-family: var(--font-mono), monospace;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    border-bottom: 1px dashed rgba(20, 184, 166, 0.15);
+}
+
+.prompt {
+    color: var(--primary-light);
+    margin-right: 6px;
+}
+
+.dropdownGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 10px;
+}
+
+.dropdownItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: rgba(20, 184, 166, 0.03);
+    cursor: pointer;
+    text-align: left;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.dropdownItem:hover {
+    background: rgba(20, 184, 166, 0.1);
+    border-color: rgba(20, 184, 166, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(20, 184, 166, 0.08);
+}
+
+.itemIndex {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--primary-light);
+    opacity: 0.7;
+    min-width: 20px;
+}
+
+.itemBody {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.itemLabel {
+    font-family: var(--font-sans), sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.itemFile {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    opacity: 0.75;
+}
+
+.itemArrow {
+    color: var(--primary-light);
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.dropdownItem:hover .itemArrow {
+    opacity: 1;
+    transform: translate(0, 0);
 }
 
 .actions {
@@ -137,41 +394,63 @@
     align-items: center;
     gap: 6px;
     padding: 8px 16px;
-    border-radius: 10px;
+    border-radius: 8px;
     font-size: 0.82rem;
     font-weight: 600;
+    font-family: var(--font-mono), monospace;
     background: var(--gradient);
     color: #fff;
     box-shadow: 0 4px 16px var(--glow);
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     text-decoration: none;
 }
 
 .contactCta:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px var(--glow);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--glow);
 }
 
-.contactCta span {
+.contactCta span:last-child {
     display: inline;
 }
 
 .menuBtn {
     display: none;
-    background: var(--bg-elevated);
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: rgba(8, 12, 22, 0.6);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 8px;
     width: 40px;
     height: 40px;
-    color: var(--text);
-    font-size: 1.2rem;
+    padding: 10px;
     cursor: pointer;
-    align-items: center;
-    justify-content: center;
+}
+
+.menuBtn span {
+    display: block;
+    height: 2px;
+    width: 100%;
+    background: var(--primary-light);
+    border-radius: 2px;
+    transition: transform 0.25s, opacity 0.25s;
+}
+
+.menuOpen span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.menuOpen span:nth-child(2) {
+    opacity: 0;
+}
+
+.menuOpen span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
 }
 
 @media (max-width: 960px) {
-    .contactCta span {
+    .contactCta span:last-child {
         display: none;
     }
 
@@ -179,15 +458,24 @@
         padding: 8px 10px;
     }
 
-    .links a,
+    .navLink,
     .exploreBtn {
         padding: 8px 10px;
-        font-size: 0.78rem;
+        font-size: 0.76rem;
+    }
+
+    .dropdownGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .dropdownWrap {
+        width: min(320px, calc(100vw - 24px));
     }
 }
 
 @media (max-width: 768px) {
-    .navbar {
+    .navbar,
+    .navbar.scrolled {
         top: 0;
         left: 0;
         transform: none;
@@ -201,12 +489,7 @@
     }
 
     .inner {
-        grid-template-columns: auto 1fr auto;
-        padding: 0 16px;
-    }
-
-    .navCenter {
-        position: static;
+        padding: 0 14px;
     }
 
     .menuBtn {
@@ -222,11 +505,12 @@
         align-items: stretch;
         gap: 4px;
         padding: 12px;
-        border-radius: 14px;
+        border-radius: 12px;
         transform: translateY(-130%);
         opacity: 0;
         pointer-events: none;
-        transition: transform 0.3s, opacity 0.3s;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        z-index: 1050;
     }
 
     .links.open {
@@ -239,23 +523,25 @@
         width: 100%;
     }
 
-    .links a,
+    .navLink,
     .exploreBtn {
         width: 100%;
         justify-content: flex-start;
         padding: 12px 14px;
     }
 
-    .dropdown {
+    .dropdownWrap {
         position: static;
-        transform: none;
-        box-shadow: none;
-        border: none;
-        background: transparent;
-        padding: 0 0 0 12px;
+        width: 100%;
     }
 
-    .dropdownLink {
-        padding: 10px 12px;
+    .dropdown {
+        margin-top: 6px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scanBar {
+        animation: none;
     }
 }

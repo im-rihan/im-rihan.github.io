@@ -3,17 +3,39 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.85;
+    opacity: 0.92;
+    mix-blend-mode: screen;
+}
+
+.wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse 90% 75% at 50% 45%, transparent 35%, rgba(3, 7, 18, 0.35) 100%),
+        linear-gradient(180deg, rgba(3, 7, 18, 0.12) 0%, transparent 30%, transparent 70%, rgba(3, 7, 18, 0.25) 100%);
+}
+
+:global(html.light) .wrapper {
+    mix-blend-mode: multiply;
+    opacity: 0.55;
+}
+
+:global(html.light) .wrapper::after {
+    background:
+        radial-gradient(ellipse 90% 75% at 50% 45%, transparent 40%, rgba(248, 250, 252, 0.4) 100%);
 }
 
 @media (max-width: 768px) {
     .wrapper {
-        opacity: 0.35;
+        opacity: 0.48;
+        mix-blend-mode: normal;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .wrapper {
-        display: none;
+        opacity: 0.55;
     }
 }

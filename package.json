@@ -6,7 +6,8 @@
         "dev": "next dev",
         "build": "next build",
         "build:clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true}); require('fs').rmSync('out',{recursive:true,force:true})\" && next build",
-        "start": "next start",
+        "start": "npx --yes serve@latest out -p 3000",
+        "preview": "npm run build && npm run start",
         "lint": "next lint"
     },
     "dependencies": {

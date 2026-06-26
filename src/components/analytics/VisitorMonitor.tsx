@@ -104,6 +104,14 @@ function deviceIcon(type: string) {
     return <Monitor size={16} />;
 }
 
+/** Dev-only: localhost or ?debug=1 — hide backend status banners in production. */
+function isAnalyticsDebugMode(): boolean {
+    if (typeof window === "undefined") return false;
+    const host = window.location.hostname;
+    if (host === "localhost" || host === "127.0.0.1") return true;
+    return new URLSearchParams(window.location.search).get("debug") === "1";
+}
+
 export function VisitorMonitor() {
     const [stats, setStats] = useState<
         (VisitorStats & { source: string; isDemo?: boolean; supabase?: { ok: boolean; message: string } }) | null
@@ -156,6 +164,7 @@ export function VisitorMonitor() {
     const topDevice = stats.devices[0]?.label ?? "—";
     const isDemo = stats.isDemo || stats.source === "demo";
     const supabase = stats.supabase;
+    const showBackendStatus = isAnalyticsDebugMode();
 
     return (
         <div className={styles.wrapper}>
@@ -164,12 +173,12 @@ export function VisitorMonitor() {
                     Demo preview — sample visitor data on localhost. Add <code>?live=1</code> to see real tracking.
                 </div>
             )}
-            {!isDemo && supabase && !supabase.ok && (
+            {showBackendStatus && !isDemo && supabase && !supabase.ok && (
                 <div className={styles.errorBanner} role="alert">
                     <strong>Analytics backend:</strong> {supabase.message}
                 </div>
             )}
-            {!isDemo && supabase?.ok && (
+            {showBackendStatus && !isDemo && supabase?.ok && (
                 <div className={styles.okBanner}>
                     Supabase connected — visits sync to shared database.
                 </div>
