@@ -1,11 +1,13 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Stars } from "@react-three/drei";
+import { Float, Grid, Stars } from "@react-three/drei";
 import { useTheme } from "next-themes";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Group, Mesh, Points } from "three";
 import * as THREE from "three";
+import { getCursorCharge, getCursorPointer, getCursorVelocity } from "@/lib/cursor-signals";
+import { SceneInteractions } from "./scene-interactions";
 import {
     lerpVec3,
     smoothStep,
@@ -102,8 +104,8 @@ function AdaptiveFog({ viewportRef, isLight }: { viewportRef: ViewportRef; isLig
         if (!v) return;
 
         const t = v.mobileBlend;
-        const near = THREE.MathUtils.lerp(14, 16, t);
-        const far = THREE.MathUtils.lerp(38, 48, t);
+        const near = THREE.MathUtils.lerp(12, 14, t);
+        const far = THREE.MathUtils.lerp(34, 44, t);
 
         if (!(scene.fog instanceof THREE.Fog)) {
             scene.fog = new THREE.Fog(color, near, far);
@@ -218,7 +220,9 @@ function ParticleField({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: 
         const py = THREE.MathUtils.lerp(0.05, 0.22, t);
         const moveX = THREE.MathUtils.lerp(0.7, 0.38, t);
         const moveY = THREE.MathUtils.lerp(0.45, 0.24, t);
-        ref.current.rotation.y = elapsed * 0.028 + state.pointer.x * px;
+        const chargeBoost = 1 + getCursorCharge() * 0.35;
+        const speedBoost = 1 + getCursorVelocity().speed * 0.25;
+        ref.current.rotation.y = (elapsed * 0.028 + state.pointer.x * px) * chargeBoost * speedBoost;
         ref.current.rotation.x = Math.sin(elapsed * 0.18) * 0.06 + state.pointer.y * py;
         ref.current.position.x = state.pointer.x * moveX;
         ref.current.position.y = state.pointer.y * moveY;
@@ -620,11 +624,12 @@ function WireGlobe({ viewportRef }: { viewportRef: ViewportRef }) {
         const elapsed = state.clock.elapsedTime;
         const px = THREE.MathUtils.lerp(0.22, 0.12, blend);
         const py = THREE.MathUtils.lerp(0.08, 0.05, blend);
-        const globeScale = THREE.MathUtils.lerp(1, MOBILE.globe.outerR / 2.55, blend);
+        const { nx, ny } = getCursorPointer();
+        const globeScale = THREE.MathUtils.lerp(1, MOBILE.globe.outerR / 2.55, blend) * (1 + getCursorCharge() * 0.1);
 
         shellRef.current.scale.setScalar(globeScale);
-        outer.current.rotation.y = elapsed * 0.1 + state.pointer.x * px;
-        outer.current.rotation.x = 0.32 + state.pointer.y * py;
+        outer.current.rotation.y = elapsed * 0.1 + state.pointer.x * px + nx * 0.06;
+        outer.current.rotation.x = 0.32 + state.pointer.y * py + ny * 0.04;
         inner.current.rotation.y = -elapsed * 0.16;
         inner.current.rotation.z = elapsed * 0.05;
         ring.current.rotation.z = elapsed * 0.07;
@@ -663,13 +668,15 @@ function InnerCore({ viewportRef }: { viewportRef: ViewportRef }) {
         const blend = viewportRef.current?.mobileBlend ?? 0;
         const elapsed = state.clock.elapsedTime;
         ref.current.rotation.y = -elapsed * 0.12;
-        const pulse = 1 + Math.sin(elapsed * 1.1) * 0.07;
+        const pulse = (1 + Math.sin(elapsed * 1.1) * 0.07) * (1 + getCursorCharge() * 0.14);
         const baseScale = THREE.MathUtils.lerp(1, 0.7, blend);
         groupRef.current.scale.setScalar(baseScale);
         ref.current.scale.setScalar(pulse);
         glow.current.scale.setScalar(pulse * 1.8);
         if (light.current) {
-            light.current.intensity = (0.5 + Math.sin(elapsed * 1.4) * 0.18) * THREE.MathUtils.lerp(1, 0.85, blend);
+            const charge = getCursorCharge();
+            light.current.intensity =
+                (0.5 + Math.sin(elapsed * 1.4) * 0.18 + charge * 0.35) * THREE.MathUtils.lerp(1, 0.85, blend);
         }
     });
 
@@ -747,22 +754,33 @@ function HexRing({ count = 14 }: { count?: number }) {
     );
 }
 
-function GridPlane({ segments = 64 }: { segments?: number }) {
-    const ref = useRef<Mesh>(null);
+function SceneGrid({ viewportRef, isLight }: { viewportRef: ViewportRef; isLight: boolean }) {
+    const groupRef = useRef<Group>(null);
 
     useFrame((state) => {
-        if (!ref.current) return;
-        ref.current.rotation.x = -Math.PI / 2.04;
-        ref.current.position.y = -4.8;
-        ref.current.position.x = state.pointer.x * 0.4;
-        ref.current.position.z = state.pointer.y * 0.28;
+        if (!groupRef.current) return;
+        const blend = viewportRef.current?.mobileBlend ?? 0;
+        groupRef.current.position.x = state.pointer.x * THREE.MathUtils.lerp(0.38, 0.24, blend);
+        groupRef.current.position.z = state.pointer.y * THREE.MathUtils.lerp(0.26, 0.16, blend);
+        groupRef.current.position.y = THREE.MathUtils.lerp(-4.85, -5.15, blend);
     });
 
     return (
-        <mesh ref={ref}>
-            <planeGeometry args={[48, 48, segments, segments]} />
-            <meshBasicMaterial color="#0f766e" wireframe transparent opacity={0.11} />
-        </mesh>
+        <group ref={groupRef}>
+            <Grid
+                infiniteGrid
+                cellSize={0.52}
+                cellThickness={0.42}
+                cellColor={isLight ? "#0d9488" : "#0f766e"}
+                sectionSize={3.1}
+                sectionThickness={0.72}
+                sectionColor={isLight ? "#14b8a6" : "#115e59"}
+                fadeDistance={28}
+                fadeStrength={1.45}
+                fadeFrom={0.62}
+                followCamera={false}
+            />
+        </group>
     );
 }
 
@@ -846,7 +864,8 @@ function SceneContent({ isLight, viewportRef }: { isLight: boolean; viewportRef:
             </SceneFocal>
             <HexRing count={14} />
             <CodeNodes count={10} />
-            <GridPlane segments={isCompact ? 48 : 64} />
+            <SceneGrid viewportRef={viewportRef} isLight={isLight} />
+            <SceneInteractions isLight={isLight} />
         </>
     );
 }
