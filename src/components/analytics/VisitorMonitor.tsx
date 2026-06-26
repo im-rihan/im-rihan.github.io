@@ -112,9 +112,27 @@ export function VisitorMonitor() {
 
     const load = useCallback(async (refresh = false) => {
         setLoading(true);
-        const s = await getVisitorStats(refresh);
-        setStats(s);
-        setLoading(false);
+        try {
+            const s = await getVisitorStats(refresh);
+            setStats(s);
+        } catch (err) {
+            console.error("[analytics] Failed to load stats:", err);
+            setStats({
+                total: 0,
+                globalTotal: null,
+                countries: [],
+                devices: [],
+                recent: [],
+                current: null,
+                source: "local",
+                supabase: {
+                    ok: false,
+                    message: err instanceof Error ? err.message : "Failed to load analytics",
+                },
+            });
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     useEffect(() => {
@@ -148,7 +166,7 @@ export function VisitorMonitor() {
             )}
             {!isDemo && supabase && !supabase.ok && (
                 <div className={styles.errorBanner} role="alert">
-                    <strong>Supabase:</strong> {supabase.message}
+                    <strong>Analytics backend:</strong> {supabase.message}
                 </div>
             )}
             {!isDemo && supabase?.ok && (

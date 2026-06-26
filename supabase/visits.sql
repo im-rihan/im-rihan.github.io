@@ -1,5 +1,7 @@
--- Run in Supabase → SQL Editor (NOT the Migrations tab)
--- Creates the visits table for portfolio analytics
+-- =============================================================================
+-- Portfolio visitor analytics — run ONCE in Supabase Dashboard → SQL Editor
+-- (Do NOT use the Migrations tab if it shows schema_migrations errors)
+-- =============================================================================
 
 create table if not exists public.visits (
   id text primary key,
@@ -15,16 +17,25 @@ create table if not exists public.visits (
   timestamp timestamptz not null default now()
 );
 
+-- Required for API access (publishable key uses the anon role)
+grant usage on schema public to anon, authenticated;
+grant select, insert on public.visits to anon, authenticated;
+
 alter table public.visits enable row level security;
 
 drop policy if exists "Allow anonymous read" on public.visits;
 create policy "Allow anonymous read"
-  on public.visits for select
-  to anon
+  on public.visits
+  for select
+  to anon, authenticated
   using (true);
 
 drop policy if exists "Allow anonymous insert" on public.visits;
 create policy "Allow anonymous insert"
-  on public.visits for insert
-  to anon
+  on public.visits
+  for insert
+  to anon, authenticated
   with check (true);
+
+-- Verify (should return 0 rows, not an error)
+select count(*) as visits_count from public.visits;
