@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { bindSceneScrollTracker } from "@/lib/scene-scroll";
 import { sceneWrapperOpacity } from "./scene-viewport";
 import styles from "./Scene3D.module.css";
 
@@ -18,6 +19,8 @@ export function Scene3D() {
     useEffect(() => {
         setReady(true);
     }, []);
+
+    useEffect(() => bindSceneScrollTracker(), []);
 
     const handleViewportFrame = useCallback((snapshot: { mobileBlend: number }) => {
         const el = hostRef.current;

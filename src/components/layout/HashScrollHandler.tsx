@@ -15,14 +15,20 @@ export function HashScrollHandler() {
     useEffect(() => {
         if (pathname !== "/") return;
 
-        const run = () => {
+        const scrollToHash = (behavior: ScrollBehavior = "smooth") => {
             const hash = window.location.hash.replace(/^#/, "");
-            if (hash) scrollToSection(hash);
+            if (hash) scrollToSection(hash, behavior);
         };
 
-        run();
-        const t = window.setTimeout(run, 120);
-        return () => window.clearTimeout(t);
+        const raf = requestAnimationFrame(() => scrollToHash("auto"));
+
+        const onHashChange = () => scrollToHash("smooth");
+
+        window.addEventListener("hashchange", onHashChange);
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener("hashchange", onHashChange);
+        };
     }, [pathname]);
 
     return null;

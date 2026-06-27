@@ -2,23 +2,157 @@
     display: grid;
     gap: 24px;
     width: 100%;
-    max-width: min(960px, 100%);
+    max-width: min(1100px, 100%);
     min-width: 0;
     margin: 0 auto;
     overflow: hidden;
 }
 
-.statsCard, .linksCard {
+.row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 20px;
+}
+
+.statsCard, .linksCard, .stackCard {
+    position: relative;
     padding: 28px;
     min-width: 0;
     overflow: hidden;
+    border: 1px solid rgba(20, 184, 166, 0.16);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.statsCard h2, .linksCard h2 {
+.statsCard::before, .linksCard::before, .stackCard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), transparent 50%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+:global(html.light) .statsCard,
+:global(html.light) .linksCard,
+:global(html.light) .stackCard {
+    border-color: rgba(15, 118, 110, 0.14);
+}
+
+.statsCard h2, .linksCard h2, .stackCard h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 1.15rem;
     font-weight: 700;
     margin-bottom: 20px;
     color: var(--primary-light);
+}
+
+.stackList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.stackList li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.86rem;
+}
+
+.stackList li:last-child {
+    border-bottom: none;
+}
+
+.stackLabel {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stackValue {
+    color: var(--text);
+    font-family: var(--font-mono), monospace;
+    font-size: 0.8rem;
+    text-align: right;
+}
+
+.healthSummary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.healthTile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 18px 14px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.healthNum {
+    font-size: 1.35rem;
+    font-weight: 800;
+    font-family: var(--font-mono), monospace;
+    color: var(--text);
+    line-height: 1.1;
+}
+
+.healthOk {
+    color: #22c55e;
+}
+
+.healthOk .healthNum {
+    color: #22c55e;
+}
+
+.healthWarn {
+    color: #f59e0b;
+}
+
+.healthWarn .healthNum {
+    color: #f59e0b;
+}
+
+.healthBad {
+    color: #ef4444;
+}
+
+.healthBad .healthNum {
+    color: #ef4444;
+}
+
+:global(html.light) .healthOk { color: #16a34a; }
+:global(html.light) .healthOk .healthNum { color: #16a34a; }
+:global(html.light) .healthWarn { color: #d97706; }
+:global(html.light) .healthWarn .healthNum { color: #d97706; }
+:global(html.light) .healthBad { color: #dc2626; }
+:global(html.light) .healthBad .healthNum { color: #dc2626; }
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .statsGrid {
@@ -152,5 +286,13 @@
     .wrapper {
         margin-bottom: 0;
         gap: 16px;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+    }
+
+    .healthSummary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }

@@ -1,6 +1,15 @@
 .card {
     transform-style: preserve-3d;
     will-change: transform;
+    box-shadow:
+        var(--shadow),
+        0 24px 48px -28px rgba(20, 184, 166, 0.12);
+}
+
+:global(html.light) .card {
+    box-shadow:
+        var(--shadow),
+        0 20px 40px -28px rgba(15, 118, 110, 0.1);
 }
 
 @media (prefers-reduced-motion: reduce) {

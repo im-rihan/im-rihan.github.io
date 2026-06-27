@@ -8,7 +8,7 @@ import { ChevronDown, Mail, ArrowUpRight, Terminal } from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { siteMeta } from "@/data/profile";
-import { scrollToSection } from "@/lib/scroll-to-section";
+import { navigateToSection } from "@/lib/scroll-to-section";
 import styles from "./Navbar.module.css";
 
 const pageLinks = [
@@ -119,8 +119,7 @@ export function Navbar() {
     const goToSection = (id: string) => {
         closeAll();
         if (pathname === "/") {
-            scrollToSection(id);
-            window.history.replaceState(null, "", `/#${id}`);
+            navigateToSection(id);
             return;
         }
         router.push(`/#${id}`);

@@ -29,7 +29,19 @@
     inset: 0;
     pointer-events: none;
     background:
-        radial-gradient(ellipse 92% 78% at 50% 44%, transparent 38%, rgba(3, 7, 18, 0.32) 100%);
+        radial-gradient(ellipse 92% 78% at 50% 44%, transparent 38%, rgba(3, 7, 18, 0.32) 100%),
+        linear-gradient(180deg, rgba(20, 184, 166, 0.03) 0%, transparent 28%, transparent 72%, rgba(15, 118, 110, 0.04) 100%);
+}
+
+.wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.35;
+    background: radial-gradient(circle at 50% 42%, rgba(34, 211, 238, 0.06), transparent 55%);
+    mix-blend-mode: screen;
 }
 
 :global(html.light) .wrapper {
@@ -39,7 +51,14 @@
 
 :global(html.light) .wrapper::after {
     background:
-        radial-gradient(ellipse 90% 75% at 50% 45%, transparent 40%, rgba(248, 250, 252, 0.4) 100%);
+        radial-gradient(ellipse 90% 75% at 50% 45%, transparent 40%, rgba(248, 250, 252, 0.4) 100%),
+        linear-gradient(180deg, rgba(15, 118, 110, 0.04) 0%, transparent 28%, transparent 72%, rgba(13, 148, 136, 0.05) 100%);
+}
+
+:global(html.light) .wrapper::before {
+    opacity: 0.22;
+    background: radial-gradient(circle at 50% 42%, rgba(15, 118, 110, 0.1), transparent 55%);
+    mix-blend-mode: multiply;
 }
 
 @media (max-width: 768px) {

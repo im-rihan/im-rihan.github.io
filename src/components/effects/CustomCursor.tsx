@@ -320,6 +320,15 @@ export function CustomCursor() {
             document.documentElement.style.setProperty("--cursor-charge", String(chargeRef.current));
             document.documentElement.style.setProperty("--cursor-speed", String(spd));
 
+            if (spd > 0.022 && Math.random() < spd * 1.8) {
+                spawnSparks(
+                    e.clientX + (Math.random() - 0.5) * 8,
+                    e.clientY + (Math.random() - 0.5) * 8,
+                    1,
+                    Math.min(0.5, spd * 4)
+                );
+            }
+
             const now = performance.now();
             if (now - lastTrailAt.current > 20) {
                 lastTrailAt.current = now;
@@ -448,7 +457,7 @@ export function CustomCursor() {
                 style={{ x: glowX, y: glowY, scale: chargeScale + speed * 0.15 }}
                 aria-hidden
             />
-            {speed > 0.018 && mode === "default" && !clicking && (
+            {speed > 0.012 && mode === "default" && !clicking && (
                 <motion.div
                     className={styles.cometTail}
                     style={{
@@ -460,6 +469,26 @@ export function CustomCursor() {
                     }}
                     aria-hidden
                 />
+            )}
+            {speed > 0.04 && mode === "default" && (
+                <motion.div
+                    className={styles.cometCore}
+                    style={{
+                        x: dotX,
+                        y: dotY,
+                        rotate: velocityAngle,
+                        scaleX: 1.2 + Math.min(speed * 20, 2),
+                        opacity: Math.min(speed * 1.6, 0.55),
+                    }}
+                    aria-hidden
+                />
+            )}
+            {mode === "default" && (
+                <motion.div className={styles.microOrbit} style={{ x: dotX, y: dotY }} aria-hidden>
+                    {Array.from({ length: 10 }, (_, i) => (
+                        <span key={i} className={styles.microParticle} style={{ ["--i" as string]: i }} />
+                    ))}
+                </motion.div>
             )}
             {mode === "default" && (
                 <motion.div

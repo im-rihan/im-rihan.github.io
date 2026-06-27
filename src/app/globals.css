@@ -225,6 +225,46 @@ section {
     scroll-margin-top: calc(var(--nav-h) + 32px);
 }
 
+section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(680px, 90%);
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.22), transparent);
+    opacity: 0.55;
+    pointer-events: none;
+}
+
+section:first-of-type::before {
+    display: none;
+}
+
+.light .glass-card::before {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.14), transparent 45%, rgba(13, 148, 136, 0.08) 100%);
+}
+
+.light .glass-card::after {
+    background: radial-gradient(ellipse 80% 55% at 50% 0%, rgba(15, 118, 110, 0.08), transparent 65%);
+}
+
+.light section::before {
+    background: linear-gradient(90deg, transparent, rgba(15, 118, 110, 0.16), transparent);
+    opacity: 0.65;
+}
+
+@media (pointer: fine) {
+    .light .glass-card:hover {
+        border-color: rgba(15, 118, 110, 0.28);
+        box-shadow:
+            var(--shadow),
+            0 0 32px rgba(15, 118, 110, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    }
+}
+
 .section-label {
     font-family: var(--font-mono), monospace;
     font-size: 0.72rem;
@@ -262,13 +302,17 @@ section {
     border-radius: 14px;
     box-shadow: var(--shadow);
     position: relative;
+    transform-style: preserve-3d;
     transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 @media (pointer: fine) {
     .glass-card:hover {
         border-color: rgba(20, 184, 166, 0.3);
-        box-shadow: var(--shadow), 0 0 32px rgba(20, 184, 166, 0.06);
+        box-shadow:
+            var(--shadow),
+            0 0 32px rgba(20, 184, 166, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
 }
 
@@ -278,12 +322,29 @@ section {
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 50%);
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent 45%, rgba(20, 184, 166, 0.08) 100%);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+}
+
+.glass-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(ellipse 80% 55% at 50% 0%, rgba(20, 184, 166, 0.07), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+@media (pointer: fine) {
+    .glass-card:hover::after {
+        opacity: 1;
+    }
 }
 
 .btn {

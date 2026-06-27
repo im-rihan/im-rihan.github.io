@@ -29,12 +29,15 @@ export function BackgroundFX() {
 
     return (
         <div className={styles.fx} aria-hidden>
+            <div className={styles.depthMesh} />
             <div className={styles.aurora} />
+            <div className={styles.lightBeams} />
             <div className={styles.orbs}>
                 <span className={styles.orbA} />
                 <span className={styles.orbB} />
                 <span className={styles.orbC} />
             </div>
+            <div className={styles.starDust} />
             <div className={styles.horizon} />
             <div className={styles.gridPulse} />
             <div className={styles.scanlines} />

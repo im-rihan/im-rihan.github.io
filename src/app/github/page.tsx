@@ -1,4 +1,5 @@
 import { ContributionGraph } from "@/components/github/ContributionGraph";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
@@ -9,16 +10,18 @@ export const metadata = createPageMetadata(
 export default function GitHubPage() {
     return (
         <>
-            <header className="page-header container">
-                <h1>GitHub Activity</h1>
-                <p>
-                    Public contribution graph and rule-based suggestions from{" "}
-                    <a href="https://github.com/im-rihan" target="_blank" rel="noopener noreferrer">
-                        @im-rihan
-                    </a>
-                    .
-                </p>
-            </header>
+            <PageHeader
+                title="GitHub Activity"
+                description={
+                    <>
+                        Public contribution graph and rule-based suggestions from{" "}
+                        <a href="https://github.com/im-rihan" target="_blank" rel="noopener noreferrer">
+                            @im-rihan
+                        </a>
+                        .
+                    </>
+                }
+            />
             <div className="container">
                 <ContributionGraph />
             </div>

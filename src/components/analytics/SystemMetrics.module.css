@@ -1,0 +1,227 @@
+.panel {
+    position: relative;
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid rgba(20, 184, 166, 0.22);
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.glowBorder {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.45), transparent 42%, rgba(34, 211, 238, 0.25));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+.corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: var(--primary-light);
+    border-style: solid;
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+.cornerTl { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+.cornerTr { top: 8px; right: 8px; border-width: 2px 2px 0 0; }
+.cornerBl { bottom: 8px; left: 8px; border-width: 0 0 2px 2px; }
+.cornerBr { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+}
+
+.headerLeft {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--primary-light);
+}
+
+.headerLeft h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.sub {
+    font-size: 0.72rem;
+    font-family: var(--font-mono), monospace;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+}
+
+.live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    font-family: var(--font-mono), monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primary-light);
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(20, 184, 166, 0.25);
+    background: rgba(20, 184, 166, 0.08);
+}
+
+.liveDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+    animation: livePulse 2s ease-in-out infinite;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.metric {
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    min-width: 0;
+}
+
+.metricHead {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.metricHead svg {
+    color: var(--primary-light);
+    flex-shrink: 0;
+}
+
+.value {
+    font-size: 1.15rem;
+    font-weight: 800;
+    font-family: var(--font-mono), monospace;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 8px;
+}
+
+.unit {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-left: 2px;
+}
+
+.barTrack {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.15);
+    overflow: hidden;
+}
+
+.barFill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--primary-dark), var(--primary-light));
+    transition: width 0.4s ease;
+    box-shadow: 0 0 10px var(--glow);
+}
+
+.barFillWarn {
+    background: linear-gradient(90deg, #d97706, #f59e0b);
+}
+
+.barFillHot {
+    background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+.hint {
+    margin-top: 14px;
+    font-size: 0.68rem;
+    font-family: var(--font-mono), monospace;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.hint code {
+    color: var(--primary-light);
+}
+
+:global(html.light) .panel {
+    border-color: rgba(15, 118, 110, 0.18);
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+}
+
+:global(html.light) .glowBorder {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.35), transparent 42%, rgba(8, 145, 178, 0.2));
+}
+
+:global(html.light) .live {
+    color: var(--primary);
+    background: rgba(15, 118, 110, 0.06);
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .panel {
+        padding: 16px;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .value {
+        font-size: 1rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .liveDot {
+        animation: none;
+    }
+
+    .barFill {
+        transition: none;
+    }
+}

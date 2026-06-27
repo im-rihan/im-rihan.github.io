@@ -12,6 +12,8 @@ import {
     isCursorDragging,
     subscribeCursorSignals,
 } from "@/lib/cursor-signals";
+import { getScrollProgress } from "@/lib/scene-scroll";
+import { getSceneTheme } from "@/lib/scene-theme";
 
 function ndcToWorld(nx: number, ny: number, camera: THREE.Camera, depth = 4.5): THREE.Vector3 {
     const v = new THREE.Vector3(nx, ny, 0.5);
@@ -48,7 +50,7 @@ function PointerFollowLight() {
             );
             accentRef.current.intensity = THREE.MathUtils.lerp(
                 accentRef.current.intensity,
-                0.12 + charge * 0.4,
+                0.12 + charge * 0.4 + speed * 0.08,
                 0.1
             );
         }
@@ -58,6 +60,13 @@ function PointerFollowLight() {
         <>
             <pointLight ref={lightRef} color="#22d3ee" intensity={0.28} distance={18} decay={2} />
             <pointLight ref={accentRef} color="#f59e0b" intensity={0.12} distance={14} decay={2} />
+            <pointLight
+                position={[0, 0, 1]}
+                color="#14b8a6"
+                intensity={0.08}
+                distance={12}
+                decay={2}
+            />
         </>
     );
 }
@@ -259,17 +268,18 @@ function CursorSparkTrail() {
 }
 
 function AuroraRibbons({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const ribbons = useRef<(Mesh | null)[]>([]);
     const configs = useMemo(
         () =>
             Array.from({ length: 5 }, (_, i) => ({
                 y: -2 + i * 1.1,
                 z: -5.5 - i * 2.2,
-                hue: ["#14b8a6", "#6366f1", "#22d3ee", "#0f766e", "#f59e0b"][i],
+                hue: theme.ribbon[i],
                 speed: 0.14 + i * 0.05,
                 amp: 0.3 + i * 0.1,
             })),
-        []
+        [theme.ribbon]
     );
 
     useFrame((state) => {
@@ -312,7 +322,8 @@ function AuroraRibbons({ isLight }: { isLight: boolean }) {
     );
 }
 
-function OrbitingMotes() {
+function OrbitingMotes({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const group = useRef<Group>(null);
     const motes = useMemo(
         () =>
@@ -347,9 +358,9 @@ function OrbitingMotes() {
                 <mesh key={i}>
                     <sphereGeometry args={[0.04, 8, 8]} />
                     <meshBasicMaterial
-                        color={i % 3 === 0 ? "#14b8a6" : i % 3 === 1 ? "#f59e0b" : "#22d3ee"}
+                        color={i % 3 === 0 ? theme.primary : i % 3 === 1 ? theme.warm : theme.accent}
                         transparent
-                        opacity={0.62}
+                        opacity={isLight ? 0.48 : 0.62}
                     />
                 </mesh>
             ))}
@@ -359,6 +370,7 @@ function OrbitingMotes() {
 
 function CursorGravityDust() {
     const ref = useRef<Points>(null);
+    const matRef = useRef<THREE.PointsMaterial>(null);
     const count = 120;
     const velocities = useRef<Float32Array>(new Float32Array(count * 3));
 
@@ -410,6 +422,14 @@ function CursorGravityDust() {
 
         const attr = ref.current.geometry.getAttribute("position") as THREE.BufferAttribute;
         attr.needsUpdate = true;
+
+        if (matRef.current) {
+            const charge = getCursorCharge();
+            const { speed } = getCursorVelocity();
+            matRef.current.size = 0.028 + charge * 0.022 + speed * 0.018;
+            matRef.current.opacity = THREE.MathUtils.clamp(0.35 + charge * 0.35 + speed * 0.25, 0.35, 0.88);
+            matRef.current.color.set(charge > 0.45 ? "#f59e0b" : "#14b8a6");
+        }
     });
 
     return (
@@ -418,6 +438,7 @@ function CursorGravityDust() {
                 <bufferAttribute attach="attributes-position" args={[positions, 3]} />
             </bufferGeometry>
             <pointsMaterial
+                ref={matRef}
                 size={0.032}
                 color="#14b8a6"
                 transparent
@@ -503,7 +524,8 @@ function ConstellationLine({
     return <primitive object={lineObj} />;
 }
 
-function ChargeGlobeAura() {
+function ChargeGlobeAura({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const ringRef = useRef<Mesh>(null);
     const ring2Ref = useRef<Mesh>(null);
 
@@ -534,17 +556,18 @@ function ChargeGlobeAura() {
         <group>
             <mesh ref={ringRef}>
                 <torusGeometry args={[1, 0.012, 8, 96]} />
-                <meshBasicMaterial color="#14b8a6" transparent opacity={0.08} blending={THREE.AdditiveBlending} />
+                <meshBasicMaterial color={theme.primary} transparent opacity={isLight ? 0.06 : 0.08} blending={THREE.AdditiveBlending} />
             </mesh>
             <mesh ref={ring2Ref}>
                 <torusGeometry args={[1, 0.008, 8, 96]} />
-                <meshBasicMaterial color="#f59e0b" transparent opacity={0.05} blending={THREE.AdditiveBlending} />
+                <meshBasicMaterial color={theme.warm} transparent opacity={isLight ? 0.04 : 0.05} blending={THREE.AdditiveBlending} />
             </mesh>
         </group>
     );
 }
 
-function EnergyTether() {
+function EnergyTether({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const end = useRef(new THREE.Vector3());
     const { camera } = useThree();
     const lineObj = useMemo(() => {
@@ -553,13 +576,13 @@ function EnergyTether() {
             new THREE.Vector3(0, 0, 1),
         ]);
         const mat = new THREE.LineBasicMaterial({
-            color: "#14b8a6",
+            color: theme.primary,
             transparent: true,
             opacity: 0.12,
             blending: THREE.AdditiveBlending,
         });
         return new THREE.Line(geom, mat);
-    }, []);
+    }, [theme.primary]);
 
     useFrame((state) => {
         const charge = getCursorCharge();
@@ -582,7 +605,8 @@ function EnergyTether() {
     return <primitive object={lineObj} />;
 }
 
-function FloatingGlyphs() {
+function FloatingGlyphs({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const group = useRef<Group>(null);
     const glyphs = useMemo(
         () =>
@@ -601,7 +625,9 @@ function FloatingGlyphs() {
     useFrame((state) => {
         if (!group.current) return;
         const t = state.clock.elapsedTime;
-        group.current.rotation.y = t * 0.02 + state.pointer.x * 0.08;
+        const scroll = getScrollProgress();
+        group.current.rotation.y = t * 0.02 + state.pointer.x * 0.08 + scroll * 0.35;
+        group.current.position.y = scroll * 0.5;
         group.current.children.forEach((child, i) => {
             child.rotation.x = t * glyphs[i].speed;
             child.rotation.z = t * glyphs[i].speed * 0.7;
@@ -617,10 +643,10 @@ function FloatingGlyphs() {
                     {g.shape === "octahedron" && <octahedronGeometry args={[1, 0]} />}
                     {g.shape === "icosahedron" && <icosahedronGeometry args={[1, 0]} />}
                     <meshBasicMaterial
-                        color={i % 2 === 0 ? "#22d3ee" : "#14b8a6"}
+                        color={i % 2 === 0 ? theme.accent : theme.primary}
                         wireframe
                         transparent
-                        opacity={0.18}
+                        opacity={isLight ? 0.12 : 0.18}
                     />
                 </mesh>
             ))}
@@ -628,22 +654,25 @@ function FloatingGlyphs() {
     );
 }
 
-function HoloScanSweep() {
+function HoloScanSweep({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const ref = useRef<Mesh>(null);
 
     useFrame((state) => {
         if (!ref.current) return;
         const idle = getCursorIdle();
-        ref.current.rotation.y = state.clock.elapsedTime * 0.35;
+        const scroll = getScrollProgress();
+        ref.current.rotation.y = state.clock.elapsedTime * 0.35 + scroll * Math.PI * 0.5;
         ref.current.rotation.x = Math.PI / 2;
+        ref.current.position.y = scroll * 0.8 - 0.4;
         const mat = ref.current.material as THREE.MeshBasicMaterial;
-        mat.opacity = 0.025 + (idle > 1500 ? 0.035 : 0);
+        mat.opacity = (isLight ? 0.018 : 0.025) + (idle > 1500 ? (isLight ? 0.025 : 0.035) : 0) + scroll * 0.02;
     });
 
     return (
         <mesh ref={ref} scale={7}>
             <ringGeometry args={[0.92, 1, 64]} />
-            <meshBasicMaterial color="#22d3ee" transparent opacity={0.04} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
+            <meshBasicMaterial color={theme.accent} transparent opacity={isLight ? 0.03 : 0.04} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} />
         </mesh>
     );
 }
@@ -709,7 +738,8 @@ function BurstBeacon() {
     );
 }
 
-function CrystalShards() {
+function CrystalShards({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const group = useRef<Group>(null);
     const shards = useMemo(
         () =>
@@ -746,10 +776,10 @@ function CrystalShards() {
                 <mesh key={i} scale={0.12}>
                     <octahedronGeometry args={[1, 0]} />
                     <meshBasicMaterial
-                        color={i % 2 === 0 ? "#14b8a6" : "#6366f1"}
+                        color={i % 2 === 0 ? theme.primary : theme.purple}
                         wireframe
                         transparent
-                        opacity={0.22}
+                        opacity={isLight ? 0.16 : 0.22}
                     />
                 </mesh>
             ))}
@@ -758,25 +788,31 @@ function CrystalShards() {
 }
 
 function AmbientPulseOrbs({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const orbs = useRef<(Mesh | null)[]>([]);
     const configs = useMemo(
-        () => [
-            { x: -5, y: 2, z: -8, hue: "#14b8a6", speed: 0.5 },
-            { x: 4.5, y: -1.5, z: -11, hue: "#6366f1", speed: 0.38 },
-            { x: 0, y: 3, z: -14, hue: "#22d3ee", speed: 0.42 },
-        ],
-        []
+        () =>
+            theme.orb.map((hue, i) => ({
+                x: [-5, 4.5, 0][i],
+                y: [2, -1.5, 3][i],
+                z: [-8, -11, -14][i],
+                hue,
+                speed: [0.5, 0.38, 0.42][i],
+            })),
+        [theme.orb]
     );
 
     useFrame((state) => {
         const t = state.clock.elapsedTime;
         const { speed } = getCursorVelocity();
+        const scroll = getScrollProgress();
         orbs.current.forEach((mesh, i) => {
             if (!mesh) return;
             const c = configs[i];
             const pulse = 1 + Math.sin(t * c.speed + i) * 0.12;
-            mesh.scale.setScalar((2.2 + i * 0.4) * pulse);
-            mesh.position.y = c.y + Math.sin(t * 0.3 + i) * 0.5 + state.pointer.y * 0.2;
+            mesh.scale.setScalar((2.2 + i * 0.4) * pulse * (1 + scroll * 0.08));
+            mesh.position.y = c.y + Math.sin(t * 0.3 + i) * 0.5 + state.pointer.y * 0.2 + scroll * 0.6;
+            mesh.position.z = c.z - scroll * 2.2;
             const mat = mesh.material as THREE.MeshBasicMaterial;
             mat.opacity = (isLight ? 0.018 : 0.032) + speed * 0.04;
         });
@@ -800,7 +836,8 @@ function AmbientPulseOrbs({ isLight }: { isLight: boolean }) {
     );
 }
 
-function TwinkleDeepStars() {
+function TwinkleDeepStars({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const ref = useRef<Points>(null);
     const matRef = useRef<THREE.PointsMaterial>(null);
     const count = 600;
@@ -834,9 +871,9 @@ function TwinkleDeepStars() {
             <pointsMaterial
                 ref={matRef}
                 size={0.025}
-                color="#64748b"
+                color={theme.star}
                 transparent
-                opacity={0.35}
+                opacity={isLight ? 0.28 : 0.35}
                 sizeAttenuation
                 depthWrite={false}
             />
@@ -844,21 +881,207 @@ function TwinkleDeepStars() {
     );
 }
 
+function PulseRings({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
+    const rings = useRef<(Mesh | null)[]>([]);
+
+    useFrame((state) => {
+        const t = state.clock.elapsedTime;
+        const scroll = getScrollProgress();
+        const charge = getCursorCharge();
+        rings.current.forEach((mesh, i) => {
+            if (!mesh) return;
+            const phase = (t * (0.35 + charge * 0.15) + i * 0.4) % 2.4;
+            const scale = 1 + phase * (1.8 + i * 0.3 + charge * 0.4);
+            mesh.scale.setScalar(scale);
+            const mat = mesh.material as THREE.MeshBasicMaterial;
+            mat.opacity = Math.max(0, (0.12 + charge * 0.06) - phase * 0.05) * (1 - scroll * 0.3);
+        });
+    });
+
+    return (
+        <>
+            {[0, 1, 2].map((i) => (
+                <mesh
+                    key={i}
+                    ref={(el) => {
+                        rings.current[i] = el;
+                    }}
+                    position={[0, -0.2, 0]}
+                    rotation={[Math.PI / 2, 0, 0]}
+                >
+                    <ringGeometry args={[2.6 + i * 0.35, 2.75 + i * 0.35, 64]} />
+                    <meshBasicMaterial
+                        color={i % 2 === 0 ? theme.primary : theme.accent}
+                        transparent
+                        opacity={isLight ? 0.06 : 0.08}
+                        side={THREE.DoubleSide}
+                        depthWrite={false}
+                        blending={THREE.AdditiveBlending}
+                    />
+                </mesh>
+            ))}
+        </>
+    );
+}
+
+function VelocityEmbers({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
+    const { camera } = useThree();
+    const ref = useRef<Points>(null);
+    const matRef = useRef<THREE.PointsMaterial>(null);
+    const spawnCooldown = useRef(0);
+    const MAX = 48;
+    const positions = useMemo(() => new Float32Array(MAX * 3), []);
+    const pool = useRef(
+        Array.from({ length: MAX }, () => ({
+            active: false,
+            age: 0,
+            life: 0.6,
+            x: 0,
+            y: 0,
+            z: 0,
+            vx: 0,
+            vy: 0,
+            vz: 0,
+        }))
+    );
+
+    useFrame((_, delta) => {
+        const { speed, vx, vy } = getCursorVelocity();
+        const { nx, ny } = getCursorPointer();
+        const charge = getCursorCharge();
+        spawnCooldown.current -= delta;
+
+        if (speed > 0.03 && spawnCooldown.current <= 0) {
+            spawnCooldown.current = 0.035;
+            const head = ndcToWorld(nx, ny, camera, 3.2);
+            const spawnCount = Math.min(3, Math.ceil(speed * 18));
+            for (let n = 0; n < spawnCount; n++) {
+                const slot = pool.current.find((p) => !p.active);
+                if (!slot) break;
+                slot.active = true;
+                slot.age = 0;
+                slot.life = 0.45 + Math.random() * 0.35;
+                slot.x = head.x + (Math.random() - 0.5) * 0.35;
+                slot.y = head.y + (Math.random() - 0.5) * 0.35;
+                slot.z = head.z + (Math.random() - 0.5) * 0.35;
+                slot.vx = -vx * 2.2 + (Math.random() - 0.5) * 0.6;
+                slot.vy = -vy * 2.2 + (Math.random() - 0.5) * 0.6;
+                slot.vz = (Math.random() - 0.5) * 0.35;
+            }
+        }
+
+        for (let i = 0; i < MAX; i++) {
+            const p = pool.current[i];
+            const off = i * 3;
+            if (!p.active) {
+                positions[off] = 9999;
+                positions[off + 1] = 9999;
+                positions[off + 2] = 9999;
+                continue;
+            }
+            p.age += delta;
+            if (p.age >= p.life) {
+                p.active = false;
+                positions[off] = 9999;
+                positions[off + 1] = 9999;
+                positions[off + 2] = 9999;
+                continue;
+            }
+            p.x += p.vx * delta * 4.5;
+            p.y += p.vy * delta * 4.5;
+            p.z += p.vz * delta * 4.5;
+            positions[off] = p.x;
+            positions[off + 1] = p.y;
+            positions[off + 2] = p.z;
+        }
+
+        if (ref.current) {
+            (ref.current.geometry.getAttribute("position") as THREE.BufferAttribute).needsUpdate = true;
+        }
+        if (matRef.current) {
+            matRef.current.size = 0.038 + speed * 0.035 + charge * 0.02;
+            matRef.current.opacity = THREE.MathUtils.clamp(0.42 + speed * 0.45 + charge * 0.2, 0.42, 0.92);
+            matRef.current.color.set(charge > 0.4 ? theme.warm : theme.accent);
+        }
+    });
+
+    return (
+        <points ref={ref}>
+            <bufferGeometry>
+                <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+            </bufferGeometry>
+            <pointsMaterial
+                ref={matRef}
+                size={0.04}
+                color={theme.accent}
+                transparent
+                opacity={0.5}
+                sizeAttenuation
+                depthWrite={false}
+                blending={THREE.AdditiveBlending}
+            />
+        </points>
+    );
+}
+
+function CursorWakeRing({ isLight }: { isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
+    const ref = useRef<Mesh>(null);
+    const { camera } = useThree();
+
+    useFrame((state) => {
+        if (!ref.current) return;
+        const { speed } = getCursorVelocity();
+        const { nx, ny } = getCursorPointer();
+        if (speed < 0.018) {
+            ref.current.visible = false;
+            return;
+        }
+        ref.current.visible = true;
+        ref.current.position.copy(ndcToWorld(nx, ny, camera, 3.4 + speed * 0.8));
+        ref.current.rotation.x = Math.PI / 2;
+        ref.current.rotation.z = state.clock.elapsedTime * 2.5;
+        const scale = 0.12 + speed * 2.2;
+        ref.current.scale.setScalar(scale);
+        const mat = ref.current.material as THREE.MeshBasicMaterial;
+        mat.opacity = THREE.MathUtils.clamp(speed * 0.75, 0.06, 0.28);
+    });
+
+    return (
+        <mesh ref={ref} visible={false}>
+            <ringGeometry args={[0.82, 1, 48]} />
+            <meshBasicMaterial
+                color={theme.accent}
+                transparent
+                opacity={0.12}
+                side={THREE.DoubleSide}
+                depthWrite={false}
+                blending={THREE.AdditiveBlending}
+            />
+        </mesh>
+    );
+}
+
 export function SceneInteractions({ isLight }: { isLight: boolean }) {
     return (
         <>
-            <TwinkleDeepStars />
+            <TwinkleDeepStars isLight={isLight} />
             <AmbientPulseOrbs isLight={isLight} />
+            <PulseRings isLight={isLight} />
             <PointerFollowLight />
             <AuroraRibbons isLight={isLight} />
-            <FloatingGlyphs />
-            <CrystalShards />
+            <FloatingGlyphs isLight={isLight} />
+            <CrystalShards isLight={isLight} />
             <CursorGravityDust />
+            <VelocityEmbers isLight={isLight} />
+            <CursorWakeRing isLight={isLight} />
             <ConstellationWeb />
-            <ChargeGlobeAura />
-            <EnergyTether />
-            <HoloScanSweep />
-            <OrbitingMotes />
+            <ChargeGlobeAura isLight={isLight} />
+            <EnergyTether isLight={isLight} />
+            <HoloScanSweep isLight={isLight} />
+            <OrbitingMotes isLight={isLight} />
             <CursorSparkTrail />
             <BurstBeacon />
             <ClickShockwaves />

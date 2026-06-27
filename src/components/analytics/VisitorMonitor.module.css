@@ -61,8 +61,8 @@
 
 .metrics {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
     margin-bottom: 16px;
 }
 
@@ -73,6 +73,13 @@
     padding: 16px 18px;
     color: var(--primary-light);
     min-width: 0;
+    border: 1px solid rgba(20, 184, 166, 0.12);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.metric:hover {
+    border-color: rgba(20, 184, 166, 0.28);
+    box-shadow: 0 0 20px rgba(20, 184, 166, 0.08);
 }
 
 .metric > div {
@@ -98,20 +105,54 @@
 }
 
 .card {
+    position: relative;
     padding: 22px;
     min-width: 0;
     overflow: hidden;
+    border: 1px solid rgba(20, 184, 166, 0.18);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 10px 36px rgba(0, 0, 0, 0.18);
+}
+
+.cardGlow {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(20, 184, 166, 0.35), transparent 45%, rgba(34, 211, 238, 0.18));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.cardCorner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: var(--primary-light);
+    border-style: solid;
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.cardCornerTl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
+.cardCornerTr { top: 10px; right: 10px; border-width: 2px 2px 0 0; }
+
+:global(html.light) .card {
+    border-color: rgba(15, 118, 110, 0.16);
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+}
+
+:global(html.light) .cardGlow {
+    background: linear-gradient(135deg, rgba(15, 118, 110, 0.28), transparent 45%, rgba(8, 145, 178, 0.15));
 }
 
 .header {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 18px;
-    color: var(--primary-light);
-}
-
-.headerText {
     flex: 1;
 }
 
@@ -145,6 +186,130 @@
 .refresh:hover {
     color: var(--primary-light);
     border-color: var(--primary-light);
+}
+
+.shareBars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+}
+
+.shareRow {
+    display: grid;
+    grid-template-columns: auto 1fr minmax(80px, 120px) auto;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.8rem;
+}
+
+.shareLabel {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.shareTrack {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(20, 184, 166, 0.12);
+    overflow: hidden;
+}
+
+:global(html.light) .shareTrack {
+    background: rgba(15, 118, 110, 0.1);
+}
+
+.shareFill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--primary-dark), var(--primary-light));
+}
+
+.sharePct {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    min-width: 2.5rem;
+    text-align: right;
+}
+
+:global(html.light) .sharePct {
+    color: var(--primary);
+}
+
+.pagePath {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.recentCard {
+    margin-top: 14px;
+    padding: 16px 18px;
+}
+
+.recentCard h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary-light);
+    margin-bottom: 12px;
+}
+
+.recentList {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.recentList li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.recentList li:last-child {
+    border-bottom: none;
+}
+
+.recentBody {
+    flex: 1;
+    min-width: 0;
+}
+
+.recentBody strong {
+    display: block;
+    font-size: 0.86rem;
+    margin-bottom: 2px;
+}
+
+.recentBody span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.recentTime {
+    font-size: 0.72rem;
+    font-family: var(--font-mono), monospace;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .loading, .emptyMap {
@@ -238,43 +403,158 @@
     border: 1px solid var(--border);
 }
 
-/* World map — dark theme (default) */
+/* World map — professional futuristic */
 .mapWrap {
     position: relative;
     margin-bottom: 18px;
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(20, 184, 166, 0.2);
     aspect-ratio: 2 / 1;
-    min-height: 200px;
-    background: linear-gradient(165deg, #0c4a6e 0%, #0f766e 38%, #134e4a 100%);
+    min-height: 220px;
+    background: linear-gradient(165deg, #071018 0%, #0c4a6e 42%, #0f766e 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 12px 40px rgba(0, 0, 0, 0.28);
+}
+
+.mapFrame {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    border-radius: inherit;
+    box-shadow:
+        inset 0 0 0 1px rgba(34, 211, 238, 0.12),
+        inset 0 0 60px rgba(20, 184, 166, 0.06);
+}
+
+.mapGrid {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image:
+        linear-gradient(rgba(34, 211, 238, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 211, 238, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 85% 75% at 50% 50%, black 30%, transparent 100%);
 }
 
 .mapOcean {
     position: absolute;
     inset: 0;
+    z-index: 1;
     background:
-        radial-gradient(ellipse 70% 50% at 30% 40%, rgba(20, 184, 166, 0.18), transparent 70%),
-        radial-gradient(ellipse 50% 40% at 75% 60%, rgba(56, 189, 248, 0.12), transparent 65%);
+        radial-gradient(ellipse 75% 55% at 28% 38%, rgba(20, 184, 166, 0.22), transparent 72%),
+        radial-gradient(ellipse 55% 45% at 78% 58%, rgba(56, 189, 248, 0.14), transparent 68%),
+        radial-gradient(ellipse 40% 35% at 50% 50%, rgba(99, 102, 241, 0.06), transparent 70%);
     pointer-events: none;
 }
 
 .mapGeo {
     position: absolute;
     inset: 0;
+    z-index: 2;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.42;
-    filter: sepia(0.35) hue-rotate(130deg) saturate(1.4) brightness(0.75);
+    opacity: 0.5;
+    filter: sepia(0.25) hue-rotate(125deg) saturate(1.6) brightness(0.82) contrast(1.05);
     pointer-events: none;
     user-select: none;
+}
+
+.mapShine {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 38%,
+        rgba(34, 211, 238, 0.06) 48%,
+        rgba(255, 255, 255, 0.04) 50%,
+        rgba(34, 211, 238, 0.06) 52%,
+        transparent 62%
+    );
+    background-size: 220% 100%;
+    animation: mapShine 8s ease-in-out infinite;
+}
+
+.mapArcs {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.mapArc {
+    fill: none;
+    stroke: rgba(34, 211, 238, 0.35);
+    stroke-width: 0.15;
+    stroke-linecap: round;
+    stroke-dasharray: 1.2 0.8;
+    animation: mapArcFlow 6s linear infinite;
+}
+
+.mapHud {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.mapLive {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    font-family: var(--font-mono), monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--primary-light);
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(20, 184, 166, 0.25);
+    padding: 4px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+}
+
+.mapLiveDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.65);
+    animation: mapLivePulse 2.4s ease-in-out infinite;
+}
+
+.mapStat {
+    font-size: 0.68rem;
+    font-family: var(--font-mono), monospace;
+    color: rgba(241, 245, 249, 0.75);
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4px 9px;
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
 }
 
 .mapPins {
     position: absolute;
     inset: 0;
-    z-index: 2;
+    z-index: 3;
 }
 
 .mapPin {
@@ -282,9 +562,23 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     transform: translate(-50%, -50%) scale(var(--pin-scale, 1));
     transform-origin: center center;
+}
+
+.mapPinRing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 56px;
+    height: 56px;
+    transform: translate(-50%, -62%);
+    border-radius: 50%;
+    border: 1px solid rgba(34, 211, 238, 0.35);
+    animation: mapPinRing 3s ease-out infinite;
+    animation-delay: var(--pin-delay, 0s);
+    pointer-events: none;
 }
 
 .mapPinGlow {
@@ -295,7 +589,21 @@
     height: 52px;
     transform: translate(-50%, -58%);
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(20, 184, 166, 0.45), transparent 70%);
+    background: radial-gradient(circle, rgba(20, 184, 166, 0.5), transparent 70%);
+    pointer-events: none;
+}
+
+.mapPinDot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--primary-light);
+    box-shadow: 0 0 10px var(--glow);
+    z-index: 0;
     pointer-events: none;
 }
 
@@ -303,21 +611,28 @@
     position: relative;
     z-index: 1;
     border-radius: 50%;
-    border: 2px solid rgba(255, 255, 255, 0.85);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.35),
+        0 0 0 1px rgba(34, 211, 238, 0.2);
     object-fit: cover;
     aspect-ratio: 1;
-    width: 36px !important;
-    height: 36px !important;
+    width: 38px !important;
+    height: 38px !important;
 }
 
 .mapPinMeta {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1px;
+    gap: 2px;
     position: relative;
     z-index: 1;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(20, 184, 166, 0.18);
+    backdrop-filter: blur(4px);
 }
 
 .mapPinCode {
@@ -325,7 +640,7 @@
     font-weight: 700;
     font-family: var(--font-mono), monospace;
     color: var(--text);
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    letter-spacing: 0.08em;
     line-height: 1;
 }
 
@@ -334,52 +649,137 @@
     font-weight: 700;
     font-family: var(--font-mono), monospace;
     color: var(--primary-light);
-    background: rgba(15, 23, 42, 0.75);
-    padding: 1px 5px;
-    border-radius: 999px;
     line-height: 1.2;
+}
+
+.mapVignette {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    background: radial-gradient(ellipse 92% 88% at 50% 50%, transparent 55%, rgba(2, 6, 23, 0.35) 100%);
+}
+
+@keyframes mapShine {
+    0%, 100% { background-position: 120% 0; }
+    50% { background-position: -20% 0; }
+}
+
+@keyframes mapArcFlow {
+    to { stroke-dashoffset: -4; }
+}
+
+@keyframes mapPinRing {
+    0% { transform: translate(-50%, -62%) scale(0.75); opacity: 0.7; }
+    100% { transform: translate(-50%, -62%) scale(1.35); opacity: 0; }
+}
+
+@keyframes mapLivePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
 }
 
 /* World map — light theme */
 :global(html.light) .mapWrap {
-    background: linear-gradient(165deg, #bae6fd 0%, #7dd3fc 35%, #38bdf8 100%);
+    background: linear-gradient(165deg, #e0f2fe 0%, #bae6fd 40%, #7dd3fc 100%);
+    border-color: rgba(15, 118, 110, 0.2);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+:global(html.light) .mapFrame {
+    box-shadow:
+        inset 0 0 0 1px rgba(15, 118, 110, 0.12),
+        inset 0 0 50px rgba(255, 255, 255, 0.35);
+}
+
+:global(html.light) .mapGrid {
+    opacity: 0.35;
+    background-image:
+        linear-gradient(rgba(15, 118, 110, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 118, 110, 0.08) 1px, transparent 1px);
 }
 
 :global(html.light) .mapOcean {
     background:
-        radial-gradient(ellipse 70% 50% at 28% 38%, rgba(255, 255, 255, 0.35), transparent 70%),
-        radial-gradient(ellipse 45% 35% at 72% 62%, rgba(15, 118, 110, 0.12), transparent 65%);
+        radial-gradient(ellipse 75% 55% at 28% 38%, rgba(255, 255, 255, 0.45), transparent 72%),
+        radial-gradient(ellipse 50% 40% at 75% 58%, rgba(15, 118, 110, 0.12), transparent 68%);
 }
 
 :global(html.light) .mapGeo {
-    opacity: 0.72;
-    filter: none;
+    opacity: 0.78;
+    filter: saturate(0.85) brightness(1.05) contrast(1.02);
+}
+
+:global(html.light) .mapShine {
+    background: linear-gradient(
+        105deg,
+        transparent 38%,
+        rgba(255, 255, 255, 0.35) 48%,
+        rgba(255, 255, 255, 0.55) 50%,
+        rgba(255, 255, 255, 0.35) 52%,
+        transparent 62%
+    );
+    background-size: 220% 100%;
+}
+
+:global(html.light) .mapArc {
+    stroke: rgba(15, 118, 110, 0.35);
+}
+
+:global(html.light) .mapLive {
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--primary);
+    border-color: rgba(15, 118, 110, 0.2);
+}
+
+:global(html.light) .mapStat {
+    color: #334155;
+    background: rgba(255, 255, 255, 0.78);
+    border-color: rgba(15, 23, 42, 0.08);
 }
 
 :global(html.light) .mapPinCode {
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
     color: #0f172a;
 }
 
 :global(html.light) .mapPinCount {
-    background: rgba(255, 255, 255, 0.92);
     color: var(--primary);
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+}
+
+:global(html.light) .mapPinMeta {
+    background: rgba(255, 255, 255, 0.88);
+    border-color: rgba(15, 118, 110, 0.15);
 }
 
 :global(html.light) .mapPinFlag {
-    border-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+    border-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 2px 10px rgba(15, 23, 42, 0.15);
 }
 
 :global(html.light) .mapPinGlow {
-    background: radial-gradient(circle, rgba(15, 118, 110, 0.28), transparent 70%);
+    background: radial-gradient(circle, rgba(15, 118, 110, 0.3), transparent 70%);
+}
+
+:global(html.light) .mapPinRing {
+    border-color: rgba(15, 118, 110, 0.35);
+}
+
+:global(html.light) .mapVignette {
+    background: radial-gradient(ellipse 92% 88% at 50% 50%, transparent 58%, rgba(15, 23, 42, 0.06) 100%);
 }
 
 .panels {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
+}
+
+@media (min-width: 900px) {
+    .panels {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
 }
 
 .panel {
@@ -452,6 +852,12 @@
     font-size: 0.82rem;
 }
 
+@media (max-width: 1100px) {
+    .metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
     .wrapper {
         margin-bottom: 0;
@@ -502,21 +908,26 @@
         display: none;
     }
 
+    .mapHud .mapStat:last-child {
+        display: none;
+    }
+
     .mapPinGlow {
         width: 36px;
         height: 36px;
     }
 
     .mapPinFlag {
-        width: 24px !important;
-        height: 24px !important;
+        width: 26px !important;
+        height: 26px !important;
     }
 
-    .demoBanner,
-    .errorBanner,
-    .okBanner {
-        font-size: 0.78rem;
-        padding: 8px 12px;
+    .shareRow {
+        grid-template-columns: auto 1fr auto;
+    }
+
+    .shareTrack {
+        display: none;
     }
 
     .currentVisit {
@@ -553,5 +964,14 @@
     .count {
         font-size: 0.68rem;
         padding: 2px 8px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mapShine,
+    .mapArc,
+    .mapPinRing,
+    .mapLiveDot {
+        animation: none;
     }
 }

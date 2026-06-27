@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Mail, Phone, MessageCircle, X, ChevronUp } from "lucide-react";
 import { siteMeta } from "@/data/profile";
+import { SectionScrollLink } from "@/components/layout/SectionScrollLink";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import styles from "./ContactDock.module.css";
 
@@ -39,9 +40,14 @@ export function ContactDock() {
                             {label}
                         </a>
                     ))}
-                    <Link href="/#contact" className={styles.quickBtn} onClick={() => setOpen(false)} data-cursor="pointer">
+                    <SectionScrollLink
+                        sectionId="contact"
+                        className={styles.quickBtn}
+                        onClick={() => setOpen(false)}
+                        data-cursor="pointer"
+                    >
                         Full contact
-                    </Link>
+                    </SectionScrollLink>
                     <Link href="/chat" className={styles.quickBtn} onClick={() => setOpen(false)} data-cursor="pointer">
                         <MessageCircle size={16} />
                         Chat

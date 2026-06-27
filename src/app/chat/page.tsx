@@ -1,4 +1,5 @@
 import { ChatWindow } from "@/components/chat/ChatWindow";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
@@ -9,13 +10,15 @@ export const metadata = createPageMetadata(
 export default function ChatPage() {
     return (
         <>
-            <header className="page-header container">
-                <h1>Portfolio Chat</h1>
-                <p>
-                    Ask about Rihan&apos;s skills, experience, projects, and certifications —
-                    powered by a client-side knowledge base.
-                </p>
-            </header>
+            <PageHeader
+                title="Portfolio Chat"
+                description={
+                    <>
+                        Chat with an AI assistant trained on Rihan&apos;s resume — skills, experience,
+                        projects, and certifications. Everything runs in your browser.
+                    </>
+                }
+            />
             <div className="container">
                 <ChatWindow />
             </div>

@@ -431,6 +431,50 @@
     filter: blur(0.5px);
 }
 
+.cometCore {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 2px;
+    margin-left: -9px;
+    margin-top: -1px;
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 9996;
+    transform-origin: center center;
+    background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.85));
+    filter: blur(0.3px);
+}
+
+.microOrbit {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    z-index: 9995;
+    animation: microSpin 6s linear infinite;
+}
+
+.microParticle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    margin: -1.5px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    box-shadow: 0 0 6px var(--glow);
+    opacity: 0.55;
+    transform: rotate(calc(var(--i) * 36deg)) translateX(22px);
+}
+
+@keyframes microSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .hexRing {
     position: fixed;
     top: 0;
@@ -482,7 +526,7 @@
 
 @media (max-width: 768px), (prefers-reduced-motion: reduce) {
     .glow, .dot, .ring, .trail, .orbit, .ripple, .spark, .chargeArc, .satellite,
-    .paintCanvas, .playHint, .crosshair, .ringOuter, .idlePulse, .cometTail, .hexRing, .chargeTicks, .chargeTick {
+    .paintCanvas, .playHint, .crosshair, .ringOuter, .idlePulse, .cometTail, .cometCore, .microOrbit, .hexRing, .chargeTicks, .chargeTick {
         display: none;
     }
 }

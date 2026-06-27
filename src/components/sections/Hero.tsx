@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { siteMeta } from "@/data/profile";
+import { SectionScrollLink } from "@/components/layout/SectionScrollLink";
 import { assetPath } from "@/lib/paths";
 import { FadeIn } from "@/components/effects/FadeIn";
 import { TiltCard } from "@/components/effects/TiltCard";
@@ -93,9 +93,9 @@ export function Hero() {
                         <p className={styles.subtitle}>{siteMeta.tagline}</p>
                         <p className={styles.desc}>{siteMeta.description}</p>
                         <div className={styles.actions}>
-                            <Link href="/#projects" className="btn btn-primary">
+                            <SectionScrollLink sectionId="projects" className="btn btn-primary">
                                 View My Work
-                            </Link>
+                            </SectionScrollLink>
                             <a href={assetPath("/resume.pdf")} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
                                 Download Resume
                             </a>

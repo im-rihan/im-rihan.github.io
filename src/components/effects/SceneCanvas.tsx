@@ -1,13 +1,17 @@
 "use client";
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Grid, Stars } from "@react-three/drei";
-import { useTheme } from "next-themes";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Float, Grid, Sparkles, Stars } from "@react-three/drei";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import type { Group, Mesh, Points } from "three";
 import * as THREE from "three";
 import { getCursorCharge, getCursorPointer, getCursorVelocity } from "@/lib/cursor-signals";
+import { getScrollProgress, advanceScrollProgress } from "@/lib/scene-scroll";
+import { getSceneTheme } from "@/lib/scene-theme";
 import { SceneInteractions } from "./scene-interactions";
+import { SceneProfessional } from "./scene-professional";
+import { SceneFuturistic } from "./scene-futuristic";
+import { useIsLightTheme } from "./use-scene-theme";
 import {
     lerpVec3,
     smoothStep,
@@ -39,19 +43,9 @@ const DESKTOP = {
     pointer: { x: 1.15, y: 0.78, lookX: 0.45, lookY: 0.3, z: 0.25 },
 } as const;
 
-function useIsLightTheme() {
-    const { resolvedTheme } = useTheme();
-    const [isLight, setIsLight] = useState(false);
-
-    useEffect(() => {
-        setIsLight(resolvedTheme === "light");
-    }, [resolvedTheme]);
-
-    return isLight;
-}
-
 function ViewportDriver({ viewportRef }: { viewportRef: ViewportRef }) {
     useFrame((_, delta) => {
+        advanceScrollProgress(delta);
         const v = viewportRef.current;
         if (!v) return;
         v.mobileBlend = smoothStep(v.mobileBlend, v.mobileTarget, delta);
@@ -76,6 +70,8 @@ function ResponsiveCamera({ viewportRef }: { viewportRef: ViewportRef }) {
         const pz = THREE.MathUtils.lerp(DESKTOP.pointer.z, MOBILE.pointer.z, t);
         const lookX = THREE.MathUtils.lerp(DESKTOP.pointer.lookX, MOBILE.pointer.lookX, t);
         const lookY = THREE.MathUtils.lerp(DESKTOP.pointer.lookY, MOBILE.pointer.lookY, t);
+        const scroll = getScrollProgress();
+        const scrollShift = (scroll - 0.5) * 2;
 
         const { camera } = state;
         if (camera instanceof THREE.PerspectiveCamera) {
@@ -84,37 +80,42 @@ function ResponsiveCamera({ viewportRef }: { viewportRef: ViewportRef }) {
         }
 
         camera.position.x = THREE.MathUtils.lerp(camera.position.x, basePos[0] + pointer.x * px, 0.042);
-        camera.position.y = THREE.MathUtils.lerp(camera.position.y, basePos[1] + pointer.y * py, 0.042);
+        camera.position.y = THREE.MathUtils.lerp(
+            camera.position.y,
+            basePos[1] + pointer.y * py + scrollShift * 0.32 * (1 - t * 0.2),
+            0.042
+        );
         camera.position.z = THREE.MathUtils.lerp(
             camera.position.z,
-            baseZ + portrait * 0.45 + Math.abs(pointer.y) * pz,
+            baseZ + portrait * 0.45 + Math.abs(pointer.y) * pz + scroll * 0.55,
             0.028
         );
-        camera.lookAt(pointer.x * lookX, pointer.y * lookY, 0);
+        camera.lookAt(pointer.x * lookX, pointer.y * lookY + scrollShift * 0.14, 0);
     });
     return null;
 }
 
 function AdaptiveFog({ viewportRef, isLight }: { viewportRef: ViewportRef; isLight: boolean }) {
     const { scene } = useThree();
-    const color = isLight ? "#eef2f7" : "#0b1220";
+    const theme = getSceneTheme(isLight);
 
     useFrame(() => {
         const v = viewportRef.current;
         if (!v) return;
 
         const t = v.mobileBlend;
+        const scroll = getScrollProgress();
         const near = THREE.MathUtils.lerp(12, 14, t);
-        const far = THREE.MathUtils.lerp(34, 44, t);
+        const far = THREE.MathUtils.lerp(34, 44, t) + scroll * 8;
 
         if (!(scene.fog instanceof THREE.Fog)) {
-            scene.fog = new THREE.Fog(color, near, far);
+            scene.fog = new THREE.Fog(theme.fog, near, far);
             return;
         }
 
         scene.fog.near = near;
         scene.fog.far = far;
-        scene.fog.color.set(color);
+        scene.fog.color.set(theme.fog);
     });
 
     return null;
@@ -128,18 +129,20 @@ function SceneFocal({ viewportRef, children }: { viewportRef: ViewportRef; child
         if (!ref.current || !v) return;
 
         const t = v.mobileBlend;
+        const scroll = getScrollProgress();
         ref.current.position.set(
             THREE.MathUtils.lerp(0, MOBILE.focal.position[0], t),
-            THREE.MathUtils.lerp(0, MOBILE.focal.position[1], t),
-            THREE.MathUtils.lerp(0, MOBILE.focal.position[2], t)
+            THREE.MathUtils.lerp(0, MOBILE.focal.position[1], t) + scroll * 0.45,
+            THREE.MathUtils.lerp(0, MOBILE.focal.position[2], t) - scroll * 0.9
         );
-        ref.current.scale.setScalar(THREE.MathUtils.lerp(1, MOBILE.focal.scale, t));
+        ref.current.scale.setScalar(THREE.MathUtils.lerp(1, MOBILE.focal.scale, t) * (1 - scroll * 0.06));
     });
 
     return <group ref={ref}>{children}</group>;
 }
 
-function NebulaMist({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: ViewportRef }) {
+function NebulaMist({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+    const theme = getSceneTheme(isLight);
     const ref = useRef<Group>(null);
     const clouds = useMemo(
         () =>
@@ -149,9 +152,9 @@ function NebulaMist({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: Vie
                 z: -8 - Math.random() * 8,
                 scale: 6 + Math.random() * 9,
                 speed: 0.012 + Math.random() * 0.018,
-                hue: i % 3 === 0 ? "#14b8a6" : i % 3 === 1 ? "#22d3ee" : "#6366f1",
+                hue: i % 3 === 0 ? theme.primary : i % 3 === 1 ? theme.accent : theme.purple,
             })),
-        []
+        [theme.primary, theme.accent, theme.purple]
     );
 
     useFrame((state) => {
@@ -175,7 +178,11 @@ function NebulaMist({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: Vie
                     <meshBasicMaterial
                         color={c.hue}
                         transparent
-                        opacity={dimmed ? 0.018 : THREE.MathUtils.lerp(0.038, 0.042, viewportRef.current?.mobileBlend ?? 0)}
+                        opacity={
+                            isLight
+                                ? theme.nebula * 0.85
+                                : THREE.MathUtils.lerp(theme.nebula, theme.nebula * 1.1, viewportRef.current?.mobileBlend ?? 0)
+                        }
                         depthWrite={false}
                     />
                 </mesh>
@@ -184,18 +191,20 @@ function NebulaMist({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: Vie
     );
 }
 
-function ParticleField({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: ViewportRef }) {
+function ParticleField({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+    const theme = getSceneTheme(isLight);
     const ref = useRef<Points>(null);
+    const matRef = useRef<THREE.PointsMaterial>(null);
     const isCompact = (viewportRef.current?.mobileTarget ?? 0) === 1;
-    const count = isCompact && !dimmed ? 2800 : isCompact ? 2200 : dimmed ? 1800 : 2800;
+    const count = isCompact ? (isLight ? 1800 : 2200) : isLight ? 1800 : 2800;
 
     const { positions, colors } = useMemo(() => {
         const pos = new Float32Array(count * 3);
         const col = new Float32Array(count * 3);
-        const c1 = new THREE.Color("#14b8a6");
-        const c2 = new THREE.Color("#22d3ee");
-        const c3 = new THREE.Color("#64748b");
-        const c4 = new THREE.Color("#f59e0b");
+        const c1 = new THREE.Color(theme.primary);
+        const c2 = new THREE.Color(theme.accent);
+        const c3 = new THREE.Color(theme.muted);
+        const c4 = new THREE.Color(theme.warm);
         for (let i = 0; i < count; i++) {
             const radius = 12 + Math.random() * 20;
             const theta = Math.random() * Math.PI * 2;
@@ -210,7 +219,7 @@ function ParticleField({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: 
             col[i * 3 + 2] = c.b;
         }
         return { positions: pos, colors: col };
-    }, [count]);
+    }, [count, theme.primary, theme.accent, theme.muted, theme.warm]);
 
     useFrame((state) => {
         if (!ref.current) return;
@@ -220,12 +229,28 @@ function ParticleField({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: 
         const py = THREE.MathUtils.lerp(0.05, 0.22, t);
         const moveX = THREE.MathUtils.lerp(0.7, 0.38, t);
         const moveY = THREE.MathUtils.lerp(0.45, 0.24, t);
-        const chargeBoost = 1 + getCursorCharge() * 0.35;
-        const speedBoost = 1 + getCursorVelocity().speed * 0.25;
-        ref.current.rotation.y = (elapsed * 0.028 + state.pointer.x * px) * chargeBoost * speedBoost;
-        ref.current.rotation.x = Math.sin(elapsed * 0.18) * 0.06 + state.pointer.y * py;
-        ref.current.position.x = state.pointer.x * moveX;
-        ref.current.position.y = state.pointer.y * moveY;
+        const charge = getCursorCharge();
+        const { speed, vx, vy } = getCursorVelocity();
+        const { nx, ny } = getCursorPointer();
+        const chargeBoost = 1 + charge * 0.35;
+        const speedBoost = 1 + speed * 0.25;
+        const scroll = getScrollProgress();
+        ref.current.rotation.y = (elapsed * 0.028 + state.pointer.x * px + nx * 0.08) * chargeBoost * speedBoost;
+        ref.current.rotation.x = Math.sin(elapsed * 0.18) * 0.06 + state.pointer.y * py + scroll * 0.12 + ny * 0.04;
+        ref.current.position.x = THREE.MathUtils.lerp(
+            ref.current.position.x,
+            state.pointer.x * moveX + nx * 0.55 + vx * 1.2,
+            0.04
+        );
+        ref.current.position.y = THREE.MathUtils.lerp(
+            ref.current.position.y,
+            state.pointer.y * moveY + ny * 0.35 + vy * 0.8 - scroll * 0.65,
+            0.04
+        );
+        if (matRef.current) {
+            matRef.current.size = 0.038 + charge * 0.018 + speed * 0.028;
+            matRef.current.opacity = (isLight ? theme.particle * 0.92 : theme.particle) * (1 + charge * 0.22 + speed * 0.18);
+        }
     });
 
     return (
@@ -235,10 +260,11 @@ function ParticleField({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: 
                 <bufferAttribute attach="attributes-color" args={[colors, 3]} />
             </bufferGeometry>
             <pointsMaterial
+                ref={matRef}
                 size={0.04}
                 vertexColors
                 transparent
-                opacity={dimmed ? 0.45 : 0.78}
+                opacity={isLight ? theme.particle : theme.particle}
                 sizeAttenuation
                 depthWrite={false}
                 blending={THREE.AdditiveBlending}
@@ -510,10 +536,11 @@ function Planets({ isLight, viewportRef }: { isLight: boolean; viewportRef: View
     );
 }
 
-function AsteroidBelt({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: ViewportRef }) {
+function AsteroidBelt({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+    const theme = getSceneTheme(isLight);
     const ref = useRef<Group>(null);
     const isCompact = (viewportRef.current?.mobileTarget ?? 0) === 1;
-    const count = isCompact && !dimmed ? 32 : isCompact ? 22 : dimmed ? 18 : 32;
+    const count = isCompact ? (isLight ? 18 : 22) : isLight ? 18 : 32;
     const asteroids = useMemo(
         () =>
             Array.from({ length: count }, (_, i) => ({
@@ -544,7 +571,7 @@ function AsteroidBelt({ dimmed, viewportRef }: { dimmed: boolean; viewportRef: V
                     position={[Math.cos(a.angle) * a.radius, a.y, Math.sin(a.angle) * a.radius]}
                 >
                     <dodecahedronGeometry args={[a.size, 0]} />
-                    <meshBasicMaterial color="#64748b" transparent opacity={0.55} wireframe />
+                    <meshBasicMaterial color={theme.muted} transparent opacity={isLight ? 0.38 : 0.55} wireframe />
                 </mesh>
             ))}
         </group>
@@ -612,7 +639,8 @@ function DataStreams({ count = 14 }: { count?: number }) {
     );
 }
 
-function WireGlobe({ viewportRef }: { viewportRef: ViewportRef }) {
+function WireGlobe({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+    const theme = getSceneTheme(isLight);
     const outer = useRef<Mesh>(null);
     const inner = useRef<Mesh>(null);
     const ring = useRef<Mesh>(null);
@@ -639,17 +667,30 @@ function WireGlobe({ viewportRef }: { viewportRef: ViewportRef }) {
     return (
         <Float speed={1.2} rotationIntensity={0.18} floatIntensity={0.4}>
             <group ref={shellRef}>
+                <mesh>
+                    <icosahedronGeometry args={[2.48, 2]} />
+                    <meshStandardMaterial
+                        color={theme.primaryDark}
+                        emissive={theme.primary}
+                        emissiveIntensity={theme.wire.shellEmissive}
+                        transparent
+                        opacity={theme.wire.shell}
+                        roughness={0.85}
+                        metalness={0.35}
+                        depthWrite={false}
+                    />
+                </mesh>
                 <mesh ref={outer}>
                     <icosahedronGeometry args={[2.55, 4]} />
-                    <meshBasicMaterial color="#14b8a6" wireframe transparent opacity={0.28} />
+                    <meshBasicMaterial color={theme.primary} wireframe transparent opacity={theme.wire.outer} />
                 </mesh>
                 <mesh ref={inner}>
                     <octahedronGeometry args={[1.75, 0]} />
-                    <meshBasicMaterial color="#22d3ee" wireframe transparent opacity={0.14} />
+                    <meshBasicMaterial color={theme.accent} wireframe transparent opacity={theme.wire.inner} />
                 </mesh>
                 <mesh ref={ring}>
                     <torusGeometry args={[3.1, 0.015, 8, 80]} />
-                    <meshBasicMaterial color="#14b8a6" transparent opacity={0.2} />
+                    <meshBasicMaterial color={theme.primary} transparent opacity={theme.wire.ring} />
                 </mesh>
                 <OrbitingMoon viewportRef={viewportRef} />
             </group>
@@ -657,7 +698,8 @@ function WireGlobe({ viewportRef }: { viewportRef: ViewportRef }) {
     );
 }
 
-function InnerCore({ viewportRef }: { viewportRef: ViewportRef }) {
+function InnerCore({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+    const theme = getSceneTheme(isLight);
     const groupRef = useRef<Group>(null);
     const ref = useRef<Mesh>(null);
     const glow = useRef<Mesh>(null);
@@ -684,13 +726,25 @@ function InnerCore({ viewportRef }: { viewportRef: ViewportRef }) {
         <group ref={groupRef}>
             <mesh ref={glow}>
                 <sphereGeometry args={[0.85, 20, 20]} />
-                <meshBasicMaterial color="#14b8a6" transparent opacity={0.04} />
+                <meshBasicMaterial color={theme.core} transparent opacity={isLight ? 0.035 : 0.05} depthWrite={false} blending={THREE.AdditiveBlending} />
             </mesh>
             <mesh ref={ref}>
                 <sphereGeometry args={[0.55, 28, 28]} />
-                <meshBasicMaterial color="#14b8a6" transparent opacity={0.16} />
+                <meshStandardMaterial
+                    color={theme.core}
+                    emissive={theme.coreEmissive}
+                    emissiveIntensity={isLight ? 0.4 : 0.55}
+                    transparent
+                    opacity={isLight ? 0.22 : 0.28}
+                    roughness={0.15}
+                    metalness={0.75}
+                />
             </mesh>
-            <pointLight ref={light} color="#14b8a6" intensity={0.55} distance={12} />
+            <mesh scale={1.15}>
+                <sphereGeometry args={[0.55, 16, 16]} />
+                <meshBasicMaterial color={theme.coreEmissive} transparent opacity={isLight ? 0.03 : 0.04} depthWrite={false} blending={THREE.AdditiveBlending} />
+            </mesh>
+            <pointLight ref={light} color={theme.core} intensity={isLight ? 0.42 : 0.55} distance={12} />
         </group>
     );
 }
@@ -726,7 +780,8 @@ function OrbitRing({
     );
 }
 
-function HexRing({ count = 14 }: { count?: number }) {
+function HexRing({ count = 14, isLight }: { count?: number; isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const ref = useRef<Group>(null);
     const hexes = useMemo(() => {
         const items: { x: number; y: number; s: number }[] = [];
@@ -747,7 +802,7 @@ function HexRing({ count = 14 }: { count?: number }) {
             {hexes.map((h, i) => (
                 <mesh key={i} position={[h.x, h.y, 0]} scale={h.s}>
                     <ringGeometry args={[0.32, 0.38, 6]} />
-                    <meshBasicMaterial color="#14b8a6" transparent opacity={0.11} wireframe />
+                    <meshBasicMaterial color={theme.primary} transparent opacity={theme.hex} wireframe />
                 </mesh>
             ))}
         </group>
@@ -755,14 +810,16 @@ function HexRing({ count = 14 }: { count?: number }) {
 }
 
 function SceneGrid({ viewportRef, isLight }: { viewportRef: ViewportRef; isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const groupRef = useRef<Group>(null);
 
     useFrame((state) => {
         if (!groupRef.current) return;
         const blend = viewportRef.current?.mobileBlend ?? 0;
+        const scroll = getScrollProgress();
         groupRef.current.position.x = state.pointer.x * THREE.MathUtils.lerp(0.38, 0.24, blend);
         groupRef.current.position.z = state.pointer.y * THREE.MathUtils.lerp(0.26, 0.16, blend);
-        groupRef.current.position.y = THREE.MathUtils.lerp(-4.85, -5.15, blend);
+        groupRef.current.position.y = THREE.MathUtils.lerp(-4.85, -5.15, blend) - scroll * 1.35;
     });
 
     return (
@@ -770,21 +827,22 @@ function SceneGrid({ viewportRef, isLight }: { viewportRef: ViewportRef; isLight
             <Grid
                 infiniteGrid
                 cellSize={0.52}
-                cellThickness={0.42}
-                cellColor={isLight ? "#0d9488" : "#0f766e"}
+                cellThickness={0.48}
+                cellColor={theme.gridCell}
                 sectionSize={3.1}
-                sectionThickness={0.72}
-                sectionColor={isLight ? "#14b8a6" : "#115e59"}
-                fadeDistance={28}
-                fadeStrength={1.45}
-                fadeFrom={0.62}
+                sectionThickness={0.85}
+                sectionColor={theme.gridSection}
+                fadeDistance={32}
+                fadeStrength={1.55}
+                fadeFrom={0.55}
                 followCamera={false}
             />
         </group>
     );
 }
 
-function CodeNodes({ count = 10 }: { count?: number }) {
+function CodeNodes({ count = 10, isLight }: { count?: number; isLight: boolean }) {
+    const theme = getSceneTheme(isLight);
     const group = useRef<Group>(null);
     const nodes = useMemo(
         () =>
@@ -807,9 +865,39 @@ function CodeNodes({ count = 10 }: { count?: number }) {
             {nodes.map((n, i) => (
                 <mesh key={i} position={[n.x, n.y, n.z]}>
                     <boxGeometry args={[n.s * 2.2, n.s * 2.2, n.s * 2.2]} />
-                    <meshBasicMaterial color={i % 2 === 0 ? "#14b8a6" : "#22d3ee"} transparent opacity={0.38} wireframe />
+                    <meshBasicMaterial color={i % 2 === 0 ? theme.primary : theme.accent} transparent opacity={isLight ? 0.28 : 0.38} wireframe />
                 </mesh>
             ))}
+        </group>
+    );
+}
+
+function CursorReactiveSparkles({ isLight, isCompact }: { isLight: boolean; isCompact: boolean }) {
+    const theme = getSceneTheme(isLight);
+    const groupRef = useRef<Group>(null);
+
+    useFrame((state) => {
+        if (!groupRef.current) return;
+        const charge = getCursorCharge();
+        const { speed } = getCursorVelocity();
+        const { nx, ny } = getCursorPointer();
+        groupRef.current.position.set(nx * 2.2, ny * 1.4, 0.4 + charge * 0.6);
+        groupRef.current.rotation.z = state.clock.elapsedTime * (0.4 + speed * 2);
+        groupRef.current.visible = charge > 0.08 || speed > 0.02;
+    });
+
+    if (isCompact) return null;
+
+    return (
+        <group ref={groupRef}>
+            <Sparkles
+                count={isLight ? 24 : 36}
+                scale={[2.8, 2.2, 1.8]}
+                size={1.2}
+                speed={0.6}
+                opacity={isLight ? 0.35 : 0.55}
+                color={theme.accentSoft}
+            />
         </group>
     );
 }
@@ -829,7 +917,7 @@ function ViewportFrameRelay({
 }
 
 function SceneContent({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
-    const softVisuals = isLight;
+    const theme = getSceneTheme(isLight);
     const isCompact = (viewportRef.current?.mobileTarget ?? 0) === 1;
 
     return (
@@ -843,27 +931,48 @@ function SceneContent({ isLight, viewportRef }: { isLight: boolean; viewportRef:
                 fade
                 speed={0.45}
             />
+            <Sparkles
+                count={isCompact ? 55 : isLight ? 80 : 140}
+                scale={[16, 12, 14]}
+                size={2.8}
+                speed={0.35}
+                opacity={isLight ? 0.22 : 0.42}
+                color={theme.sparkle}
+            />
+            <CursorReactiveSparkles isLight={isLight} isCompact={isCompact} />
+            <Sparkles
+                count={isCompact ? 30 : 55}
+                scale={[22, 16, 18]}
+                size={1.4}
+                speed={0.18}
+                opacity={isLight ? 0.1 : 0.2}
+                color={theme.sparkleFine}
+            />
+            <hemisphereLight args={[isLight ? "#e2e8f0" : theme.accent, isLight ? "#f8fafc" : theme.fog, isLight ? 0.42 : 0.38]} />
+            <directionalLight position={[6, 10, 4]} intensity={isLight ? 0.32 : 0.22} color={isLight ? "#ffffff" : "#f8fafc"} />
             <ambientLight intensity={isLight ? 0.55 : isCompact ? 0.42 : 0.4} />
-            <pointLight position={[8, 8, 8]} intensity={isLight ? 0.35 : isCompact ? 0.44 : 0.48} color="#14b8a6" />
-            <pointLight position={[-6, -4, 5]} intensity={isLight ? 0.2 : isCompact ? 0.26 : 0.28} color="#22d3ee" />
-            <pointLight position={[0, -6, 2]} intensity={0.15} color="#0f766e" />
-            <NebulaMist dimmed={softVisuals} viewportRef={viewportRef} />
-            <ParticleField dimmed={softVisuals} viewportRef={viewportRef} />
+            <pointLight position={[8, 8, 8]} intensity={isLight ? 0.3 : isCompact ? 0.44 : 0.48} color={theme.primary} />
+            <pointLight position={[-6, -4, 5]} intensity={isLight ? 0.16 : isCompact ? 0.26 : 0.28} color={theme.accent} />
+            <pointLight position={[0, -6, 2]} intensity={isLight ? 0.1 : 0.15} color={theme.primaryDark} />
+            <NebulaMist isLight={isLight} viewportRef={viewportRef} />
+            <ParticleField isLight={isLight} viewportRef={viewportRef} />
             <BrokenStarField count={isCompact ? 7 : isLight ? 4 : 7} />
             <ShootingStars count={8} />
             <Comets count={4} />
             <Planets isLight={isLight} viewportRef={viewportRef} />
-            <AsteroidBelt dimmed={softVisuals} viewportRef={viewportRef} />
+            <AsteroidBelt isLight={isLight} viewportRef={viewportRef} />
             <DataStreams count={14} />
             <SceneFocal viewportRef={viewportRef}>
-                <WireGlobe viewportRef={viewportRef} />
-                <InnerCore viewportRef={viewportRef} />
-                <OrbitRing radius={3.3} opacity={isLight ? 0.28 : 0.42} speed={0.085} color="#14b8a6" viewportRef={viewportRef} />
-                <OrbitRing radius={4.5} opacity={isLight ? 0.16 : 0.24} speed={-0.055} color="#22d3ee" viewportRef={viewportRef} />
-                <OrbitRing radius={5.8} opacity={isLight ? 0.08 : 0.13} speed={0.038} color="#64748b" viewportRef={viewportRef} />
+                <WireGlobe isLight={isLight} viewportRef={viewportRef} />
+                <InnerCore isLight={isLight} viewportRef={viewportRef} />
+                <OrbitRing radius={3.3} opacity={theme.orbit[0]} speed={0.085} color={theme.primary} viewportRef={viewportRef} />
+                <OrbitRing radius={4.5} opacity={theme.orbit[1]} speed={-0.055} color={theme.accent} viewportRef={viewportRef} />
+                <OrbitRing radius={5.8} opacity={theme.orbit[2]} speed={0.038} color={theme.muted} viewportRef={viewportRef} />
             </SceneFocal>
-            <HexRing count={14} />
-            <CodeNodes count={10} />
+            <SceneProfessional isLight={isLight} isCompact={isCompact} />
+            <SceneFuturistic isLight={isLight} isCompact={isCompact} viewportRef={viewportRef} />
+            <HexRing count={14} isLight={isLight} />
+            <CodeNodes count={10} isLight={isLight} />
             <SceneGrid viewportRef={viewportRef} isLight={isLight} />
             <SceneInteractions isLight={isLight} />
         </>
