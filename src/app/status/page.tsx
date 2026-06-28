@@ -4,7 +4,8 @@ import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
     "Analytics",
-    "Live visitor map, system telemetry, geo analytics, and link health monitoring."
+    "Live visitor map, system telemetry, geo analytics, and link health monitoring.",
+    "/status",
 );
 
 export default function StatusPage() {

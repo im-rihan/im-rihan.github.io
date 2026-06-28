@@ -1,0 +1,38 @@
+.wrap {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px 80px;
+}
+
+.card {
+    max-width: 480px;
+    padding: 40px 32px;
+    text-align: center;
+}
+
+.code {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 8px;
+}
+
+.card h1 {
+    font-size: 1.75rem;
+    margin-bottom: 12px;
+}
+
+.card p {
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}

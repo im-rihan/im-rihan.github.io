@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { Scene3D } from "@/components/effects/Scene3D";
@@ -10,19 +12,27 @@ import { AnalysisOverlay, InsightsButton } from "@/components/overlay/AnalysisOv
 import { VisitorTracker } from "@/components/analytics/VisitorTracker";
 import { ContactDock } from "./ContactDock";
 import { HashScrollHandler } from "./HashScrollHandler";
+import { shouldLoadScene } from "@/lib/scene-preference";
 
 export function AppShell({ children }: { children: ReactNode }) {
     const [insightsOpen, setInsightsOpen] = useState(false);
+    const pathname = usePathname();
+    const showScene = shouldLoadScene(pathname);
 
     return (
         <>
+            <a href="#main-content" className="skip-link">
+                Skip to main content
+            </a>
             <VisitorTracker />
             <HashScrollHandler />
             <BackgroundFX />
-            <Scene3D />
+            {showScene && <Scene3D />}
             <CustomCursor />
             <Navbar />
-            <main className="main-content">{children}</main>
+            <main id="main-content" className="main-content">
+                {children}
+            </main>
             <Footer />
             <ContactDock />
             <InsightsButton onClick={() => setInsightsOpen(true)} />

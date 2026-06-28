@@ -4,7 +4,8 @@ import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
     "GitHub Activity",
-    "Public contribution graph and activity insights for @im-rihan."
+    "Public contribution graph and activity insights for @im-rihan.",
+    "/github",
 );
 
 export default function GitHubPage() {

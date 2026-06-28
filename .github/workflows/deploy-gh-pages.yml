@@ -24,11 +24,14 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "26"
           cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Generate brand assets
+        run: npm run generate:brand
 
       - name: Build static export
         env:

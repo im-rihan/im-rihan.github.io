@@ -1,0 +1,4 @@
+python-docx
+pymupdf
+playwright
+pypdf

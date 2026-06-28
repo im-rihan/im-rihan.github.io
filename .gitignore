@@ -9,6 +9,7 @@ node_modules/
 # Next.js
 .next/
 out/
+*.tsbuildinfo
 
 # Debug
 npm-debug.log*
@@ -18,3 +19,7 @@ yarn-error.log*
 # Env
 .env
 .env*.local
+
+# Resume build intermediate
+docs/resume-page.png
+resume/resume.docx

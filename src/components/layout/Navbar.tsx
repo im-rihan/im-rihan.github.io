@@ -24,6 +24,7 @@ const sectionLinks = [
     { id: "skills", label: "Skills", file: "skills.json" },
     { id: "experience", label: "Experience", file: "experience.ts" },
     { id: "projects", label: "Projects", file: "projects/" },
+    { id: "testimonials", label: "Testimonials", file: "reviews.md" },
     { id: "education", label: "Education", file: "education.md" },
     { id: "contact", label: "Contact", file: "contact.sh" },
 ];

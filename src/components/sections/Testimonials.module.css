@@ -1,0 +1,36 @@
+.section {
+    padding: var(--section-pad) 0;
+}
+
+.grid {
+    margin-top: 8px;
+}
+
+.card {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.card blockquote {
+    color: var(--text-muted);
+    line-height: 1.7;
+    font-size: 0.92rem;
+    flex: 1;
+}
+
+.card footer {
+    display: grid;
+    gap: 4px;
+    font-size: 0.82rem;
+}
+
+.card footer strong {
+    color: var(--text);
+}
+
+.card footer span {
+    color: var(--accent);
+}

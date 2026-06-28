@@ -208,7 +208,14 @@ im-rihan.github.io/
 │   ├── favicon.svg
 │   ├── brand-logo-*.svg/png/gif
 │   ├── og-image-*.svg/png/gif
-│   └── resume.html             # Standalone printable resume
+│   └── resume.{html,pdf,docx}  # Generated resume downloads
+├── resume/                     # Resume source + Python generator (git tracked)
+│   ├── resume.html             # Source of truth — edit content here
+│   ├── generate_resume.py      # HTML → PDF/DOCX pipeline
+│   ├── requirements.txt
+│   └── README.md
+├── docs/                       # GitHub Pages docs mirror + resume exports
+│   └── resume.{html,pdf,docx}
 ├── scripts/
 │   ├── generate-og.mjs         # SVG → PNG/GIF brand pipeline
 │   └── test-supabase.mjs       # Supabase visits table smoke test
@@ -587,14 +594,30 @@ gh api repos/im-rihan/im-rihan.github.io/pages -X PUT \
 
 ## Resume sync
 
-Resume PDF/HTML is generated from a sibling project:
+Resume HTML, PDF, and Word are generated from **`resume/`** inside this repo (git tracked):
 
 ```bash
-cd ../resume
+npm run setup:resume          # once — pip deps + Playwright Chromium
+npm run generate:resume
+```
+
+Or manually:
+
+```bash
+cd resume
+pip install -r requirements.txt
+python -m playwright install chromium   # once, for PDF
 python generate_resume.py
 ```
 
-Outputs copy to `im-rihan.github.io/public/` (and `docs/`). The portfolio links to `/resume.pdf` from Hero and Contact sections.
+| Flag | Use |
+|------|-----|
+| `--docx-only` | Regenerate Word only |
+| `--skip-pdf` | HTML + Word, skip PDF |
+
+Outputs copy to `public/` and `docs/` (`resume.html`, `resume.pdf`, `resume.docx`). Hero and Contact offer all three formats.
+
+Edit **`resume/resume.html`** as the source of truth, then regenerate. Word embeds a raster of the PDF so it is a **ditto mirror** of the HTML/PDF on one A4 page.
 
 ---
 

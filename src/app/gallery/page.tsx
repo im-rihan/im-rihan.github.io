@@ -4,7 +4,8 @@ import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
     "Gallery",
-    "Personal snapshots — work, learning, and life."
+    "Work, learning, and life snapshots from Rihan's portfolio journey.",
+    "/gallery",
 );
 
 export default function GalleryPage() {
@@ -12,7 +13,7 @@ export default function GalleryPage() {
         <>
             <PageHeader
                 title="Gallery"
-                description="Personal snapshots — work, learning, and life. Placeholder tiles ready for your photos."
+                description="Moments from remote engineering, continuous learning, and life in Puri — filter by Work, Learning, or Life."
             />
             <div className="container">
                 <GalleryGrid />
