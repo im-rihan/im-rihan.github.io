@@ -9,7 +9,9 @@
         "start": "npx --yes serve@latest out -p 3000",
         "preview": "npm run build && npm run start",
         "lint": "next lint",
-        "generate:brand": "node scripts/generate-og.mjs"
+        "generate:brand": "node scripts/generate-og.mjs",
+        "setup:resume": "pip install -r resume/requirements.txt && python -m playwright install chromium",
+        "generate:resume": "python resume/generate_resume.py"
     },
     "dependencies": {
         "@react-three/drei": "^10.0.0",

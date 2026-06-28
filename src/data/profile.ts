@@ -22,30 +22,74 @@ export const stats = [
 
 export const aboutParagraphs = [
     "Passionate Full Stack Developer with nearly 4 years at HomeAbroad Inc. and Ziffy.ai, building production fintech and real-estate platforms at scale.",
-    "Skilled in JavaScript, React, Next.js, Node.js, Python, and cloud infrastructure — from AI-native property search and NestJS APIs to PHP webhook backends, data ingestion pipelines, and AWS deployments.",
+    "Skilled across React, Next.js, TypeScript, NestJS, Node.js, and Python — from AI-native property search and SSE streaming to PHP webhook backends, data pipelines, and AWS deployments.",
     "Committed to delivering innovative, user-focused solutions through effective collaboration and continuous learning.",
 ];
 
 export const skillGroups = [
     {
         title: "Frontend",
-        tags: ["React", "Next.js 15", "TypeScript", "JavaScript", "Tailwind CSS", "Webpack", "Zustand", "TanStack Query"],
+        tags: [
+            "React 19",
+            "Next.js 16",
+            "TypeScript",
+            "JavaScript",
+            "CSS Modules",
+            "Framer Motion",
+            "React Three Fiber",
+            "Zustand",
+            "TanStack Query",
+            "Tailwind CSS",
+        ],
     },
     {
         title: "Backend",
-        tags: ["NestJS", "Node.js", "PHP 8", "TypeORM", "Express", "REST APIs", "BullMQ", "SSE Streaming"],
+        tags: [
+            "NestJS",
+            "Node.js",
+            "PHP 8",
+            "REST APIs",
+            "TypeORM",
+            "BullMQ",
+            "SSE Streaming",
+            "Puppeteer",
+        ],
     },
     {
         title: "Data & Search",
-        tags: ["MySQL", "Redis", "Typesense", "Python", "Data Analysis", "Data Ingestion"],
+        tags: [
+            "MySQL",
+            "Redis",
+            "Supabase",
+            "Typesense",
+            "Python",
+            "Data Pipelines",
+            "Data Ingestion",
+        ],
     },
     {
         title: "AI & Integrations",
-        tags: ["LangChain", "OpenAI", "Google Gemini", "Zoho CRM", "Twilio", "SendGrid"],
+        tags: [
+            "LangChain",
+            "OpenAI",
+            "Google Gemini",
+            "Zoho CRM",
+            "Twilio",
+            "SendGrid",
+        ],
     },
     {
         title: "DevOps & Cloud",
-        tags: ["CI/CD", "GitHub Actions", "Docker", "AWS Lambda", "Amazon EC2", "Vercel", "Cloudflare"],
+        tags: [
+            "GitHub Actions",
+            "GitHub Pages",
+            "AWS Lambda",
+            "Amazon EC2",
+            "Docker",
+            "Vercel",
+            "Cloudflare",
+            "CI/CD",
+        ],
     },
 ];
 
@@ -56,7 +100,7 @@ export const experience = [
         period: "Jan 2025 – Present · Remote",
         subtitle: "AI-native real estate investment platform — ziffy.ai",
         bullets: [
-            "Architected Next.js 15 / React 19 frontend with dual-brand support, deployed on Vercel with ISR and BunnyCDN sitemaps.",
+            "Architected Next.js 16 / React 19 frontend with dual-brand support, deployed on Vercel with ISR and BunnyCDN sitemaps.",
             "Built AI property search with SSE streaming, Zustand state sync, and Typesense full-text search.",
             "Delivered SEO programmatic listings, DSCR calculators, and mortgage pre-approval portal with document uploads.",
             "Integrated GA4, Google Ads, Facebook Pixel, LogRocket, and Fingerprint.js fraud detection.",
@@ -77,13 +121,24 @@ export const experience = [
     },
 ];
 
-export const projects = [
+export interface Project {
+    icon: string;
+    title: string;
+    stack: string;
+    description: string;
+    url?: string;
+    caseStudySlug?: string;
+}
+
+export const projects: Project[] = [
     {
         icon: "🏠",
         title: "Ziffy.ai Platform",
-        stack: "Next.js 15 · React 19 · Zustand · SSE · Vercel",
+        stack: "Next.js 16 · React 19 · Zustand · SSE · Vercel",
         description:
             "AI-native investor platform with streaming NLP search, SEO listings, DSCR calculators, and dual-brand deployment.",
+        url: "https://ziffy.ai",
+        caseStudySlug: "ziffy-ai-search",
     },
     {
         icon: "⚡",
@@ -91,6 +146,8 @@ export const projects = [
         stack: "NestJS · TypeORM · Redis · Typesense · LangChain",
         description:
             "Modular REST API powering property search, loan estimates, auth, CRM sync, and AI-assisted SEO content.",
+        url: "https://homeabroadinc.com",
+        caseStudySlug: "nestjs-appi-api",
     },
     {
         icon: "🔗",
@@ -127,7 +184,7 @@ export const education = [
         degree: "Post Graduate Diploma in Computer Application (PGDCA)",
         school: "Utkal University",
         campus: "HDVSc Degree College, Panaspada, Puri",
-        year: "",
+        year: "2020 – 2021",
     },
     {
         degree: "Honors / Regents High School Diploma",

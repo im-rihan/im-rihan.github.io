@@ -22,14 +22,21 @@ const ogImages = [
     },
 ] as const;
 
-function socialMetadata(page: string, description?: string) {
+function pagePath(path?: string): string {
+    if (!path || path === "/") return siteUrl;
+    const normalized = path.startsWith("/") ? path : `/${path}`;
+    return `${siteUrl}${normalized.endsWith("/") ? normalized : `${normalized}/`}`;
+}
+
+function socialMetadata(page: string, description?: string, path?: string) {
     const title = pageTitle(page);
     const desc = description ?? siteMeta.description;
+    const url = pagePath(path);
     return {
         openGraph: {
             title,
             description: desc,
-            url: siteUrl,
+            url,
             siteName: siteMeta.name,
             type: "website" as const,
             locale: "en_US",
@@ -41,6 +48,9 @@ function socialMetadata(page: string, description?: string) {
             description: desc,
             images: [ogImages[0].url, ogImages[1].url],
         },
+        alternates: {
+            canonical: url,
+        },
     };
 }
 
@@ -49,21 +59,33 @@ export function pageTitle(page?: string): string {
     return `${page} · ${siteMeta.name}`;
 }
 
-export function createPageMetadata(page: string, description?: string): Metadata {
+export function createPageMetadata(page: string, description?: string, path?: string): Metadata {
     return {
         title: page,
         description: description ?? siteMeta.description,
         metadataBase: new URL(siteUrl),
+        authors: [{ name: siteMeta.name, url: siteUrl }],
+        creator: siteMeta.name,
+        keywords: [
+            "Full Stack Developer",
+            "React",
+            "Next.js",
+            "NestJS",
+            "TypeScript",
+            "Fintech",
+            "Real Estate",
+            siteMeta.name,
+        ],
         icons: {
             icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
             apple: [{ url: "/brand-logo-dark.svg", type: "image/svg+xml" }],
         },
-        ...socialMetadata(page, description),
+        ...socialMetadata(page, description, path),
     };
 }
 
 export const rootMetadata: Metadata = {
-    ...createPageMetadata(siteMeta.title),
+    ...createPageMetadata(siteMeta.title, siteMeta.description, "/"),
     title: {
         default: pageTitle(),
         template: `%s · ${siteMeta.name}`,
@@ -75,3 +97,5 @@ export const rootViewport: Viewport = {
     initialScale: 1,
     viewportFit: "cover",
 };
+
+export { siteUrl, ogImages };

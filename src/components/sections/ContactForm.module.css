@@ -1,0 +1,63 @@
+.form {
+    padding: 28px;
+    display: grid;
+    gap: 16px;
+}
+
+.form h3 {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+}
+
+.form label {
+    display: grid;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.form input,
+.form textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-elevated);
+    color: var(--text);
+    font: inherit;
+}
+
+.form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.submit {
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.honey {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.success {
+    padding: 32px;
+    text-align: center;
+    display: grid;
+    gap: 12px;
+    justify-items: center;
+}
+
+.success svg {
+    color: var(--accent);
+}
+
+.success p {
+    color: var(--text-muted);
+}

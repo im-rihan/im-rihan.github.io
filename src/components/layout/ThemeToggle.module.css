@@ -1,3 +1,8 @@
+.group {
+    display: flex;
+    gap: 8px;
+}
+
 .toggle {
     display: flex;
     align-items: center;
@@ -15,6 +20,11 @@
 .toggle:hover {
     border-color: var(--primary-light);
     transform: scale(1.05);
+}
+
+.sceneOn {
+    border-color: rgba(20, 184, 166, 0.45);
+    color: var(--primary-light);
 }
 
 @media (max-width: 480px) {

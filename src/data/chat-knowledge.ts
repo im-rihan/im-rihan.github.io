@@ -60,11 +60,11 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["stack", "tech", "skills", "technologies", "framework"],
-        answer: "Rihan's core stack:\n\n- **Frontend:** React, Next.js, TypeScript\n- **Backend:** NestJS, Node.js, PHP 8, Python\n- **Data:** MySQL, Redis, Typesense\n- **AI / tools:** LangChain, AWS, Docker, GitHub Actions\n\nHe specializes in **fintech and real-estate platforms** at production scale.",
+        answer: "Rihan's core stack:\n\n- **Frontend:** React, Next.js, TypeScript, CSS Modules, Framer Motion, React Three Fiber\n- **Backend:** NestJS, Node.js, PHP 8, REST APIs, BullMQ, SSE streaming\n- **Data:** MySQL, Redis, Supabase, Typesense, Python data pipelines\n- **AI / cloud:** LangChain, AWS Lambda, Docker, GitHub Actions, Vercel\n\nHe specializes in **fintech and real-estate platforms** at production scale.",
     },
     {
         keywords: ["ziffy", "ziffy.ai"],
-        answer: "**Full Stack Engineer @ Ziffy.ai** (Jan 2025 – Present)\n\n- Next.js 15 / React 19 frontend with dual-brand support\n- AI property search with **SSE streaming**\n- SEO programmatic listings & DSCR calculators\n- Multi-channel analytics integration",
+        answer: "**Full Stack Engineer @ Ziffy.ai** (Jan 2025 – Present)\n\n- Next.js 16 / React 19 frontend with dual-brand support\n- AI property search with **SSE streaming**\n- SEO programmatic listings & DSCR calculators\n- Multi-channel analytics integration",
     },
     {
         keywords: ["homeabroad", "home abroad"],
@@ -76,15 +76,15 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["project", "portfolio", "built"],
-        answer: "Key projects:\n\n- **Ziffy.ai Platform** — dual-brand Next.js product\n- **appi Core API** — NestJS backend\n- **3rdpartycomms** — PHP webhook hub (60+ integrations)\n- **mortgage-pricer** — Puppeteer on AWS Lambda\n- **estimate-calculator** & **data-pipelines** for property ingestion",
+        answer: "Key projects:\n\n- **Ziffy.ai Platform** — [Case study](/work/ziffy-ai-search/) · dual-brand Next.js product\n- **appi Core API** — [Case study](/work/nestjs-appi-api/) · NestJS backend\n- **3rdpartycomms** — PHP webhook hub (60+ integrations)\n- **mortgage-pricer** — Puppeteer on AWS Lambda\n- **estimate-calculator** & **data-pipelines** for property ingestion",
     },
     {
         keywords: ["certification", "cert", "udemy", "freecodecamp", "course"],
-        answer: "Rihan holds **14 certifications**:\n\n- **11 from Udemy** — Web Dev, React, Node.js, Python, databases, and more\n- **2 from freeCodeCamp** — JS Algorithms & Responsive Web Design\n- **PGDCA** from Survey Institute Gulf Training",
+        answer: "Rihan holds **14 certifications**:\n\n- **11 from Udemy** — Web Dev, React, Node.js, Python, databases, and more\n- **2 from freeCodeCamp** — JS Algorithms & Responsive Web Design\n- **PGDCA** — Utkal University (HDVSc Degree College, Panaspada, Puri)",
     },
     {
         keywords: ["education", "degree", "pgdca", "diploma", "college"],
-        answer: "**Education**\n\n- PGDCA — Utkal University (HDVSc Degree College, Panaspada, Puri)\n- Honors / Regents High School Diploma (2016–2019)",
+        answer: "**Education**\n\n- PGDCA — Utkal University (HDVSc Degree College, Panaspada, Puri) · 2020–2021\n- Honors / Regents High School Diploma (2016–2019)",
     },
     {
         keywords: ["contact", "email", "phone", "reach", "hire", "linkedin"],
@@ -96,7 +96,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["resume", "cv", "download"],
-        answer: "Download Rihan's resume from the **Contact** section on the home page — available as **PDF** or **Word**.",
+        answer: "View Rihan's resume from the **Contact** section — **HTML**, **PDF**, and **Word** downloads. Regenerate from `resume/` in the portfolio repo (`npm run generate:resume`).",
     },
     {
         keywords: ["nestjs", "next.js", "react", "python", "php"],

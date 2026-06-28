@@ -11,8 +11,23 @@ export const statusTargets: StatusTarget[] = [
         type: "internal",
     },
     {
+        name: "Resume HTML",
+        url: "https://im-rihan.github.io/resume.html",
+        type: "internal",
+    },
+    {
         name: "Resume PDF",
         url: "https://im-rihan.github.io/resume.pdf",
+        type: "internal",
+    },
+    {
+        name: "Portfolio Chat",
+        url: "https://im-rihan.github.io/chat/",
+        type: "internal",
+    },
+    {
+        name: "Analytics",
+        url: "https://im-rihan.github.io/status/",
         type: "internal",
     },
     {

@@ -100,6 +100,8 @@ export function ContributionGraph() {
                                         <div
                                             key={`${wi}-${di}-${day.date}`}
                                             className={`${styles.cell} ${styles[`l${Math.min(day.level, 4)}`]}`}
+                                            role="img"
+                                            aria-label={`${day.date}: ${day.count} contribution${day.count !== 1 ? "s" : ""}`}
                                             title={`${day.date}: ${day.count} contribution${day.count !== 1 ? "s" : ""}`}
                                         />
                                     ))}

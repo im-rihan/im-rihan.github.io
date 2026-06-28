@@ -1,7 +1,8 @@
 "use client";
 
 import { siteMeta } from "@/data/profile";
-import { assetPath } from "@/lib/paths";
+import { resumeHtmlUrl, resumePdfUrl, resumeDocxUrl } from "@/lib/resume";
+import { ContactForm } from "./ContactForm";
 import { FadeIn } from "@/components/effects/FadeIn";
 import { TiltCard } from "@/components/effects/TiltCard";
 import { SocialLinks } from "@/components/ui/SocialLinks";
@@ -124,6 +125,8 @@ export function Contact() {
                     </FadeIn>
 
                     <FadeIn delay={0.1} className={styles.side}>
+                        <ContactForm />
+
                         <TiltCard className={styles.resumeCard}>
                             <div className={styles.resumeIcon}>
                                 <FileText size={28} />
@@ -131,17 +134,27 @@ export function Contact() {
                             <h3>Download Resume</h3>
                             <p>Full experience, skills, certifications, and projects in one page.</p>
                             <a
-                                href={assetPath("/resume.pdf")}
+                                href={resumeHtmlUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={`btn btn-primary ${styles.dlBtn}`}
                                 data-cursor="pointer"
                             >
                                 <Download size={18} />
+                                View HTML Resume
+                            </a>
+                            <a
+                                href={resumePdfUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`btn btn-outline ${styles.dlBtn}`}
+                                data-cursor="pointer"
+                            >
+                                <FileText size={18} />
                                 PDF Resume
                             </a>
                             <a
-                                href={assetPath("/resume.docx")}
+                                href={resumeDocxUrl}
                                 className={`btn btn-outline ${styles.dlBtn}`}
                                 data-cursor="pointer"
                             >
