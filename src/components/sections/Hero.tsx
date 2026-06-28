@@ -2,7 +2,7 @@
 
 import { siteMeta } from "@/data/profile";
 import { SectionScrollLink } from "@/components/layout/SectionScrollLink";
-import { assetPath } from "@/lib/paths";
+import { resumePdfUrl } from "@/lib/resume";
 import { FadeIn } from "@/components/effects/FadeIn";
 import { TiltCard } from "@/components/effects/TiltCard";
 import { SocialLinks } from "@/components/ui/SocialLinks";
@@ -96,7 +96,7 @@ export function Hero() {
                             <SectionScrollLink sectionId="projects" className="btn btn-primary">
                                 View My Work
                             </SectionScrollLink>
-                            <a href={assetPath("/resume.pdf")} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
+                            <a href={resumePdfUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline">
                                 Download Resume
                             </a>
                         </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { siteMeta } from "@/data/profile";
-import { assetPath } from "@/lib/paths";
+import { resumePdfUrl, resumeDocxUrl } from "@/lib/resume";
 import { FadeIn } from "@/components/effects/FadeIn";
 import { TiltCard } from "@/components/effects/TiltCard";
 import { SocialLinks } from "@/components/ui/SocialLinks";
@@ -131,9 +131,10 @@ export function Contact() {
                             <h3>Download Resume</h3>
                             <p>Full experience, skills, certifications, and projects in one page.</p>
                             <a
-                                href={assetPath("/resume.pdf")}
+                                href={resumePdfUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                download="Rihan-Mohammed-Resume.pdf"
                                 className={`btn btn-primary ${styles.dlBtn}`}
                                 data-cursor="pointer"
                             >
@@ -141,7 +142,8 @@ export function Contact() {
                                 PDF Resume
                             </a>
                             <a
-                                href={assetPath("/resume.docx")}
+                                href={resumeDocxUrl}
+                                download="Rihan-Mohammed-Resume.docx"
                                 className={`btn btn-outline ${styles.dlBtn}`}
                                 data-cursor="pointer"
                             >
