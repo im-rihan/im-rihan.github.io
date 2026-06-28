@@ -440,6 +440,17 @@ section:first-of-type::before {
     overflow-x: clip;
 }
 
+.main-content--chat {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    max-height: 100dvh;
+    padding-top: calc(var(--nav-h) + var(--safe-top));
+    padding-bottom: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));

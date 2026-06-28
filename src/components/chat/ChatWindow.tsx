@@ -98,6 +98,7 @@ export function ChatWindow() {
     const lastUserPromptRef = useRef("");
     const usedPromptsRef = useRef<Set<string>>(new Set());
     const skipInitialScrollRef = useRef(true);
+    const hydratedScrollDoneRef = useRef(false);
 
     const [activePrompts, setActivePrompts] = useState<string[]>([]);
 
@@ -132,6 +133,13 @@ export function ChatWindow() {
             behavior: smooth ? "smooth" : "auto",
         });
     }, []);
+
+    useEffect(() => {
+        if (!hydrated || hydratedScrollDoneRef.current) return;
+        if (!messages.some((m) => m.role === "user")) return;
+        hydratedScrollDoneRef.current = true;
+        requestAnimationFrame(() => scrollToBottom(false));
+    }, [hydrated, messages, scrollToBottom]);
 
     useEffect(() => {
         if (skipInitialScrollRef.current) {
@@ -278,11 +286,18 @@ export function ChatWindow() {
 
     const busy = thinking || streaming;
     const hasUserMessages = messages.some((m) => m.role === "user");
+    const visibleMessages = hasUserMessages
+        ? messages.filter((m) => m.id !== "welcome")
+        : messages;
     const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
     const canRegenerate = hasUserMessages && lastAssistant && !busy;
 
     return (
-        <div className={styles.shell} data-cursor="card">
+        <div
+            className={styles.shell}
+            data-conversation={hasUserMessages ? "active" : "idle"}
+            data-cursor="card"
+        >
             <div className={styles.glowBorder} aria-hidden />
 
             <header className={styles.header}>
@@ -338,7 +353,7 @@ export function ChatWindow() {
                         </div>
                     )}
 
-                    {messages.map((msg, i) => (
+                    {visibleMessages.map((msg, i) => (
                         <article
                             key={msg.id}
                             className={`${styles.row} ${styles[msg.role]}`}

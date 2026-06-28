@@ -1,10 +1,13 @@
 .shell {
     position: relative;
-    max-width: 860px;
-    margin: 0 auto 80px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
-    height: min(78vh, 720px);
+    flex: 1;
+    min-height: 0;
+    height: 100%;
     overflow: hidden;
     border-radius: 20px;
     background: var(--bg-card);
@@ -162,15 +165,70 @@
 }
 
 .messages {
-    flex: 1;
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 20px 22px;
+    padding: 24px 28px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 22px;
     scroll-behavior: smooth;
     overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.shell[data-conversation="active"] .header {
+    padding: 10px 16px;
+    gap: 10px;
+}
+
+.shell[data-conversation="active"] .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+}
+
+.shell[data-conversation="active"] .avatar svg {
+    width: 24px;
+    height: 24px;
+}
+
+.shell[data-conversation="active"] .headerText h2 {
+    font-size: 0.92rem;
+}
+
+.shell[data-conversation="active"] .headerText p {
+    font-size: 0.72rem;
+}
+
+.shell[data-conversation="active"] .messages {
+    padding: 20px 24px;
+    gap: 18px;
+}
+
+.shell[data-conversation="active"] .msgIcon {
+    display: none;
+}
+
+.shell[data-conversation="active"] .msgBody,
+.shell[data-conversation="active"] .assistant .msgBody {
+    max-width: 100%;
+}
+
+.shell[data-conversation="active"] .bubble {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    padding: 18px 20px;
+}
+
+.shell[data-conversation="active"] .markdown {
+    gap: 12px;
+}
+
+.shell[data-conversation="active"] .markdown li {
+    line-height: 1.65;
 }
 
 .welcomeBanner {
@@ -196,8 +254,9 @@
     display: flex;
     align-items: flex-start;
     gap: 12px;
+    width: 100%;
+    min-width: 0;
     animation: msgIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-    max-width: 100%;
 }
 
 @keyframes msgIn {
@@ -230,15 +289,22 @@
 }
 
 .msgBody {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
-    max-width: min(680px, 88%);
+    max-width: calc(100% - 48px);
 }
 
 .user .msgBody {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
+    margin-left: auto;
+}
+
+.assistant .msgBody {
+    margin-right: auto;
+    max-width: calc(100% - 48px);
+    width: 100%;
 }
 
 .msgMeta {
@@ -267,10 +333,12 @@
 }
 
 .bubble {
-    padding: 14px 16px;
+    padding: 16px 18px;
     border-radius: 16px;
-    font-size: 0.92rem;
-    line-height: 1.6;
+    font-size: 1rem;
+    line-height: 1.7;
+    max-width: 100%;
+    overflow-wrap: anywhere;
     word-break: break-word;
 }
 
@@ -279,6 +347,8 @@
     border: 1px solid var(--border);
     border-top-left-radius: 4px;
     color: var(--text);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .userBubble {
@@ -287,6 +357,8 @@
     border-top-right-radius: 4px;
     box-shadow: 0 6px 24px rgba(20, 184, 166, 0.22);
     white-space: pre-wrap;
+    width: fit-content;
+    max-width: 100%;
 }
 
 .cursor {
@@ -343,10 +415,13 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .markdown p {
     margin: 0;
+    overflow-wrap: anywhere;
 }
 
 .markdown p:last-child {
@@ -369,6 +444,8 @@
     color: var(--primary-light);
     text-decoration: underline;
     text-underline-offset: 2px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .markdown strong {
@@ -392,10 +469,12 @@
     background: var(--code-bg);
     border: 1px solid var(--border);
     overflow-x: auto;
+    max-width: 100%;
     font-family: var(--font-mono), monospace;
     font-size: 0.8rem;
     line-height: 1.55;
     color: var(--code-text);
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Typing / thinking */
@@ -523,6 +602,8 @@
     text-align: left;
     cursor: pointer;
     transition: border-color 0.25s, color 0.25s, transform 0.25s, box-shadow 0.25s;
+    max-width: 100%;
+    overflow-wrap: anywhere;
 }
 
 .promptChip:hover:not(:disabled),
@@ -653,11 +734,41 @@
     font-family: inherit;
 }
 
+@media (max-width: 768px) {
+    .shell {
+        border-radius: 18px;
+    }
+
+    .messages {
+        padding: 16px;
+        gap: 18px;
+    }
+
+    .shell[data-conversation="active"] .messages {
+        padding: 14px 16px;
+    }
+
+    .shell[data-conversation="active"] .bubble {
+        font-size: 1rem;
+        line-height: 1.7;
+        padding: 16px 18px;
+    }
+
+    .msgBody {
+        max-width: calc(100% - 44px);
+    }
+
+    .assistant .msgBody {
+        max-width: calc(100% - 44px);
+    }
+
+    .welcomeBanner {
+        font-size: 0.74rem;
+    }
+}
+
 @media (max-width: 640px) {
     .shell {
-        height: min(calc(100dvh - var(--nav-h) - var(--safe-top) - 160px), 620px);
-        min-height: 360px;
-        margin-bottom: 16px;
         border-radius: 16px;
     }
 
@@ -684,33 +795,52 @@
     }
 
     .messages {
-        padding: 14px;
+        padding: 14px 12px;
         gap: 16px;
     }
 
     .msgBody {
-        max-width: 92%;
+        max-width: calc(100% - 40px);
+    }
+
+    .assistant .msgBody {
+        max-width: calc(100% - 40px);
     }
 
     .msgIcon {
         width: 28px;
         height: 28px;
-        margin-top: 20px;
+        margin-top: 18px;
     }
 
     .bubble {
-        font-size: 0.86rem;
-        padding: 12px 14px;
+        font-size: 0.96rem;
+        padding: 14px 16px;
+        line-height: 1.65;
     }
 
     .msgActions {
         opacity: 1;
     }
 
+    .prompts {
+        padding: 10px 12px 12px;
+    }
+
+    .promptGrid {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
     .promptGrid button,
     .promptChip {
         font-size: 0.72rem;
         padding: 7px 11px;
+        flex-shrink: 0;
+        max-width: min(260px, 78vw);
     }
 
     .shuffleBtn {
@@ -733,6 +863,44 @@
 
     .composerHint {
         font-size: 0.62rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .headerTitleRow {
+        align-items: flex-start;
+    }
+
+    .headerActions {
+        align-self: flex-start;
+    }
+
+    .msgMeta {
+        flex-wrap: wrap;
+        gap: 4px 8px;
+    }
+
+    .user .msgMeta {
+        justify-content: flex-end;
+    }
+
+    .composerHint {
+        display: none;
+    }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+    .prompts {
+        padding: 8px 12px;
+    }
+
+    .promptGrid {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+    }
+
+    .composerHint {
+        display: none;
     }
 }
 

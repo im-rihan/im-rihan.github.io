@@ -18,6 +18,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     const [insightsOpen, setInsightsOpen] = useState(false);
     const pathname = usePathname();
     const showScene = shouldLoadScene(pathname);
+    const isChatPage = pathname === "/chat" || pathname === "/chat/";
 
     return (
         <>
@@ -30,10 +31,13 @@ export function AppShell({ children }: { children: ReactNode }) {
             {showScene && <Scene3D />}
             <CustomCursor />
             <Navbar />
-            <main id="main-content" className="main-content">
+            <main
+                id="main-content"
+                className={`main-content${isChatPage ? " main-content--chat" : ""}`}
+            >
                 {children}
             </main>
-            <Footer />
+            {!isChatPage && <Footer />}
             <ContactDock />
             <InsightsButton onClick={() => setInsightsOpen(true)} />
             <AnalysisOverlay open={insightsOpen} onClose={() => setInsightsOpen(false)} />
