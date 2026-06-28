@@ -28,6 +28,7 @@
 .block h2 {
     font-size: 1.1rem;
     margin-bottom: 12px;
+    color: var(--text);
 }
 
 .block p,

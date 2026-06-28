@@ -155,6 +155,7 @@ export const projects: Project[] = [
         stack: "PHP 8 · MySQL · Redis · Cloudflare Zero Trust",
         description:
             "Webhook-driven integration hub with agent AI tools, nurture campaigns, and multi-channel comms orchestration.",
+        caseStudySlug: "php-3rdpartycomms",
     },
     {
         icon: "💰",
@@ -162,6 +163,7 @@ export const projects: Project[] = [
         stack: "TypeScript · Puppeteer · AWS Lambda · Serverless",
         description:
             "Headless browser microservice scraping live rates from 11 lender portals with pluggable scraper registry.",
+        caseStudySlug: "lambda-mortgage-pricer",
     },
     {
         icon: "📊",
@@ -176,6 +178,7 @@ export const projects: Project[] = [
         stack: "Python · Node.js · Typesense · AWS S3",
         description:
             "End-to-end property data acquisition — multi-source scrapers with chunked/resumable ingestion to MySQL.",
+        caseStudySlug: "property-data-pipelines",
     },
 ];
 

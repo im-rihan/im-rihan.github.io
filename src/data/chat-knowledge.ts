@@ -76,7 +76,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["project", "portfolio", "built"],
-        answer: "Key projects:\n\n- **Ziffy.ai Platform** — [Case study](/work/ziffy-ai-search/) · dual-brand Next.js product\n- **appi Core API** — [Case study](/work/nestjs-appi-api/) · NestJS backend\n- **3rdpartycomms** — PHP webhook hub (60+ integrations)\n- **mortgage-pricer** — Puppeteer on AWS Lambda\n- **estimate-calculator** & **data-pipelines** for property ingestion",
+        answer: "Key projects:\n\n- **Ziffy.ai** — [Case study](/work/ziffy-ai-search/)\n- **appi Core API** — [Case study](/work/nestjs-appi-api/)\n- **3rdpartycomms** — [Case study](/work/php-3rdpartycomms/)\n- **mortgage-pricer** — [Case study](/work/lambda-mortgage-pricer/)\n- **data-pipelines** — [Case study](/work/property-data-pipelines/)\n- **estimate-calculator** — shared TypeScript loan math library",
     },
     {
         keywords: ["certification", "cert", "udemy", "freecodecamp", "course"],
