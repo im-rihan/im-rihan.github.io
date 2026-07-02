@@ -48,7 +48,7 @@ export function ContactDock() {
                     >
                         Full contact
                     </SectionScrollLink>
-                    <Link href="/chat" className={styles.quickBtn} onClick={() => setOpen(false)} data-cursor="pointer">
+                    <Link href="/chat" prefetch={false} className={styles.quickBtn} onClick={() => setOpen(false)} data-cursor="pointer">
                         <MessageCircle size={16} />
                         Chat
                     </Link>

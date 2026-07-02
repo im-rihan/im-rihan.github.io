@@ -9,10 +9,10 @@ export default function NotFound() {
                 <h1>Page not found</h1>
                 <p>The route you requested does not exist on this portfolio.</p>
                 <div className={styles.actions}>
-                    <Link href="/" className="btn btn-primary" data-cursor="pointer">
+                    <Link href="/" prefetch={false} className="btn btn-primary" data-cursor="pointer">
                         Back to home
                     </Link>
-                    <Link href="/chat/" className="btn btn-outline" data-cursor="pointer">
+                    <Link href="/chat/" prefetch={false} className="btn btn-outline" data-cursor="pointer">
                         Portfolio chat
                     </Link>
                 </div>

@@ -36,9 +36,10 @@ interface Spark {
     life: number;
 }
 
-const TRAIL_LENGTH = 16;
+const TRAIL_LENGTH = 10;
 const MAGNETIC_SELECTOR = "a, button, .btn, .glass-card, [data-tilt-card], [data-cursor]";
-const SATELLITE_COUNT = 6;
+const SATELLITE_COUNT = 4;
+const MICRO_PARTICLE_COUNT = 6;
 
 function toNdc(x: number, y: number) {
     return {
@@ -63,8 +64,13 @@ export function CustomCursor() {
     const lastTrailAt = useRef(0);
     const lastMoveAt = useRef(performance.now());
     const lastNdc = useRef({ nx: 0, ny: 0 });
+    const speedRef = useRef(0);
+    const velocityAngleRef = useRef(0);
+    const paintCanvasSizeRef = useRef({ width: 0, height: 0 });
     const chargeStart = useRef(0);
     const pointerRef = useRef({ x: 0, y: 0 });
+    const lastTargetRef = useRef<EventTarget | null>(null);
+    const lastProcessedPos = useRef({ x: -1, y: -1 });
     const chargeRaf = useRef<number | null>(null);
     const chargeRef = useRef(0);
     const modeRef = useRef<CursorMode>("default");
@@ -213,9 +219,123 @@ export function CustomCursor() {
         chargeRaf.current = requestAnimationFrame(tick);
     }, [stopChargeLoop]);
 
+    // The raw `mousemove` listener below only records the latest pointer
+    // position/target — all the actual work (mode + magnetic-offset
+    // resolution via closest()/getBoundingClientRect, spring updates, style
+    // writes, spark/trail spawning) happens here, at most once per animation
+    // frame. Native mousemove can fire far more often than the screen
+    // repaints (especially on precision mice/trackpads/high polling-rate
+    // devices), so doing DOM reads and writes per raw event was the main
+    // source of visible cursor lag/stutter.
+    useEffect(() => {
+        if (!enabled) return;
+        let raf = 0;
+        const tick = () => {
+            const { x, y } = pointerRef.current;
+            const moved = x !== lastProcessedPos.current.x || y !== lastProcessedPos.current.y;
+
+            if (moved) {
+                lastProcessedPos.current = { x, y };
+                const target = lastTargetRef.current;
+                const nextMode = resolveMode(target);
+                if (nextMode !== modeRef.current) {
+                    modeRef.current = nextMode;
+                    setMode(nextMode);
+                }
+                const magnetic = resolveMagneticOffset(target, x, y, nextMode);
+
+                const { nx, ny } = toNdc(x, y);
+                const vnx = nx - lastNdc.current.nx;
+                const vny = ny - lastNdc.current.ny;
+                const spd = Math.hypot(vnx, vny);
+                lastNdc.current = { nx, ny };
+                speedRef.current = spd;
+                if (spd > 0.004) {
+                    velocityAngleRef.current = Math.atan2(vny, vnx) * (180 / Math.PI);
+                }
+                setCursorVelocity(vnx, vny);
+                setCursorPointer(nx, ny);
+                lastMoveAt.current = performance.now();
+
+                if (isDownRef.current && modeRef.current === "default") {
+                    const dx = x - pressPosRef.current.x;
+                    const dy = y - pressPosRef.current.y;
+                    if (Math.hypot(dx, dy) > 10) {
+                        didDragRef.current = true;
+                        paintStroke(x, y);
+                    }
+                }
+
+                dotX.set(x);
+                dotY.set(y);
+                ringX.set(x + magnetic.x);
+                ringY.set(y + magnetic.y);
+                glowX.set(x);
+                glowY.set(y);
+                orbitX.set(x + magnetic.x * 0.5);
+                orbitY.set(y + magnetic.y * 0.5);
+                ringOuterX.set(x + magnetic.x * 0.35);
+                ringOuterY.set(y + magnetic.y * 0.35);
+
+                document.documentElement.style.setProperty("--mouse-x", `${x}px`);
+                document.documentElement.style.setProperty("--mouse-y", `${y}px`);
+                document.documentElement.style.setProperty("--mouse-nx", String(nx));
+                document.documentElement.style.setProperty("--mouse-ny", String(ny));
+                document.documentElement.style.setProperty("--cursor-charge", String(chargeRef.current));
+                document.documentElement.style.setProperty("--cursor-speed", String(spd));
+
+                if (spd > 0.022 && Math.random() < spd * 1.8) {
+                    spawnSparks(
+                        x + (Math.random() - 0.5) * 8,
+                        y + (Math.random() - 0.5) * 8,
+                        1,
+                        Math.min(0.5, spd * 4)
+                    );
+                }
+
+                const now = performance.now();
+                if (now - lastTrailAt.current > 20) {
+                    lastTrailAt.current = now;
+                    const pointId = `${now}-${Math.random().toString(36).slice(2, 8)}`;
+                    setTrail((prev) => [
+                        { id: pointId, x, y },
+                        ...prev.slice(0, TRAIL_LENGTH - 1),
+                    ]);
+                }
+            }
+
+            setSpeed((prev) => (Math.abs(prev - speedRef.current) > 0.0004 ? speedRef.current : prev));
+            setVelocityAngle((prev) =>
+                Math.abs(prev - velocityAngleRef.current) > 0.5 ? velocityAngleRef.current : prev
+            );
+
+            raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+    }, [
+        enabled,
+        dotX,
+        dotY,
+        ringX,
+        ringY,
+        glowX,
+        glowY,
+        orbitX,
+        orbitY,
+        ringOuterX,
+        ringOuterY,
+        resolveMode,
+        resolveMagneticOffset,
+        paintStroke,
+        spawnSparks,
+    ]);
+
     useEffect(() => {
         if (!sparks.length) return;
-        const id = window.setInterval(() => {
+        // rAF instead of setInterval(16) so spark physics stay locked to actual
+        // paint frames rather than drifting/stacking under main-thread load.
+        let raf = requestAnimationFrame(function tick() {
             setSparks((prev) =>
                 prev
                     .map((s) => ({
@@ -227,8 +347,9 @@ export function CustomCursor() {
                     }))
                     .filter((s) => s.life > 0)
             );
-        }, 16);
-        return () => window.clearInterval(id);
+            raf = requestAnimationFrame(tick);
+        });
+        return () => cancelAnimationFrame(raf);
     }, [sparks.length]);
 
     useEffect(() => {
@@ -248,8 +369,14 @@ export function CustomCursor() {
         const resizePaint = () => {
             const canvas = paintCanvasRef.current;
             if (!canvas) return;
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            const w = window.innerWidth;
+            const h = window.innerHeight;
+            // Setting canvas.width/height clears it and forces layout — skip when
+            // the size hasn't meaningfully changed (e.g. mobile address-bar shifts).
+            if (paintCanvasSizeRef.current.width === w && paintCanvasSizeRef.current.height === h) return;
+            paintCanvasSizeRef.current = { width: w, height: h };
+            canvas.width = w;
+            canvas.height = h;
         };
         resizePaint();
         window.addEventListener("resize", resizePaint);
@@ -273,72 +400,13 @@ export function CustomCursor() {
             setCursorIdle(ms);
         }, 200);
 
+        // Kept intentionally trivial: just stash the latest position/target
+        // for the per-frame effect above to process. Native mousemove events
+        // can fire far more often than the display refreshes, so no DOM
+        // reads/writes or state updates happen directly in this handler.
         const move = (e: MouseEvent) => {
-            const nextMode = resolveMode(e.target);
-            modeRef.current = nextMode;
-            setMode(nextMode);
-            const magnetic = resolveMagneticOffset(e.target, e.clientX, e.clientY, nextMode);
             pointerRef.current = { x: e.clientX, y: e.clientY };
-
-            const { nx, ny } = toNdc(e.clientX, e.clientY);
-            const vnx = nx - lastNdc.current.nx;
-            const vny = ny - lastNdc.current.ny;
-            const spd = Math.hypot(vnx, vny);
-            lastNdc.current = { nx, ny };
-            setSpeed(spd);
-            if (spd > 0.004) {
-                setVelocityAngle(Math.atan2(vny, vnx) * (180 / Math.PI));
-            }
-            setCursorVelocity(vnx, vny);
-            setCursorPointer(nx, ny);
-            lastMoveAt.current = performance.now();
-
-            if (isDownRef.current && modeRef.current === "default") {
-                const dx = e.clientX - pressPosRef.current.x;
-                const dy = e.clientY - pressPosRef.current.y;
-                if (Math.hypot(dx, dy) > 10) {
-                    didDragRef.current = true;
-                    paintStroke(e.clientX, e.clientY);
-                }
-            }
-
-            dotX.set(e.clientX);
-            dotY.set(e.clientY);
-            ringX.set(e.clientX + magnetic.x);
-            ringY.set(e.clientY + magnetic.y);
-            glowX.set(e.clientX);
-            glowY.set(e.clientY);
-            orbitX.set(e.clientX + magnetic.x * 0.5);
-            orbitY.set(e.clientY + magnetic.y * 0.5);
-            ringOuterX.set(e.clientX + magnetic.x * 0.35);
-            ringOuterY.set(e.clientY + magnetic.y * 0.35);
-
-            document.documentElement.style.setProperty("--mouse-x", `${e.clientX}px`);
-            document.documentElement.style.setProperty("--mouse-y", `${e.clientY}px`);
-            document.documentElement.style.setProperty("--mouse-nx", String(nx));
-            document.documentElement.style.setProperty("--mouse-ny", String(ny));
-            document.documentElement.style.setProperty("--cursor-charge", String(chargeRef.current));
-            document.documentElement.style.setProperty("--cursor-speed", String(spd));
-
-            if (spd > 0.022 && Math.random() < spd * 1.8) {
-                spawnSparks(
-                    e.clientX + (Math.random() - 0.5) * 8,
-                    e.clientY + (Math.random() - 0.5) * 8,
-                    1,
-                    Math.min(0.5, spd * 4)
-                );
-            }
-
-            const now = performance.now();
-            if (now - lastTrailAt.current > 20) {
-                lastTrailAt.current = now;
-                const pointId = `${now}-${Math.random().toString(36).slice(2, 8)}`;
-                setTrail((prev) => [
-                    { id: pointId, x: e.clientX, y: e.clientY },
-                    ...prev.slice(0, TRAIL_LENGTH - 1),
-                ]);
-            }
-
+            lastTargetRef.current = e.target;
             setVisible(true);
         };
 
@@ -413,24 +481,7 @@ export function CustomCursor() {
             document.documentElement.removeEventListener("mouseleave", leave);
             document.documentElement.removeEventListener("mouseenter", enter);
         };
-    }, [
-        dotX,
-        dotY,
-        ringX,
-        ringY,
-        glowX,
-        glowY,
-        orbitX,
-        orbitY,
-        ringOuterX,
-        ringOuterY,
-        resolveMode,
-        resolveMagneticOffset,
-        fireBurst,
-        startChargeLoop,
-        stopChargeLoop,
-        paintStroke,
-    ]);
+    }, [resolveMode, fireBurst, startChargeLoop, stopChargeLoop]);
 
     if (!enabled || !visible) return null;
 
@@ -485,7 +536,7 @@ export function CustomCursor() {
             )}
             {mode === "default" && (
                 <motion.div className={styles.microOrbit} style={{ x: dotX, y: dotY }} aria-hidden>
-                    {Array.from({ length: 10 }, (_, i) => (
+                    {Array.from({ length: MICRO_PARTICLE_COUNT }, (_, i) => (
                         <span key={i} className={styles.microParticle} style={{ ["--i" as string]: i }} />
                     ))}
                 </motion.div>

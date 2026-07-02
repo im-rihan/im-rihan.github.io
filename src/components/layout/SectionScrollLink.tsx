@@ -39,7 +39,7 @@ export function SectionScrollLink({
     };
 
     return (
-        <Link href={href} className={className} onClick={handleClick} data-cursor="pointer" {...rest}>
+        <Link href={href} prefetch={false} className={className} onClick={handleClick} data-cursor="pointer" {...rest}>
             {children}
         </Link>
     );

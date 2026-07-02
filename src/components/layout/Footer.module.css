@@ -1,5 +1,5 @@
 .footer {
-    padding: 40px 0 calc(var(--fab-inset) + var(--fab-size) + 16px);
+    padding: 40px 0;
     border-top: 1px solid var(--border);
     text-align: center;
     font-size: 0.85rem;
@@ -7,28 +7,6 @@
     position: relative;
     z-index: 1;
     background: linear-gradient(180deg, rgba(15, 118, 110, 0.03) 0%, transparent 40%);
-}
-
-.nav {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 8px 20px;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border);
-}
-
-.navLink {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.navLink:hover {
-    color: var(--primary-light);
 }
 
 .copy {
@@ -51,24 +29,9 @@
     background: linear-gradient(180deg, rgba(15, 118, 110, 0.04) 0%, transparent 45%);
 }
 
-:global(html.light) .navLink:hover {
-    color: var(--primary-dark);
-}
-
 @media (max-width: 768px) {
     .footer {
-        padding: 32px max(16px, var(--safe-left)) calc(var(--fab-inset) + var(--fab-size) + var(--safe-bottom) + 8px)
-            max(16px, var(--safe-right));
-    }
-
-    .nav {
-        gap: 6px 16px;
-        margin-bottom: 16px;
-        padding-bottom: 16px;
-    }
-
-    .navLink {
-        font-size: 0.78rem;
+        padding: 32px max(16px, var(--safe-left)) calc(24px + var(--safe-bottom)) max(16px, var(--safe-right));
     }
 
     .copy {

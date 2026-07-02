@@ -24,7 +24,7 @@ function ProjectActions({ project }: { project: Project }) {
                 </a>
             )}
             {project.caseStudySlug && (
-                <Link href={`/work/${project.caseStudySlug}/`} className={styles.actionLink} data-cursor="pointer">
+                <Link href={`/work/${project.caseStudySlug}/`} prefetch={false} className={styles.actionLink} data-cursor="pointer">
                     <BookOpen size={14} />
                     Case study
                 </Link>
@@ -52,7 +52,7 @@ export function Projects() {
                                 Featured <span>Projects</span>
                             </h2>
                         </div>
-                        <Link href="/work/" className={styles.viewAll} data-cursor="pointer">
+                        <Link href="/work/" prefetch={false} className={styles.viewAll} data-cursor="pointer">
                             All case studies
                             <ArrowRight size={16} aria-hidden />
                         </Link>

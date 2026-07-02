@@ -9,7 +9,7 @@ import styles from "./ThemeToggle.module.css";
 export function ThemeToggle() {
     const { resolvedTheme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    const [sceneOn, setSceneOn] = useState(true);
+    const [sceneOn, setSceneOn] = useState(false);
 
     useEffect(() => {
         setMounted(true);

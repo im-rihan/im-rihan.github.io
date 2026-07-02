@@ -38,29 +38,36 @@ export function smoothStep(current: number, target: number, delta: number, smoot
     return THREE.MathUtils.lerp(current, target, factor);
 }
 
+/** Typical iOS/Android address-bar show/hide height delta — used to tell a
+ *  real layout resize apart from mobile browser chrome animating during scroll. */
+const CHROME_SHIFT_THRESHOLD = 120;
+/** Wait for the browser chrome height animation to settle before recomputing
+ *  camera-affecting aspect ratio — avoids re-framing the 3D scene mid-scroll. */
+const CHROME_SHIFT_SETTLE_MS = 220;
+
 export function useViewportTracker(
     container: HTMLElement | null,
     onTargetChange?: (mobileTarget: number) => void
 ): ViewportRef {
     const ref = useRef<ViewportSnapshot>(createViewportSnapshot());
     const settleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const prevTarget = useRef(-1);
+    const lastAppliedRef = useRef({ width: 0, height: 0 });
 
     useEffect(() => {
         if (!container) return;
 
         const mq = window.matchMedia("(max-width: 768px)");
 
-        const apply = () => {
-            const w = window.visualViewport?.width ?? window.innerWidth;
-            const h = window.visualViewport?.height ?? window.innerHeight;
+        const commit = (w: number, h: number) => {
             const snap = ref.current;
-
             snap.width = w;
             snap.height = h;
             snap.aspect = w / Math.max(h, 1);
             snap.mobileTarget = mq.matches ? 1 : 0;
             snap.isAnimating = true;
+            lastAppliedRef.current = { width: w, height: h };
 
             if (prevTarget.current !== snap.mobileTarget) {
                 prevTarget.current = snap.mobileTarget;
@@ -72,22 +79,59 @@ export function useViewportTracker(
                 snap.isAnimating = false;
             }, 520);
 
+            // Only notify other viewport-driven trackers (scroll progress, cursor
+            // canvas sizing) once a change has actually settled — not on every
+            // micro-tick while mobile browser chrome is animating.
             window.dispatchEvent(new Event("resize"));
         };
 
-        const ro = new ResizeObserver(apply);
+        const apply = (immediate = false) => {
+            const w = window.visualViewport?.width ?? window.innerWidth;
+            const h = window.visualViewport?.height ?? window.innerHeight;
+            const { width: lastW, height: lastH } = lastAppliedRef.current;
+
+            if (debounceRef.current) {
+                clearTimeout(debounceRef.current);
+                debounceRef.current = null;
+            }
+
+            const widthChanged = Math.abs(w - lastW) > 1;
+            const heightDelta = Math.abs(h - lastH);
+            const looksLikeChromeShift =
+                !immediate && !widthChanged && heightDelta > 0 && heightDelta < CHROME_SHIFT_THRESHOLD;
+
+            if (immediate || widthChanged || heightDelta >= CHROME_SHIFT_THRESHOLD) {
+                commit(w, h);
+                return;
+            }
+
+            if (looksLikeChromeShift) {
+                debounceRef.current = setTimeout(() => commit(w, h), CHROME_SHIFT_SETTLE_MS);
+                return;
+            }
+
+            commit(w, h);
+        };
+
+        const onResizeObserved = () => apply();
+        const onMqChange = () => apply(true);
+        const onVisualViewportResize = () => apply();
+        const onOrientationChange = () => apply(true);
+
+        const ro = new ResizeObserver(onResizeObserved);
         ro.observe(container);
-        mq.addEventListener("change", apply);
-        window.visualViewport?.addEventListener("resize", apply);
-        window.addEventListener("orientationchange", apply);
-        apply();
+        mq.addEventListener("change", onMqChange);
+        window.visualViewport?.addEventListener("resize", onVisualViewportResize);
+        window.addEventListener("orientationchange", onOrientationChange);
+        apply(true);
 
         return () => {
             ro.disconnect();
-            mq.removeEventListener("change", apply);
-            window.visualViewport?.removeEventListener("resize", apply);
-            window.removeEventListener("orientationchange", apply);
+            mq.removeEventListener("change", onMqChange);
+            window.visualViewport?.removeEventListener("resize", onVisualViewportResize);
+            window.removeEventListener("orientationchange", onOrientationChange);
             if (settleRef.current) clearTimeout(settleRef.current);
+            if (debounceRef.current) clearTimeout(debounceRef.current);
         };
     }, [container]);
 

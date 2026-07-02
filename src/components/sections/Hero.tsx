@@ -97,7 +97,7 @@ export function Hero() {
                             <SectionScrollLink sectionId="projects" className="btn btn-primary">
                                 View My Work
                             </SectionScrollLink>
-                            <Link href="/work/" className="btn btn-outline" data-cursor="pointer">
+                            <Link href="/work/" prefetch={false} className="btn btn-outline" data-cursor="pointer">
                                 Case Studies
                             </Link>
                             <a

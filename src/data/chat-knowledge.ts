@@ -59,7 +59,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
         answer: "Hi! I'm **Rihan's portfolio assistant**. I can answer questions about his skills, experience, projects, certifications, and contact info.\n\nAsk anything from the suggested prompts, or type your own question.",
     },
     {
-        keywords: ["stack", "tech", "skills", "technologies", "framework"],
+        keywords: ["stack", "tech", "skills", "technologies", "framework", "aws", "devops", "langchain", "ai", "cloud", "lambda", "docker"],
         answer: "Rihan's core stack:\n\n- **Frontend:** React, Next.js, TypeScript, CSS Modules, Framer Motion, React Three Fiber\n- **Backend:** NestJS, Node.js, PHP 8, REST APIs, BullMQ, SSE streaming\n- **Data:** MySQL, Redis, Supabase, Typesense, Python data pipelines\n- **AI / cloud:** LangChain, AWS Lambda, Docker, GitHub Actions, Vercel\n\nHe specializes in **fintech and real-estate platforms** at production scale.",
     },
     {

@@ -61,6 +61,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
                         <Link
                             key={link.href}
                             href={link.href}
+                            prefetch={false}
                             className="btn btn-primary"
                             data-cursor="pointer"
                             {...(link.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}

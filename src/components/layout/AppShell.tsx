@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
@@ -17,7 +17,17 @@ import { shouldLoadScene } from "@/lib/scene-preference";
 export function AppShell({ children }: { children: ReactNode }) {
     const [insightsOpen, setInsightsOpen] = useState(false);
     const pathname = usePathname();
-    const showScene = shouldLoadScene(pathname);
+    // Start false so the first client render always matches the statically
+    // exported server HTML (which has no window/localStorage access), then
+    // resolve the real preference post-mount to avoid a hydration mismatch.
+    const [showScene, setShowScene] = useState(false);
+
+    useEffect(() => {
+        setShowScene(shouldLoadScene(pathname));
+        const sync = () => setShowScene(shouldLoadScene(pathname));
+        window.addEventListener("scene-preference-change", sync);
+        return () => window.removeEventListener("scene-preference-change", sync);
+    }, [pathname]);
 
     return (
         <>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, type RefObject } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import type { Group, Mesh, PointLight, Points } from "three";
 import * as THREE from "three";
 import {
@@ -215,6 +215,7 @@ function CursorSparkTrail() {
     const history = useRef<{ x: number; y: number; z: number }[]>(
         Array.from({ length: count }, () => ({ x: 0, y: 0, z: 0 }))
     );
+    const primed = useRef(false);
 
     useFrame((state) => {
         if (!ref.current) return;
@@ -228,6 +229,14 @@ function CursorSparkTrail() {
             y: py * 2.8,
             z: 1.2 + charge * 0.8 + speed * 0.15,
         };
+
+        if (!primed.current) {
+            // Seed the whole trail at the first real position instead of the
+            // world origin — avoids a stray line rendering from the globe's
+            // center out to the cursor right after mount.
+            history.current = Array.from({ length: count }, () => ({ ...head }));
+            primed.current = true;
+        }
 
         history.current.pop();
         history.current.unshift(head);
@@ -451,79 +460,6 @@ function CursorGravityDust() {
     );
 }
 
-function ConstellationWeb() {
-    const anchors = useMemo(
-        () =>
-            Array.from({ length: 8 }, (_, i) => {
-                const a = (i / 8) * Math.PI * 2;
-                return new THREE.Vector3(Math.cos(a) * 5.5, Math.sin(a * 1.3) * 2.8, Math.sin(a) * 3.2);
-            }),
-        []
-    );
-    const cursorWorld = useRef(new THREE.Vector3());
-    const { camera } = useThree();
-
-    useFrame((state) => {
-        const { nx, ny } = getCursorPointer();
-        const { speed } = getCursorVelocity();
-        const depth = 2.5 + speed * 0.8;
-        cursorWorld.current.copy(ndcToWorld(nx, ny, camera, depth));
-    });
-
-    return (
-        <group>
-            {anchors.map((anchor, i) => (
-                <ConstellationLine key={i} from={anchor} toRef={cursorWorld} index={i} />
-            ))}
-        </group>
-    );
-}
-
-function ConstellationLine({
-    from,
-    toRef,
-    index,
-}: {
-    from: THREE.Vector3;
-    toRef: RefObject<THREE.Vector3 | null>;
-    index: number;
-}) {
-    const lineObj = useMemo(() => {
-        const geom = new THREE.BufferGeometry().setFromPoints([from.clone(), from.clone()]);
-        const mat = new THREE.LineBasicMaterial({
-            color: "#22d3ee",
-            transparent: true,
-            opacity: 0.08,
-            blending: THREE.AdditiveBlending,
-        });
-        return new THREE.Line(geom, mat);
-    }, [from]);
-
-    useFrame((state) => {
-        if (!toRef.current) return;
-        const { speed } = getCursorVelocity();
-        const charge = getCursorCharge();
-        if (charge > 0.12) {
-            (lineObj.material as THREE.LineBasicMaterial).opacity = 0;
-            return;
-        }
-        const opacity = THREE.MathUtils.clamp(speed * 0.14, 0, 0.14);
-        if (opacity < 0.02) {
-            (lineObj.material as THREE.LineBasicMaterial).opacity = 0;
-            return;
-        }
-        const wobble = Math.sin(state.clock.elapsedTime * 1.2 + index) * 0.05;
-
-        const end = toRef.current.clone();
-        end.x += wobble;
-        end.y += wobble * 0.5;
-        lineObj.geometry.setFromPoints([from, end]);
-        (lineObj.material as THREE.LineBasicMaterial).opacity = opacity;
-    });
-
-    return <primitive object={lineObj} />;
-}
-
 function ChargeGlobeAura({ isLight }: { isLight: boolean }) {
     const theme = getSceneTheme(isLight);
     const ringRef = useRef<Mesh>(null);
@@ -564,45 +500,6 @@ function ChargeGlobeAura({ isLight }: { isLight: boolean }) {
             </mesh>
         </group>
     );
-}
-
-function EnergyTether({ isLight }: { isLight: boolean }) {
-    const theme = getSceneTheme(isLight);
-    const end = useRef(new THREE.Vector3());
-    const { camera } = useThree();
-    const lineObj = useMemo(() => {
-        const geom = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(0, 0, 0),
-            new THREE.Vector3(0, 0, 1),
-        ]);
-        const mat = new THREE.LineBasicMaterial({
-            color: theme.primary,
-            transparent: true,
-            opacity: 0.12,
-            blending: THREE.AdditiveBlending,
-        });
-        return new THREE.Line(geom, mat);
-    }, [theme.primary]);
-
-    useFrame((state) => {
-        const charge = getCursorCharge();
-        const { nx, ny } = getCursorPointer();
-        const { speed } = getCursorVelocity();
-        if (charge > 0.15 || isCursorDragging()) {
-            (lineObj.material as THREE.LineBasicMaterial).opacity = 0;
-            return;
-        }
-        end.current.copy(ndcToWorld(nx, ny, camera, 2.8));
-        end.current.x += Math.sin(state.clock.elapsedTime * 3) * 0.04 * speed;
-        lineObj.geometry.setFromPoints([new THREE.Vector3(0, 0, 0), end.current]);
-        (lineObj.material as THREE.LineBasicMaterial).opacity = THREE.MathUtils.clamp(
-            speed * 0.1,
-            0,
-            0.16
-        );
-    });
-
-    return <primitive object={lineObj} />;
 }
 
 function FloatingGlyphs({ isLight }: { isLight: boolean }) {
@@ -1077,9 +974,7 @@ export function SceneInteractions({ isLight }: { isLight: boolean }) {
             <CursorGravityDust />
             <VelocityEmbers isLight={isLight} />
             <CursorWakeRing isLight={isLight} />
-            <ConstellationWeb />
             <ChargeGlobeAura isLight={isLight} />
-            <EnergyTether isLight={isLight} />
             <HoloScanSweep isLight={isLight} />
             <OrbitingMotes isLight={isLight} />
             <CursorSparkTrail />

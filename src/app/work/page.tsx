@@ -29,6 +29,7 @@ export default function WorkIndexPage() {
                         <Link
                             key={study.slug}
                             href={`/work/${study.slug}/`}
+                            prefetch={false}
                             className={`glass-card ${styles.card}`}
                             data-cursor="pointer"
                         >

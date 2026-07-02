@@ -9,7 +9,7 @@ interface LogoProps {
 
 export function Logo({ compact = false, onNavigate }: LogoProps) {
     return (
-        <Link href="/" className={styles.logo} aria-label="Rihan Mohammed — Home" onClick={onNavigate} data-cursor="nav">
+        <Link href="/" prefetch={false} className={styles.logo} aria-label="Rihan Mohammed — Home" onClick={onNavigate} data-cursor="nav">
             <span className={styles.mark}>
                 <LogoMark />
             </span>

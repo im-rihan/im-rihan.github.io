@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Grid, Sparkles, Stars } from "@react-three/drei";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Group, Mesh, Points } from "three";
 import * as THREE from "three";
 import { getCursorCharge, getCursorPointer, getCursorVelocity } from "@/lib/cursor-signals";
@@ -990,6 +990,21 @@ export function SceneCanvas({
     const [isCompact, setIsCompact] = useState(false);
     const viewportRef = useViewportTracker(container, (target) => setIsCompact(target === 1));
 
+    // Stop the render loop entirely while the tab is hidden — no visible frames
+    // are lost (nothing is drawn) and it avoids burning CPU/GPU in the background
+    // plus a visible "catch-up" jank burst when switching back.
+    const [frameloop, setFrameloop] = useState<"always" | "never">(
+        typeof document !== "undefined" && document.hidden ? "never" : "always"
+    );
+
+    useEffect(() => {
+        const onVisibilityChange = () => {
+            setFrameloop(document.hidden ? "never" : "always");
+        };
+        document.addEventListener("visibilitychange", onVisibilityChange);
+        return () => document.removeEventListener("visibilitychange", onVisibilityChange);
+    }, []);
+
     return (
         <Canvas
             eventSource={container}
@@ -999,6 +1014,7 @@ export function SceneCanvas({
             style={{ width: "100%", height: "100%", background: "transparent", display: "block" }}
             dpr={isCompact ? 1 : [1, 1.4]}
             resize={{ scroll: false, debounce: { scroll: 50, resize: 0 } }}
+            frameloop={frameloop}
         >
             <ViewportDriver viewportRef={viewportRef} />
             <ResponsiveCamera viewportRef={viewportRef} />

@@ -17,7 +17,21 @@ export function Scene3D() {
     const opacityRef = useRef(0.92);
 
     useEffect(() => {
-        setReady(true);
+        // Mount the heavy three.js/drei bundle once the browser is idle (or after
+        // a max wait) so it doesn't compete with the initial page paint and
+        // above-the-fold content for the main thread.
+        const win = window as typeof window & {
+            requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
+            cancelIdleCallback?: (handle: number) => void;
+        };
+
+        if (typeof win.requestIdleCallback === "function") {
+            const handle = win.requestIdleCallback(() => setReady(true), { timeout: 1500 });
+            return () => win.cancelIdleCallback?.(handle);
+        }
+
+        const timeout = window.setTimeout(() => setReady(true), 200);
+        return () => window.clearTimeout(timeout);
     }, []);
 
     useEffect(() => bindSceneScrollTracker(), []);

@@ -1,16 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./BackgroundFX.module.css";
 
 /** CSS-only ambient effects — aurora, grid, scanlines, glow orbs, vignette. */
 export function BackgroundFX() {
+    const pointerRef = useRef({ nx: 0, ny: 0 });
+
     useEffect(() => {
         const onMove = (clientX: number, clientY: number) => {
-            const nx = (clientX / window.innerWidth) * 2 - 1;
-            const ny = -((clientY / window.innerHeight) * 2 - 1);
-            document.documentElement.style.setProperty("--mouse-nx", String(nx));
-            document.documentElement.style.setProperty("--mouse-ny", String(ny));
+            pointerRef.current = {
+                nx: (clientX / window.innerWidth) * 2 - 1,
+                ny: -((clientY / window.innerHeight) * 2 - 1),
+            };
         };
 
         const onMouse = (e: MouseEvent) => onMove(e.clientX, e.clientY);
@@ -19,9 +21,26 @@ export function BackgroundFX() {
             if (t) onMove(t.clientX, t.clientY);
         };
 
+        // Raw mousemove/touchmove can fire far more often than the screen
+        // repaints. Writing custom properties on <html> triggers a style
+        // recalc for every CSS rule that reads them (parallax orbs, glow),
+        // so batch the actual write to at most once per animation frame.
+        const applied = { nx: NaN, ny: NaN };
+        let raf = requestAnimationFrame(function tick() {
+            const { nx, ny } = pointerRef.current;
+            if (nx !== applied.nx || ny !== applied.ny) {
+                applied.nx = nx;
+                applied.ny = ny;
+                document.documentElement.style.setProperty("--mouse-nx", String(nx));
+                document.documentElement.style.setProperty("--mouse-ny", String(ny));
+            }
+            raf = requestAnimationFrame(tick);
+        });
+
         window.addEventListener("mousemove", onMouse, { passive: true });
         window.addEventListener("touchmove", onTouch, { passive: true });
         return () => {
+            cancelAnimationFrame(raf);
             window.removeEventListener("mousemove", onMouse);
             window.removeEventListener("touchmove", onTouch);
         };
