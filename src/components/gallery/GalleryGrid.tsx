@@ -49,7 +49,12 @@ export function GalleryGrid() {
                             data-cursor="card"
                             onClick={() => setLightbox(item)}
                         >
-                            <div className={styles.media} style={{ background: item.gradient }} aria-hidden />
+                            <div className={styles.media} style={item.image ? undefined : { background: item.gradient }}>
+                                {item.image && (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={item.image} alt="" loading="lazy" className={styles.mediaImg} />
+                                )}
+                            </div>
                             <div className={styles.body}>
                                 <span className={styles.category}>{item.category}</span>
                                 <h3>{item.title}</h3>
@@ -62,15 +67,30 @@ export function GalleryGrid() {
             </div>
 
             {lightbox && (
-                <div
-                    className={styles.lightbox}
-                    onClick={() => setLightbox(null)}
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="gallery-lightbox-title"
-                >
-                    <div className={`glass-card ${styles.lightboxInner}`} onClick={(e) => e.stopPropagation()}>
-                        <div className={styles.lightboxMedia} style={{ background: lightbox.gradient }} aria-hidden />
+                // Backdrop is a mouse-only convenience for dismissing the modal — the real
+                // keyboard equivalent is the global Escape handler above plus the visible
+                // Close button below, so no keyboard listener is needed directly on it.
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+                <div className={styles.lightbox} onClick={() => setLightbox(null)}>
+                    {/* Purely stops the backdrop's dismiss-on-click from bubbling up —
+                        not a real interaction, so no keyboard equivalent is needed. */}
+                    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
+                    <div
+                        className={`glass-card ${styles.lightboxInner}`}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="gallery-lightbox-title"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div
+                            className={styles.lightboxMedia}
+                            style={lightbox.image ? undefined : { background: lightbox.gradient }}
+                        >
+                            {lightbox.image && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img src={lightbox.image} alt="" loading="lazy" className={styles.mediaImg} />
+                            )}
+                        </div>
                         <div className={styles.lightboxBody}>
                             <span className={styles.category}>{lightbox.category}</span>
                             <h2 id="gallery-lightbox-title">{lightbox.title}</h2>

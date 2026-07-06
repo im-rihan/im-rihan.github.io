@@ -14,6 +14,7 @@ import styles from "./Navbar.module.css";
 const pageLinks = [
     { href: "/", label: "Home" },
     { href: "/work", label: "Work" },
+    { href: "/blog", label: "Blog" },
     { href: "/chat", label: "Chat" },
     { href: "/github", label: "GitHub" },
     { href: "/gallery", label: "Gallery" },

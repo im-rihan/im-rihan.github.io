@@ -113,6 +113,11 @@ svgToPngFile("public/og-image-dark.svg", "public/og-image.png", OG_WIDTH);
 svgToPngFile("public/brand-logo-light.svg", "public/brand-logo-light.png", BRAND_WIDTH);
 svgToPngFile("public/brand-logo-dark.svg", "public/brand-logo-dark.png", BRAND_WIDTH);
 
+// PWA manifest icons
+svgToPngFile("public/favicon.svg", "public/icon-192.png", 192);
+svgToPngFile("public/favicon.svg", "public/icon-512.png", 512);
+svgToPngFile("public/icon-maskable.svg", "public/icon-maskable-512.png", 512);
+
 buildGif({
     inputSvgPath: "public/og-image-dark.svg",
     outputGifPath: "public/og-image-dark.gif",

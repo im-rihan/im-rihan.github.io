@@ -18,6 +18,7 @@ import { statusGroupLabels, statusTargets, type StatusGroup } from "@/data/statu
 import { portfolioStats, skillGroups } from "@/data/profile";
 import { VisitorMonitor } from "@/components/analytics/VisitorMonitor";
 import { SystemMetrics } from "@/components/analytics/SystemMetrics";
+import { WebVitalsPanel } from "@/components/analytics/WebVitalsPanel";
 import {
     checkAllLinks,
     computeOverallHealth,
@@ -185,6 +186,7 @@ export function StatusDashboard() {
     return (
         <div className={styles.wrapper}>
             <SystemMetrics networkLatencyMs={avgMs} />
+            <WebVitalsPanel />
             <VisitorMonitor />
 
             {!checking && links.length > 0 && (

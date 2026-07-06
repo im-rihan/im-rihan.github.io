@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { caseStudies, getCaseStudy } from "@/data/case-studies";
-import { createPageMetadata } from "@/lib/site-metadata";
+import { createPageMetadata, siteUrl } from "@/lib/site-metadata";
+import { siteMeta } from "@/data/profile";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { PageJsonLd } from "@/components/seo/PageJsonLd";
 import styles from "./case-study.module.css";
 
 export function generateStaticParams() {
@@ -21,8 +23,32 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
     const study = getCaseStudy(slug);
     if (!study) notFound();
 
+    const studyUrl = `${siteUrl}/work/${slug}/`;
+
+    const creativeWork = {
+        "@context": "https://schema.org",
+        "@type": "CreativeWork",
+        name: study.title,
+        description: study.subtitle,
+        url: studyUrl,
+        keywords: study.stack.join(", "),
+        creator: { "@type": "Person", name: siteMeta.name, url: siteUrl },
+        about: study.problem,
+    };
+
+    const breadcrumb = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: siteUrl },
+            { "@type": "ListItem", position: 2, name: "Case Studies", item: `${siteUrl}/work/` },
+            { "@type": "ListItem", position: 3, name: study.title, item: studyUrl },
+        ],
+    };
+
     return (
         <>
+            <PageJsonLd data={[creativeWork, breadcrumb]} />
             <PageHeader title={study.title} description={study.subtitle} />
             <div className={`container ${styles.page}`}>
                 <div className={styles.stack}>

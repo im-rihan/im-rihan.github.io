@@ -50,24 +50,24 @@ interface SocialLinksProps {
 
 export function SocialLinks({ size = "md", className = "" }: SocialLinksProps) {
     return (
-        <div className={`${styles.row} ${styles[size]} ${className}`} role="list">
+        <ul className={`${styles.row} ${styles[size]} ${className}`}>
             {socialItems.map(({ id, href, label, Icon, external }) => (
-                <a
-                    key={id}
-                    href={href}
-                    className={`${styles.link} ${styles[id]}`}
-                    target={external ? "_blank" : undefined}
-                    rel={external ? "noopener noreferrer" : undefined}
-                    aria-label={label}
-                    data-cursor="pointer"
-                    role="listitem"
-                >
-                    <span className={styles.iconWrap}>
-                        <Icon size={size === "sm" ? 16 : size === "lg" ? 22 : 18} />
-                    </span>
-                    <span className={styles.tooltip}>{label}</span>
-                </a>
+                <li key={id} className={styles.item}>
+                    <a
+                        href={href}
+                        className={`${styles.link} ${styles[id]}`}
+                        target={external ? "_blank" : undefined}
+                        rel={external ? "noopener noreferrer" : undefined}
+                        aria-label={label}
+                        data-cursor="pointer"
+                    >
+                        <span className={styles.iconWrap}>
+                            <Icon size={size === "sm" ? 16 : size === "lg" ? 22 : 18} />
+                        </span>
+                        <span className={styles.tooltip}>{label}</span>
+                    </a>
+                </li>
             ))}
-        </div>
+        </ul>
     );
 }
