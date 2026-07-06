@@ -20,23 +20,34 @@ import {
     type VisitorStats,
 } from "@/lib/visitor-analytics";
 import { countryFlagSrc, countryFlagEmoji } from "@/lib/country-flag";
-import { getCountryCoords } from "@/data/country-coordinates";
+import { getCountryCoords, hasCountryCoords } from "@/data/country-coordinates";
 import { aggregateByField, formatVisitTime, topCountryShare } from "@/lib/analytics-insights";
 import styles from "./VisitorMonitor.module.css";
 
-const WORLD_MAP_SRC =
-    "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/World_map_blank_without_borders.svg/1280px-World_map_blank_without_borders.svg.png";
+const WORLD_MAP_SRC = "/world-map.png";
+const HOME_HUB_CODE = "IN";
+const MAX_SPOKES = 6;
 
-function projectPercent(lon: number, lat: number): { left: number; top: number } {
-    return {
-        left: ((lon + 180) / 360) * 100,
-        top: ((90 - lat) / 180) * 100,
-    };
+interface MapPoint {
+    xPct: number;
+    yPct: number;
+    svgX: number;
+    svgY: number;
+}
+
+function projectMapPoint(lon: number, lat: number): MapPoint {
+    const xPct = ((lon + 180) / 360) * 100;
+    const yPct = ((90 - lat) / 180) * 100;
+    return { xPct, yPct, svgX: xPct, svgY: yPct / 2 };
 }
 
 function mapArcPath(x1: number, y1: number, x2: number, y2: number): string {
+    const dx = Math.abs(x2 - x1);
+    const dy = Math.abs(y2 - y1);
+    const dist = Math.sqrt(dx * dx + dy * dy);
     const mx = (x1 + x2) / 2;
-    const my = Math.min(y1, y2) - 6 - Math.abs(x2 - x1) * 0.04;
+    const bulge = Math.min(12, 4 + dist * 0.12);
+    const my = Math.max(1, Math.min(49, Math.min(y1, y2) - bulge - dx * 0.03));
     return `M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`;
 }
 
@@ -83,28 +94,37 @@ function CountryFlag({
 }
 
 function FlatWorldMap({ countries }: { countries: VisitorStats["countries"] }) {
-    const max = Math.max(...countries.map((c) => c.count), 1);
-    const totalHits = countries.reduce((s, c) => s + c.count, 0);
-
-    const pins = useMemo(
-        () =>
-            countries.map((c) => {
-                const [lon, lat] = getCountryCoords(c.code);
-                const { left, top } = projectPercent(lon, lat);
-                const scale = 0.88 + (c.count / max) * 0.42;
-                return { ...c, left, top, scale, mapX: left, mapY: top / 2 };
-            }),
-        [countries, max]
+    const mappable = useMemo(
+        () => countries.filter((c) => hasCountryCoords(c.code)),
+        [countries],
     );
+    const unknownCount = useMemo(
+        () => countries.filter((c) => !hasCountryCoords(c.code)).reduce((s, c) => s + c.count, 0),
+        [countries],
+    );
+    const totalHits = countries.reduce((s, c) => s + c.count, 0);
+    const max = Math.max(...mappable.map((c) => c.count), 1);
 
-    const arcs = useMemo(() => {
-        const top = pins.slice(0, 4);
-        const paths: string[] = [];
-        for (let i = 0; i < top.length - 1; i++) {
-            paths.push(mapArcPath(top[i].mapX, top[i].mapY, top[i + 1].mapX, top[i + 1].mapY));
+    const { pins, arcs, hubCode } = useMemo(() => {
+        const mapped = mappable.map((c) => {
+            const [lon, lat] = getCountryCoords(c.code);
+            const pt = projectMapPoint(lon, lat);
+            const scale = 0.88 + (c.count / max) * 0.42;
+            return { ...c, ...pt, scale };
+        });
+
+        if (mapped.length === 0) {
+            return { pins: [], arcs: [] as string[], hubCode: null as string | null };
         }
-        return paths;
-    }, [pins]);
+
+        const hub = mapped.find((p) => p.code === HOME_HUB_CODE) ?? mapped[0];
+        const hubCode = hub.code;
+        const pins = mapped.map((p) => ({ ...p, isHub: p.code === hubCode }));
+        const spokes = mapped.filter((p) => p.code !== hubCode).slice(0, MAX_SPOKES);
+        const arcs = spokes.map((s) => mapArcPath(hub.svgX, hub.svgY, s.svgX, s.svgY));
+
+        return { pins, arcs, hubCode };
+    }, [mappable, max]);
 
     return (
         <div className={styles.mapWrap} aria-label="Visitor world map">
@@ -125,31 +145,39 @@ function FlatWorldMap({ countries }: { countries: VisitorStats["countries"] }) {
                     Live geo feed
                 </span>
                 <span className={styles.mapStat}>
-                    {countries.length} region{countries.length !== 1 ? "s" : ""}
+                    {mappable.length} region{mappable.length !== 1 ? "s" : ""}
                 </span>
                 <span className={styles.mapStat}>{totalHits} sessions</span>
+                {unknownCount > 0 && (
+                    <span className={styles.mapStat}>{unknownCount} unknown geo</span>
+                )}
+                {hubCode && pins.length > 1 && (
+                    <span className={styles.mapStat}>Hub · {hubCode}</span>
+                )}
             </div>
             <div className={styles.mapPins}>
                 {pins.map((c, i) => (
                     <div
                         key={c.code}
-                        className={styles.mapPin}
+                        className={`${styles.mapPin} ${c.isHub ? styles.mapPinHub : ""}`}
                         style={{
-                            left: `${c.left}%`,
-                            top: `${c.top}%`,
+                            left: `${c.xPct}%`,
+                            top: `${c.yPct}%`,
                             "--pin-scale": c.scale,
                             "--pin-delay": `${i * 0.35}s`,
                         } as React.CSSProperties}
-                        title={`${c.name}: ${c.count} visit${c.count !== 1 ? "s" : ""}`}
+                        title={`${c.name}: ${c.count} visit${c.count !== 1 ? "s" : ""}${c.isHub ? " (hub)" : ""}`}
                     >
-                        <span className={styles.mapPinRing} aria-hidden />
-                        <span className={styles.mapPinGlow} aria-hidden />
-                        <span className={styles.mapPinDot} aria-hidden />
-                        <CountryFlag code={c.code} size="lg" className={styles.mapPinFlag} title={c.name} />
-                        <span className={styles.mapPinMeta}>
-                            <span className={styles.mapPinCode}>{c.code}</span>
-                            <span className={styles.mapPinCount}>{c.count}</span>
-                        </span>
+                        <div className={styles.mapPinAnchor}>
+                            <span className={styles.mapPinDot} aria-hidden />
+                            <span className={styles.mapPinRing} aria-hidden />
+                            <span className={styles.mapPinGlow} aria-hidden />
+                            <CountryFlag code={c.code} size="lg" className={styles.mapPinFlag} title={c.name} />
+                            <span className={styles.mapPinMeta}>
+                                <span className={styles.mapPinCode}>{c.code}</span>
+                                <span className={styles.mapPinCount}>{c.count}</span>
+                            </span>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -322,7 +350,7 @@ export function VisitorMonitor() {
                     </div>
                 )}
 
-                {stats.countries.length > 0 ? (
+                {stats.countries.some((c) => hasCountryCoords(c.code)) ? (
                     <FlatWorldMap countries={stats.countries} />
                 ) : (
                     <div className={styles.emptyMap}>

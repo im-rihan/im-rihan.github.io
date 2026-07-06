@@ -77,8 +77,8 @@
     font-weight: 800;
     background: var(--gradient);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .stat span:last-child {
@@ -204,4 +204,8 @@
         width: 32px;
         height: 32px;
     }
+}
+
+:global(html.light) .backdrop {
+    background: rgba(15, 23, 42, 0.32);
 }
