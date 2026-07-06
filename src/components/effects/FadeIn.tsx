@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { prefersReducedEffects } from "@/lib/device-capabilities";
 
 interface FadeInProps {
     children: ReactNode;
@@ -10,6 +11,18 @@ interface FadeInProps {
 }
 
 export function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
+    // Default to the static (no-animation) branch so SSR/first paint never
+    // shows an opacity:0 element waiting on a client-only viewport check.
+    const [reduceEffects, setReduceEffects] = useState(true);
+
+    useEffect(() => {
+        setReduceEffects(prefersReducedEffects());
+    }, []);
+
+    if (reduceEffects) {
+        return <div className={className}>{children}</div>;
+    }
+
     return (
         <motion.div
             className={className}

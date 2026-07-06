@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import type { ReactNode, MouseEvent } from "react";
+import { useEffect, useState, type ReactNode, type MouseEvent } from "react";
+import { prefersReducedEffects } from "@/lib/device-capabilities";
 import styles from "./TiltCard.module.css";
 
 interface TiltCardProps {
@@ -10,6 +11,23 @@ interface TiltCardProps {
 }
 
 export function TiltCard({ children, className = "" }: TiltCardProps) {
+    const [reduceEffects, setReduceEffects] = useState(true);
+
+    useEffect(() => {
+        setReduceEffects(prefersReducedEffects());
+    }, []);
+
+    // Touch devices never fire onMouseMove, so the 3D tilt is dead weight —
+    // skip the preserve-3d/will-change transform context entirely so it
+    // can't glitch during scroll compositing.
+    if (reduceEffects) {
+        return <div className={`${styles.card} ${styles.cardStatic} glass-card ${className}`}>{children}</div>;
+    }
+
+    return <TiltCardInteractive className={className}>{children}</TiltCardInteractive>;
+}
+
+function TiltCardInteractive({ children, className = "" }: TiltCardProps) {
     const x = useMotionValue(0);
     const y = useMotionValue(0);
     const spring = { stiffness: 300, damping: 20 };

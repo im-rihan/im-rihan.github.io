@@ -465,6 +465,33 @@
     background: rgba(248, 250, 252, 0.65);
 }
 
+/* Touch tablets: backdrop-filter blur on fixed/absolute layers can fail to
+   recomposite while the page scrolls beneath them on some Android GPUs. */
+@media (hover: none), (pointer: coarse) {
+    .navbar,
+    .dropdown,
+    .links {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .navbar {
+        background: rgba(15, 23, 42, 0.96);
+    }
+
+    :global(html.light) .navbar {
+        background: rgba(255, 255, 255, 0.97);
+    }
+
+    .dropdown {
+        background: rgba(8, 12, 22, 0.98);
+    }
+
+    :global(html.light) .dropdown {
+        background: rgba(255, 255, 255, 0.98);
+    }
+}
+
 @media (max-width: 960px) {
     .navbar,
     .navbar.scrolled {
