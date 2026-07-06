@@ -1,64 +1,7 @@
 import type { ReactNode } from "react";
+import { parseMarkdownBlocks } from "@/lib/markdown-blocks";
+import { CodeBlock } from "./CodeBlock";
 import styles from "./BlogMarkdown.module.css";
-
-type Block =
-    | { type: "h2" | "h3"; text: string }
-    | { type: "p"; text: string }
-    | { type: "ul"; items: string[] }
-    | { type: "code"; lang: string; code: string };
-
-function parseBlocks(source: string): Block[] {
-    const blocks: Block[] = [];
-    const parts = source.split(/\n```/);
-    let textSegment = parts[0] ?? "";
-
-    for (let i = 1; i < parts.length; i++) {
-        const chunk = parts[i];
-        const fenceEnd = chunk.indexOf("```");
-        if (fenceEnd === -1) {
-            textSegment += `\n\`\`\`${chunk}`;
-            continue;
-        }
-        const header = chunk.slice(0, fenceEnd);
-        const rest = chunk.slice(fenceEnd + 3);
-        const nl = header.indexOf("\n");
-        const lang = nl === -1 ? header.trim() : header.slice(0, nl).trim();
-        const code = nl === -1 ? "" : header.slice(nl + 1);
-        pushTextBlocks(textSegment, blocks);
-        blocks.push({ type: "code", lang, code });
-        textSegment = rest.replace(/^\n/, "");
-    }
-
-    pushTextBlocks(textSegment, blocks);
-    return blocks;
-}
-
-function pushTextBlocks(text: string, blocks: Block[]) {
-    const paragraphs = text
-        .split(/\n{2,}/)
-        .map((p) => p.trim())
-        .filter(Boolean);
-
-    for (const p of paragraphs) {
-        if (p.startsWith("### ")) {
-            blocks.push({ type: "h3", text: p.slice(4).trim() });
-            continue;
-        }
-        if (p.startsWith("## ")) {
-            blocks.push({ type: "h2", text: p.slice(3).trim() });
-            continue;
-        }
-        const lines = p.split("\n");
-        if (lines.every((l) => /^[-*•]\s+/.test(l.trim()))) {
-            blocks.push({
-                type: "ul",
-                items: lines.map((l) => l.trim().replace(/^[-*•]\s+/, "")),
-            });
-        } else {
-            blocks.push({ type: "p", text: p });
-        }
-    }
-}
 
 function renderInline(text: string, keyPrefix: string): ReactNode[] {
     const nodes: ReactNode[] = [];
@@ -110,7 +53,7 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
 }
 
 export function BlogMarkdown({ source }: { source: string }) {
-    const blocks = parseBlocks(source.trim());
+    const blocks = parseMarkdownBlocks(source.trim());
 
     return (
         <div className={styles.markdown}>
@@ -127,11 +70,7 @@ export function BlogMarkdown({ source }: { source: string }) {
                     );
                 }
                 if (block.type === "code") {
-                    return (
-                        <pre key={i} className={styles.codeBlock}>
-                            <code>{block.code.trimEnd()}</code>
-                        </pre>
-                    );
+                    return <CodeBlock key={i} lang={block.lang} code={block.code.trimEnd()} />;
                 }
                 return (
                     <p key={i}>

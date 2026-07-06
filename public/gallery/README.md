@@ -1,5 +1,12 @@
 # Gallery photos
 
+Every tile currently shows a real, freely-licensed photo hotlinked from [Unsplash](https://unsplash.com/license)
+(free to use, attribution appreciated but not required), picked to match that tile's theme —
+e.g. a MacBook with code for "Remote Dev Setup", a framed diploma for "Certification
+Milestones". Unsplash's old random-by-keyword "Source" API was shut down in 2024, so these
+are specific, verified photo IDs rather than a random feed. Replace them with real photos
+whenever available.
+
 Drop real photos here (e.g. `remote-setup.jpg`, `puri-odisha.jpg`) and reference them from
 `src/data/gallery.ts` by setting the `image` field on the matching `GalleryItem`:
 
