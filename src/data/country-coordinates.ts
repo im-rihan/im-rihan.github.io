@@ -6,7 +6,7 @@ export const countryNames: Record<string, string> = {
     NL: "Netherlands", SE: "Sweden", NO: "Norway", PL: "Poland", TR: "Turkey",
     AE: "UAE", SG: "Singapore", KR: "South Korea", ID: "Indonesia", PH: "Philippines",
     PK: "Pakistan", BD: "Bangladesh", NG: "Nigeria", ZA: "South Africa", EG: "Egypt",
-    AR: "Argentina", CO: "Colombia", XX: "Unknown",
+    AR: "Argentina", CO: "Colombia", PE: "Peru", XX: "Unknown",
 };
 
 export const countryCoordinates: Record<string, [number, number]> = {
@@ -41,9 +41,16 @@ export const countryCoordinates: Record<string, [number, number]> = {
     EG: [30, 27],
     AR: [-64, -34],
     CO: [-74, 4],
+    PE: [-76, -10],
     XX: [0, 20],
 };
 
+export function hasCountryCoords(code: string): boolean {
+    const c = code.toUpperCase();
+    return c !== "XX" && c.length === 2 && c in countryCoordinates;
+}
+
 export function getCountryCoords(code: string): [number, number] {
-    return countryCoordinates[code.toUpperCase()] ?? countryCoordinates.XX;
+    const c = code.toUpperCase();
+    return countryCoordinates[c] ?? countryCoordinates.XX;
 }
