@@ -6,6 +6,13 @@ export interface GalleryItem {
     category: GalleryCategory;
     description: string;
     gradient: string;
+    /**
+     * Optional real photo (e.g. "/gallery/remote-setup.jpg"). Drop the file in
+     * `public/gallery/` and set this field to replace the gradient placeholder
+     * tile for that item — no other changes needed, `GalleryGrid` renders the
+     * photo automatically when present and falls back to `gradient` otherwise.
+     */
+    image?: string;
 }
 
 export const galleryItems: GalleryItem[] = [

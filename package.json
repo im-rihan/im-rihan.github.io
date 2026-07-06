@@ -1,39 +1,47 @@
 {
-    "name": "im-rihan.github.io",
-    "version": "2.0.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev",
-        "build": "next build",
-        "build:clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true}); require('fs').rmSync('out',{recursive:true,force:true})\" && next build",
-        "start": "npx --yes serve@latest out -p 3000",
-        "preview": "npm run build && npm run start",
-        "lint": "next lint",
-        "generate:brand": "node scripts/generate-og.mjs",
-        "setup:resume": "pip install -r resume/requirements.txt && python -m playwright install chromium",
-        "generate:resume": "python resume/generate_resume.py"
-    },
-    "dependencies": {
-        "@react-three/drei": "^10.0.0",
-        "@react-three/fiber": "^9.0.0",
-        "@supabase/ssr": "^0.12.0",
-        "@supabase/supabase-js": "^2.108.2",
-        "framer-motion": "^12.0.0",
-        "lucide-react": "^0.475.0",
-        "next": "^16.2.9",
-        "next-themes": "^0.4.4",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0",
-        "three": "^0.173.0"
-    },
-    "devDependencies": {
-        "@resvg/resvg-js": "^2.6.2",
-        "@types/node": "^26.0.1",
-        "@types/react": "^19.0.0",
-        "@types/react-dom": "^19.0.0",
-        "@types/three": "^0.173.0",
-        "gifenc": "^1.0.3",
-        "pngjs": "^7.0.0",
-        "typescript": "^5.7.0"
-    }
+  "name": "im-rihan.github.io",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true}); require('fs').rmSync('out',{recursive:true,force:true})\" && next build",
+    "start": "npx --yes serve@latest out -p 3000",
+    "preview": "npm run build && npm run start",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "generate:brand": "node scripts/generate-og.mjs",
+    "setup:resume": "pip install -r resume/requirements.txt && python -m playwright install chromium",
+    "generate:resume": "python resume/generate_resume.py"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.2",
+    "framer-motion": "^12.0.0",
+    "lucide-react": "^0.475.0",
+    "next": "^16.2.9",
+    "next-themes": "^0.4.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.173.0",
+    "web-vitals": "^5.3.0"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "^26.0.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.173.0",
+    "@vitest/ui": "^4.1.10",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.9",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "gifenc": "^1.0.3",
+    "pngjs": "^7.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.10"
+  }
 }

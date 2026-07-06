@@ -14,6 +14,7 @@ export const SITE_BASE = "https://im-rihan.github.io";
 const corePages: StatusTarget[] = [
     { name: "Portfolio Home", url: `${SITE_BASE}/`, type: "internal", group: "page" },
     { name: "Case Studies Hub", url: `${SITE_BASE}/work/`, type: "internal", group: "page" },
+    { name: "Blog", url: `${SITE_BASE}/blog/`, type: "internal", group: "page" },
     { name: "Portfolio Chat", url: `${SITE_BASE}/chat/`, type: "internal", group: "page" },
     { name: "GitHub Activity", url: `${SITE_BASE}/github/`, type: "internal", group: "page" },
     { name: "Gallery", url: `${SITE_BASE}/gallery/`, type: "internal", group: "page" },

@@ -96,6 +96,11 @@ export function ThemedSelect({
             {open && (
                 <ul className={styles.menu} id={listId} role="listbox" aria-label={ariaLabel}>
                     {options.map((opt, i) => (
+                        // Keyboard selection already works via the trigger button's onKeyDown
+                        // (Arrow keys move `highlight`, Enter calls pick()); options are
+                        // intentionally not individually focusable, so no separate keyboard
+                        // listener belongs on this element.
+                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                         <li
                             key={opt.value}
                             role="option"

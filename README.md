@@ -550,9 +550,10 @@ cp .env.example .env.local
 
 1. Create a Supabase project
 2. Run `supabase/visits.sql` in the SQL editor
-3. Add keys to `.env.local` locally
-4. Add same keys as **GitHub Actions secrets** for production builds
-5. Verify: `node scripts/test-supabase.mjs`
+3. Run `supabase/harden-visits-rls.sql` in the SQL editor (bounds anonymous reads to a rolling 90-day window, revokes update/delete, and rejects malformed/spam inserts via `check` constraints — see comments in the file)
+4. Add keys to `.env.local` locally
+5. Add same keys as **GitHub Actions secrets** for production builds
+6. Verify: `node scripts/test-supabase.mjs`
 
 > Variables are embedded at **build time**. Changing secrets requires a rebuild and redeploy.
 

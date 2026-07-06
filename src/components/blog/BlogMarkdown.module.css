@@ -1,0 +1,83 @@
+.markdown {
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 0.98rem;
+}
+
+.markdown > * + * {
+    margin-top: 1.1em;
+}
+
+.markdown h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-top: 1.6em;
+    color: var(--text);
+    scroll-margin-top: 90px;
+}
+
+.markdown h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 1.3em;
+    color: var(--text);
+    scroll-margin-top: 90px;
+}
+
+.markdown p {
+    color: var(--text-muted);
+}
+
+.markdown ul {
+    padding-left: 1.3em;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
+}
+
+.markdown li {
+    list-style: disc;
+}
+
+.markdown strong {
+    color: var(--text);
+    font-weight: 700;
+}
+
+.markdown a {
+    color: var(--primary-light);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.markdown a:hover {
+    color: var(--primary);
+}
+
+.inlineCode {
+    font-family: var(--font-mono), monospace;
+    font-size: 0.88em;
+    padding: 0.15em 0.4em;
+    border-radius: 5px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--primary-light);
+}
+
+.codeBlock {
+    padding: 16px 18px;
+    border-radius: 10px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    font-family: var(--font-mono), monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--text);
+}
+
+:global(html.light) .inlineCode,
+:global(html.light) .codeBlock {
+    background: rgba(15, 23, 42, 0.04);
+}

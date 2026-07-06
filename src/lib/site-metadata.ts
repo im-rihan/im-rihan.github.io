@@ -77,9 +77,14 @@ export function createPageMetadata(page: string, description?: string, path?: st
             siteMeta.name,
         ],
         icons: {
-            icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-            apple: [{ url: "/brand-logo-dark.svg", type: "image/svg+xml" }],
+            icon: [
+                { url: "/favicon.svg", type: "image/svg+xml" },
+                { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+                { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+            ],
+            apple: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
         },
+        manifest: "/manifest.json",
         ...socialMetadata(page, description, path),
     };
 }
@@ -96,6 +101,10 @@ export const rootViewport: Viewport = {
     width: "device-width",
     initialScale: 1,
     viewportFit: "cover",
+    themeColor: [
+        { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+        { media: "(prefers-color-scheme: light)", color: "#f8fafc" },
+    ],
 };
 
 export { siteUrl, ogImages };
