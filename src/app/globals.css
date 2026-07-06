@@ -339,6 +339,27 @@ section:first-of-type::before {
     transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
+/*
+ * Touch tablets (Android in particular — Redmi Pad Pro, etc.) frequently fail
+ * to composite `backdrop-filter` blur inside a `preserve-3d` transform
+ * context while scrolling: the card paints as an empty/"skeleton" box and its
+ * box-shadow renders at a stale offset. Width-based breakpoints miss these
+ * devices since large tablets are wider than typical phone breakpoints, so
+ * this targets input capability instead.
+ */
+@media (hover: none), (pointer: coarse) {
+    .glass-card {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        transform-style: flat;
+        background: rgba(30, 41, 59, 0.94);
+    }
+
+    .light .glass-card {
+        background: rgba(255, 255, 255, 0.96);
+    }
+}
+
 @media (pointer: fine) {
     .glass-card:hover {
         border-color: rgba(20, 184, 166, 0.3);
