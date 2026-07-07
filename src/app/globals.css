@@ -582,10 +582,6 @@ section:first-of-type::before {
         min-height: auto;
     }
 
-    .main-content {
-        padding-bottom: calc(var(--fab-inset) + var(--fab-size) + var(--safe-bottom));
-    }
-
     .glass-card {
         max-width: 100%;
     }
