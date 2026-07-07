@@ -7,6 +7,15 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
+    /*
+     * The closed .panel stays in the layout (opacity: 0, not display: none)
+     * so it can transition in, which makes this flex column as wide as the
+     * ~320px panel even while collapsed. Without this, that invisible box
+     * sits above the footer and swallows taps meant for elements underneath
+     * it (e.g. the command palette trigger) on mobile. Only the actual
+     * visible children re-enable pointer events below.
+     */
+    pointer-events: none;
 }
 
 .panel {
@@ -109,6 +118,7 @@
     box-shadow: 0 8px 28px var(--glow);
     transition: transform 0.2s, box-shadow 0.2s;
     flex-shrink: 0;
+    pointer-events: auto;
 }
 
 .fab:hover {
