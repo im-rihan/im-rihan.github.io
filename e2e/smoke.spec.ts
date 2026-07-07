@@ -32,14 +32,18 @@ test.describe("portfolio smoke", () => {
     test("home content stays visible after navigating away and back", async ({ page }) => {
         await page.goto("/");
         await expect(page.locator("#about")).toBeVisible();
+        await expect(page.locator("#projects")).toBeVisible();
+        await expect(page.locator("#contact")).toBeVisible();
 
         await page.goto("/work/");
         await expect(page.locator("#main-content")).toBeVisible();
 
         await page.goto("/");
         await expect(page.locator("#main-content")).toBeVisible();
-        await expect(page.locator("#about")).toBeVisible();
-        await expect(page.locator("#about")).toHaveCSS("opacity", "1");
-        await expect(page.getByRole("heading", { name: /Hi,/i })).toBeVisible();
+
+        for (const id of ["about", "skills", "experience", "projects", "testimonials", "education", "contact"]) {
+            await expect(page.locator(`#${id}`)).toBeVisible();
+            await expect(page.locator(`#${id}`)).toHaveCSS("opacity", "1");
+        }
     });
 });
