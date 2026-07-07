@@ -1,7 +1,5 @@
-"use client";
-
 import { skillGroups } from "@/data/profile";
-import { FadeIn } from "@/components/effects/FadeIn";
+import { Reveal } from "@/components/effects/Reveal";
 import { TiltCard } from "@/components/effects/TiltCard";
 import styles from "./Skills.module.css";
 
@@ -9,15 +7,15 @@ export function Skills() {
     return (
         <section id="skills">
             <div className="container">
-                <FadeIn>
+                <Reveal>
                     <p className="section-label">Expertise</p>
                     <h2 className="section-title">
                         Technical <span>Skills</span>
                     </h2>
-                </FadeIn>
+                </Reveal>
                 <div className="card-grid">
                     {skillGroups.map((group, i) => (
-                        <FadeIn key={group.title} delay={i * 0.06} className="card-cell">
+                        <Reveal key={group.title} delay={i * 0.06} className="card-cell">
                             <TiltCard className={`card-equal ${styles.card}`}>
                                 <h3>{group.title}</h3>
                                 <div className={styles.tags}>
@@ -28,7 +26,7 @@ export function Skills() {
                                     ))}
                                 </div>
                             </TiltCard>
-                        </FadeIn>
+                        </Reveal>
                     ))}
                 </div>
             </div>

@@ -34,8 +34,8 @@ describe("computeOverallHealth", () => {
         expect(computeOverallHealth(results)).toBe("outage");
     });
 
-    it("treats an empty result set as operational", () => {
-        expect(computeOverallHealth([])).toBe("operational");
+    it("treats an empty result set as degraded", () => {
+        expect(computeOverallHealth([])).toBe("degraded");
     });
 });
 

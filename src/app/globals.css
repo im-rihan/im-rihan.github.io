@@ -622,6 +622,7 @@ section:first-of-type::before {
     animation: dotPulse 2s infinite;
 }
 
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;

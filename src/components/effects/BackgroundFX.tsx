@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { prefersReducedEffects } from "@/lib/device-capabilities";
 import styles from "./BackgroundFX.module.css";
 
 /** CSS-only ambient effects — aurora, grid, scanlines, glow orbs, vignette. */
@@ -8,6 +9,8 @@ export function BackgroundFX() {
     const pointerRef = useRef({ nx: 0, ny: 0 });
 
     useEffect(() => {
+        if (prefersReducedEffects()) return;
+
         const onMove = (clientX: number, clientY: number) => {
             pointerRef.current = {
                 nx: (clientX / window.innerWidth) * 2 - 1,
@@ -21,12 +24,12 @@ export function BackgroundFX() {
             if (t) onMove(t.clientX, t.clientY);
         };
 
-        // Raw mousemove/touchmove can fire far more often than the screen
-        // repaints. Writing custom properties on <html> triggers a style
-        // recalc for every CSS rule that reads them (parallax orbs, glow),
-        // so batch the actual write to at most once per animation frame.
         const applied = { nx: NaN, ny: NaN };
-        let raf = requestAnimationFrame(function tick() {
+        let raf = 0;
+        let running = !document.hidden;
+
+        const tick = () => {
+            if (!running) return;
             const { nx, ny } = pointerRef.current;
             if (nx !== applied.nx || ny !== applied.ny) {
                 applied.nx = nx;
@@ -35,12 +38,32 @@ export function BackgroundFX() {
                 document.documentElement.style.setProperty("--mouse-ny", String(ny));
             }
             raf = requestAnimationFrame(tick);
-        });
+        };
 
+        const startLoop = () => {
+            if (running) return;
+            running = true;
+            raf = requestAnimationFrame(tick);
+        };
+
+        const stopLoop = () => {
+            running = false;
+            cancelAnimationFrame(raf);
+        };
+
+        const onVisibility = () => {
+            if (document.hidden) stopLoop();
+            else startLoop();
+        };
+
+        startLoop();
+        document.addEventListener("visibilitychange", onVisibility);
         window.addEventListener("mousemove", onMouse, { passive: true });
         window.addEventListener("touchmove", onTouch, { passive: true });
+
         return () => {
-            cancelAnimationFrame(raf);
+            stopLoop();
+            document.removeEventListener("visibilitychange", onVisibility);
             window.removeEventListener("mousemove", onMouse);
             window.removeEventListener("touchmove", onTouch);
         };

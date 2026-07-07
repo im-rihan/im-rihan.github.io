@@ -26,3 +26,7 @@ resume/resume.docx
 
 # Lighthouse CI local reports
 .lighthouseci/
+
+# Playwright
+playwright-report/
+test-results/

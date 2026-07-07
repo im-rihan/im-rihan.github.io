@@ -1,4 +1,5 @@
 import { countryNames } from "@/data/country-coordinates";
+import { isCountApiEnabled } from "@/lib/count-api";
 import { isSupabaseEnvConfigured } from "@/utils/supabase/env";
 import { getBrowserClient } from "@/utils/supabase/client";
 import { normalizePagePath } from "@/lib/analytics-insights";
@@ -323,11 +324,13 @@ export async function trackVisit(page: string): Promise<VisitRecord | null> {
 
     const code = visit.countryCode.toLowerCase();
     addSeenCountry(visit.countryCode);
-    await Promise.all([
-        countApiHit("visits"),
-        countApiHit(`country-${code}`),
-        countApiHit(`device-${visit.deviceType}`),
-    ]);
+    if (isCountApiEnabled()) {
+        await Promise.all([
+            countApiHit("visits"),
+            countApiHit(`country-${code}`),
+            countApiHit(`device-${visit.deviceType}`),
+        ]);
+    }
 
     window.dispatchEvent(new CustomEvent(VISITOR_UPDATE_EVENT));
     return visit;
@@ -338,6 +341,10 @@ async function fetchGlobalStats(localVisits: VisitRecord[]): Promise<{
     countries: CountryStat[];
     devices: DeviceStat[];
 }> {
+    if (!isCountApiEnabled()) {
+        return { globalTotal: null, countries: [], devices: [] };
+    }
+
     const seenCodes = [...new Set([
         ...getSeenCountries(),
         ...localVisits.map((v) => v.countryCode),
