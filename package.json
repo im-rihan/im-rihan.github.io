@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/generate-og.mjs",
     "dev": "next dev",
     "build": "next build",
     "build:clean": "node -e \"require('fs').rmSync('.next',{recursive:true,force:true}); require('fs').rmSync('out',{recursive:true,force:true})\" && next build",
@@ -11,6 +12,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "check:bundle-size": "node scripts/check-bundle-size.mjs",
     "lighthouse": "lhci autorun",
     "generate:brand": "node scripts/generate-og.mjs",
@@ -33,6 +36,7 @@
   },
   "devDependencies": {
     "@lhci/cli": "^0.15.1",
+    "@playwright/test": "^1.51.0",
     "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^26.0.1",
     "@types/react": "^19.0.0",

@@ -1,7 +1,5 @@
-"use client";
-
 import { testimonials } from "@/data/testimonials";
-import { FadeIn } from "@/components/effects/FadeIn";
+import { Reveal } from "@/components/effects/Reveal";
 import { TiltCard } from "@/components/effects/TiltCard";
 import styles from "./Testimonials.module.css";
 
@@ -9,15 +7,15 @@ export function Testimonials() {
     return (
         <section id="testimonials" className={styles.section}>
             <div className="container">
-                <FadeIn>
+                <Reveal>
                     <p className="section-label">Social proof</p>
                     <h2 className="section-title">
                         What teams <span>say</span>
                     </h2>
-                </FadeIn>
+                </Reveal>
                 <div className={`card-grid ${styles.grid}`}>
                     {testimonials.map((item, i) => (
-                        <FadeIn key={item.company + item.role} delay={i * 0.06} className="card-cell">
+                        <Reveal key={item.company + item.role} delay={i * 0.06} className="card-cell">
                             <TiltCard className={`card-equal glass-card ${styles.card}`}>
                                 <blockquote>&ldquo;{item.quote}&rdquo;</blockquote>
                                 <footer>
@@ -27,7 +25,7 @@ export function Testimonials() {
                                     </span>
                                 </footer>
                             </TiltCard>
-                        </FadeIn>
+                        </Reveal>
                     ))}
                 </div>
             </div>

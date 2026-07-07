@@ -84,7 +84,7 @@ This repository is the source for **Rihan Mohammed's** developer portfolio — a
 - No Tailwind CSS — styling uses **CSS Modules** + global CSS variables
 - No database ORM — Supabase is optional and analytics-only
 - No LLM / OpenAI in chat — rule-based keyword matching only
-- No API routes — incompatible with static export
+- No server API routes — static export uses one build-time RSS route at `/blog/rss.xml`
 - No middleware in production — GitHub Pages serves static files only
 
 ---
@@ -248,7 +248,7 @@ im-rihan.github.io/
 
 | Folder | Files | Responsibility |
 |--------|-------|----------------|
-| **layout/** | `AppShell`, `Navbar`, `Footer`, `Logo`, `ThemeToggle`, `ContactDock`, `PageHeader`, `HashScrollHandler`, `SectionScrollLink` | Site chrome, navigation (incl. footer quick links), hash scrolling, floating contact FAB |
+| **layout/** | `AppShell`, `Navbar`, `Footer`, `Logo`, `ThemeToggle`, `ContactDock`, `PageHeader`, `HashScrollHandler`, `SectionScrollLink` | Site chrome, navigation, hash scrolling, floating contact FAB |
 | **sections/** | `Hero`, `About`, `Skills`, `Experience`, `Projects`, `Testimonials`, `Education`, `Contact`, `ContactForm` | Home page single-page sections (`#about`, `#skills`, etc.) |
 | **effects/** | `Scene3D`, `SceneCanvas`, `BackgroundFX`, `CustomCursor`, `FadeIn`, `TiltCard`, scene sub-modules | 3D WebGL background, ambient CSS FX, custom pointer |
 | **chat/** | `ChatWindow`, `ChatMarkdown` | Portfolio FAQ chat UI + lightweight markdown renderer |
@@ -355,7 +355,7 @@ HashScrollHandler  → supports /#projects from any page
 BackgroundFX       → CSS gradients / grid overlay
 Scene3D            → full-screen WebGL canvas (dynamic import, no SSR)
 CustomCursor         → replaces pointer on fine-pointer devices
-Navbar + Footer      → footer includes Home · Work · Contact · Chat · Status
+Navbar + Footer      → copyright, hosting note, command palette trigger
 main {children}      → page-specific content
 ContactDock          → floating contact FAB
 AnalysisOverlay      → portfolio stats modal
@@ -478,9 +478,9 @@ Case study URLs in `status-targets.ts` are generated from `case-studies.ts` auto
 | Education | `#education` | Degrees + 14 filterable certifications |
 | Contact | `#contact` | Two-column layout — contact methods + social (left); availability badge, FormSubmit form with themed select, resume downloads (HTML / PDF / Word) (right) |
 
-Navbar includes **Work**, **Chat**, **GitHub**, **Gallery**, **Analytics**, and a **Sections** dropdown for hash navigation from any page.
+Navbar includes **Work**, **Blog**, **Chat**, **GitHub**, **Gallery**, **Status**, and a **Sections** dropdown for hash navigation from any page.
 
-**Footer** — quick links (Home · Work · Contact · Chat · Status), copyright, and hosting note.
+**Footer** — copyright, hosting note, and command palette (⌘K) trigger.
 
 ### Contact form
 
@@ -606,7 +606,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-**Node.js:** `.nvmrc` specifies Node 26; CI uses Node 20. Either works for this project.
+**Node.js:** `.nvmrc` and CI use Node 26.
 
 ---
 

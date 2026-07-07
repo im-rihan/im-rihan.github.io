@@ -28,6 +28,11 @@ jobs:
           node-version: "26"
           cache: npm
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Install dependencies
         run: npm ci
 
@@ -43,11 +48,23 @@ jobs:
       - name: Generate brand assets
         run: npm run generate:brand
 
+      - name: Generate resume binaries
+        run: |
+          pip install -r resume/requirements.txt
+          python -m playwright install chromium
+          npm run generate:resume
+
       - name: Build static export
         run: npm run build
 
       - name: Check homepage bundle size budget
         run: npm run check:bundle-size
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium
+
+      - name: E2E smoke tests
+        run: npm run test:e2e
 
   lighthouse:
     runs-on: ubuntu-latest

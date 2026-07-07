@@ -159,6 +159,7 @@ export async function checkAllLinks(
 export type OverallHealth = "operational" | "degraded" | "outage";
 
 export function computeOverallHealth(results: StatusResult[]): OverallHealth {
+    if (results.length === 0) return "degraded";
     if (results.some((r) => r.status === "offline")) return "outage";
     if (results.some((r) => r.status === "slow" || r.status === "unknown")) return "degraded";
     return "operational";

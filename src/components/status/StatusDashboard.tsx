@@ -38,9 +38,9 @@ import styles from "./StatusDashboard.module.css";
 const siteStack = [
     { label: "Framework", value: "Next.js 16 · static export" },
     { label: "Hosting", value: "GitHub Pages" },
-    { label: "Analytics", value: "Supabase + local geo" },
+    { label: "Analytics", value: "Plausible + Supabase (optional)" },
     { label: "3D", value: "React Three Fiber" },
-    { label: "Monitoring", value: "Client-side link probes" },
+    { label: "Monitoring", value: "Client-side probes (this browser)" },
 ];
 
 const FILTER_GROUPS: (StatusGroup | "all")[] = ["all", "page", "case-study", "asset", "seo", "external"];
@@ -175,7 +175,7 @@ export function StatusDashboard() {
               )
             : null;
 
-    const overall = links.length > 0 ? computeOverallHealth(links) : "operational";
+    const overall = links.length > 0 ? computeOverallHealth(links) : "degraded";
     const plausibleConfigured = Boolean(process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN?.trim());
 
     const groupCounts = useMemo(() => {
@@ -262,7 +262,7 @@ export function StatusDashboard() {
                         </div>
                     </div>
                     <p className={styles.buildNote}>
-                        {links.length} endpoints monitored · history stored locally in your browser
+                        {links.length} endpoints monitored · probe history stored in this browser only
                     </p>
                 </div>
 
@@ -404,7 +404,7 @@ export function StatusDashboard() {
                                         )}
                                     </div>
                                     <div className={styles.linkMeta}>
-                                        <div className={styles.uptimeCol} title="Recent check history">
+                                        <div className={styles.uptimeCol} title="Uptime from checks in this browser">
                                             <Sparkline values={spark} />
                                             {uptime !== null && (
                                                 <span className={styles.uptimePct}>{uptime}% up</span>

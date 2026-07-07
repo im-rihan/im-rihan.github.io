@@ -37,9 +37,8 @@ export const skillGroups = [
             "CSS Modules",
             "Framer Motion",
             "React Three Fiber",
-            "Zustand",
-            "TanStack Query",
-            "Tailwind CSS",
+            "Three.js",
+            "Web Vitals",
         ],
     },
     {

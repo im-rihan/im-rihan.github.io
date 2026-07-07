@@ -1,10 +1,11 @@
 name: Deploy Next.js to gh-pages
 
-# Builds static export (out/) and publishes to gh-pages branch.
-# Pages setting: Deploy from branch → gh-pages → / (root)
+# Publishes out/ to gh-pages after CI passes on main (or manual dispatch).
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -17,6 +18,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,11 +29,22 @@ jobs:
           node-version: "26"
           cache: npm
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Install dependencies
         run: npm ci
 
       - name: Generate brand assets
         run: npm run generate:brand
+
+      - name: Generate resume binaries
+        run: |
+          pip install -r resume/requirements.txt
+          python -m playwright install chromium
+          npm run generate:resume
 
       - name: Build static export
         env:

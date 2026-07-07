@@ -294,8 +294,12 @@ export function VisitorMonitor() {
                 <div className={`glass-card ${styles.metric}`}>
                     <Globe size={20} />
                     <div>
-                        <span className={styles.metricNum}>{Math.round(animatedGlobal)}</span>
-                        <span className={styles.metricLabel}>Global reach</span>
+                        <span className={styles.metricNum}>
+                            {stats.globalTotal !== null ? Math.round(animatedGlobal) : "—"}
+                        </span>
+                        <span className={styles.metricLabel}>
+                            {stats.globalTotal !== null ? "Global reach" : "Global counter unavailable"}
+                        </span>
                     </div>
                 </div>
                 <div className={`glass-card ${styles.metric}`}>
