@@ -9,6 +9,80 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: "portfolio-v2-hardening-spa-navigation",
+        title: "Portfolio v2 hardening: CI gates, bundle budgets, and a SPA navigation bug",
+        excerpt:
+            "A three-phase pass on reliability and performance — deploy gated on CI, server-component sections, Playwright smoke tests — and the subtle opacity bugs that broke the homepage on client-side navigation back from other routes.",
+        date: "2026-07-08",
+        tags: ["Next.js", "Performance", "CI/CD", "Debugging"],
+        content: `
+This site shipped a **v2.0 hardening pass** across deploy reliability, homepage performance, analytics honesty, and test coverage. Most of it is invisible when things work — which is the point — but one bug only showed up during real navigation: **Home → Work → Home** changed the URL correctly while parts of the homepage stayed invisible.
+
+## Phase 0 — stop shipping broken deploys
+
+Three production footguns were fixed first:
+
+- **Deploy waits for CI** — the \`gh-pages\` workflow now runs only after the CI workflow succeeds on \`main\`, instead of racing it in parallel.
+- **Resume binaries in the pipeline** — \`generate:resume\` (Playwright + Python) runs in CI and deploy so PDF/DOCX links don't 404 on the live site.
+- **Docs and dead code** — README drift (Node 26, blog route, footer reality) was synced; the pre-Next.js \`docs-legacy/\` tree and unused Supabase server stubs were removed.
+
+\`predev\` now runs \`generate:brand\` so local dev doesn't serve broken manifest/OG icon paths on a fresh clone.
+
+## Phase 1 — homepage bundle diet (without breaking UX)
+
+Four homepage sections — **About, Skills, Experience, Testimonials** — moved from client components to **server components**. Animation wrappers (\`TiltCard\`) stay client-only where interactivity is needed; the text and structure render as static HTML at build time.
+
+A bundle gate tightened from **400 KB → 340 KB gzip** (measured baseline ~335 KB). Lighthouse performance floor moved from a **0.5 warn** to a **0.75 error** so regressions can't slip through quietly.
+
+## Phase 2 — honest analytics and smoke tests
+
+Analytics was consolidated around clearer tiers:
+
+- **Plausible** — primary privacy-friendly page analytics (when configured).
+- **Supabase** — optional cross-device visitor sync for the status dashboard demo.
+- **CountAPI** — now opt-out via \`NEXT_PUBLIC_COUNTAPI_ENABLED=false\`; the UI shows "unavailable" instead of silently displaying zero.
+
+**Playwright** smoke tests were added to CI (home, work, status, blog, skip link, and a round-trip navigation check). The status dashboard now labels probe history as **this browser only** — not a global SLA.
+
+## The bug: some sections visible, some not
+
+The worst issue appeared only on **client-side navigation back to /**\`. First load looked fine. Leaving and returning left a patchwork — Hero and About might show, Projects and Contact invisible until you scrolled (or forever, depending on the browser).
+
+Three separate mechanisms stacked \`opacity: 0\`:
+
+### 1. CSS \`animation-timeline: view()\`
+
+Scroll-driven reveal CSS sets \`opacity: 0\` before the animation runs. On a full page load the timeline advances as you scroll. On SPA remount the timeline **does not reliably restart**, so sections can remain at opacity zero even though they're in the DOM.
+
+**Fix:** remove scroll-driven opacity reveals from the critical path. \`Reveal\` is now a plain wrapper.
+
+### 2. Framer \`whileInView\` with \`once: true\`
+
+\`FadeIn\` used \`whileInView={{ opacity: 1 }}\` with \`viewport={{ once: true }}\`. When a section remounts **already in the viewport**, Framer may never re-fire the in-view trigger, leaving \`initial={{ opacity: 0 }}\` stuck.
+
+**Fix:** drop opacity-based scroll fades entirely on homepage sections. Content is always visible; motion is limited to safe transforms (e.g. Hero title word slide) or removed where it conflicted with SPA navigation.
+
+### 3. Route enter/exit opacity on \`AppShell\`
+
+\`AnimatePresence\` wrapped every page in an opacity fade. Combined with the section-level bugs above, the whole main column could appear blank on return.
+
+**Fix:** remove route enter opacity; keep a simple \`key={pathname}\` wrapper without fading the entire page in from zero.
+
+## What we kept
+
+- Server-component sections for static content (smaller JS, faster first paint).
+- Bundle and Lighthouse CI gates.
+- Playwright round-trip test asserting **all seven homepage sections** stay at \`opacity: 1\` after navigation.
+- Deploy gated on green CI.
+
+## Lesson
+
+On a **static export + client navigation** site, any pattern that hides content at \`opacity: 0\` and waits for scroll or mount-time animation is a latent SPA bug. Progressive enhancement should mean "extra motion when it works," not "invisible until JavaScript animation fires."
+
+For a portfolio, **reliability beats scroll theatrics**. The animations can come back later — behind a client-only Intersection Observer that resets on route change, or as transform-only effects that never hide content.
+`,
+    },
+    {
         slug: "static-portfolio-with-client-only-analytics",
         title: "Building a fully static portfolio with client-only visitor analytics",
         excerpt:
