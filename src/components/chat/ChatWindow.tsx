@@ -108,8 +108,12 @@ export function ChatWindow() {
     }, []);
 
     useEffect(() => {
+        // Restores persisted chat history from localStorage after client mount.
+        // setMessages / setHydrated are intentional post-hydration initializations —
+        // localStorage is unavailable during SSR so they cannot be lazy-initialized.
         const stored = loadStoredMessages();
         if (stored) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMessages(stored);
             stored
                 .filter((m) => m.role === "user")

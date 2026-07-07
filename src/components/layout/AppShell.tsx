@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, m } from "framer-motion";
 import { Navbar } from "./Navbar";
@@ -16,20 +16,25 @@ import { ContactDock } from "./ContactDock";
 import { HashScrollHandler } from "./HashScrollHandler";
 import { shouldLoadScene } from "@/lib/scene-preference";
 
+// Subscribe to the custom scene-preference-change event (fired by ThemeToggle).
+function subscribeScenePreference(callback: () => void) {
+    window.addEventListener("scene-preference-change", callback);
+    return () => window.removeEventListener("scene-preference-change", callback);
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
     const [insightsOpen, setInsightsOpen] = useState(false);
     const pathname = usePathname();
-    // Start false so the first client render always matches the statically
-    // exported server HTML (which has no window/localStorage access), then
-    // resolve the real preference post-mount to avoid a hydration mismatch.
-    const [showScene, setShowScene] = useState(false);
+    const pathnameRef = useRef(pathname);
+    pathnameRef.current = pathname;
 
-    useEffect(() => {
-        setShowScene(shouldLoadScene(pathname));
-        const sync = () => setShowScene(shouldLoadScene(pathname));
-        window.addEventListener("scene-preference-change", sync);
-        return () => window.removeEventListener("scene-preference-change", sync);
-    }, [pathname]);
+    // useSyncExternalStore: SSR-safe (server snapshot = false), subscribes to
+    // manual preference-toggle events, and re-reads shouldLoadScene on each call.
+    const showScene = useSyncExternalStore(
+        subscribeScenePreference,
+        () => shouldLoadScene(pathnameRef.current),
+        () => false,
+    );
 
     return (
         <>

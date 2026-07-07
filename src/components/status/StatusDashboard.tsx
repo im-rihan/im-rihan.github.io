@@ -151,6 +151,9 @@ export function StatusDashboard() {
     }, []);
 
     useEffect(() => {
+        // `runChecks` is an async callback that calls setState internally.
+        // Intentional — triggers the initial link-health probe run on mount.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         runChecks();
     }, [runChecks]);
 

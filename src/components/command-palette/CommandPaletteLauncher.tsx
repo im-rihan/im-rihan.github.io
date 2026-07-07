@@ -15,10 +15,13 @@ export const OPEN_COMMAND_PALETTE_EVENT = "command-palette:open";
 export function CommandPaletteLauncher() {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
+    const [prevPathname, setPrevPathname] = useState(pathname);
 
-    useEffect(() => {
-        setOpen(false);
-    }, [pathname]);
+    // Close on route change during render — avoids an extra useEffect pass.
+    if (prevPathname !== pathname) {
+        setPrevPathname(pathname);
+        if (open) setOpen(false);
+    }
 
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {

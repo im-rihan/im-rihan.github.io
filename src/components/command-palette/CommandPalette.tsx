@@ -48,6 +48,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     const { resolvedTheme, setTheme } = useTheme();
     const [query, setQuery] = useState("");
     const [activeIndex, setActiveIndex] = useState(0);
+    const [prevQuery, setPrevQuery] = useState(query);
     const [copied, setCopied] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const listId = useId();
@@ -164,9 +165,11 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         );
     }, [items, query]);
 
-    useEffect(() => {
+    // Reset active index during render when query changes — avoids an extra useEffect pass.
+    if (prevQuery !== query) {
+        setPrevQuery(query);
         setActiveIndex(0);
-    }, [query]);
+    }
 
     const run = (item: PaletteItem) => {
         item.perform();

@@ -3,18 +3,20 @@
 import { useEffect, useState } from "react";
 import styles from "./ScrollProgress.module.css";
 
+// Feature-detect CSS scroll-driven animations (Chrome 115+).
+// Computed once at module load time on the client — this file is "use client"
+// so it never runs on the server, making window/CSS always available here.
+function detectNativeScrollTimeline() {
+    return typeof CSS !== "undefined" && CSS.supports("animation-timeline", "scroll()");
+}
+
 export function ScrollProgress() {
     const [pct, setPct] = useState(0);
-    const [supportsNative, setSupportsNative] = useState(false);
+    // Lazy initializer runs once on first client render — no useEffect needed.
+    const [supportsNative] = useState(detectNativeScrollTimeline);
 
     useEffect(() => {
-        // Feature-detect CSS scroll-driven animations (Chrome 115+)
-        const supports =
-            typeof CSS !== "undefined" &&
-            CSS.supports("animation-timeline", "scroll()");
-        setSupportsNative(supports);
-
-        if (supports) return; // Native CSS handles it
+        if (supportsNative) return; // Native CSS handles it
 
         const onScroll = () => {
             const el = document.documentElement;

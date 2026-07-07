@@ -14,6 +14,10 @@ export function TiltCard({ children, className = "" }: TiltCardProps) {
     const [reduceEffects, setReduceEffects] = useState(true);
 
     useEffect(() => {
+        // Reads window.matchMedia — only available after client mount.
+        // Intentionally calling setState in effect here to flip from the SSR-safe
+        // default (true → static) to the real user preference without a hydration mismatch.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setReduceEffects(prefersReducedEffects());
     }, []);
 

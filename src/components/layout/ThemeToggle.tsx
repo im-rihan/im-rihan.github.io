@@ -12,8 +12,16 @@ export function ThemeToggle() {
     const [sceneOn, setSceneOn] = useState(false);
 
     useEffect(() => {
+        // setMounted/setSceneOn are intentional post-hydration initializations —
+        // they must read from localStorage (unavailable during SSR) and flip from
+        // the server-safe default to the real client value without a mismatch.
+        // setMounted/setSceneOn are intentional post-hydration initializations —
+        // they read from localStorage (unavailable during SSR) so they cannot use
+        // a lazy useState initializer without causing a hydration mismatch.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
         setSceneOn(isSceneEnabled());
+        // setState here is inside a callback (event handler), which is correct.
         const sync = () => setSceneOn(isSceneEnabled());
         window.addEventListener("scene-preference-change", sync);
         return () => window.removeEventListener("scene-preference-change", sync);

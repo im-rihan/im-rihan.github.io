@@ -232,6 +232,9 @@ export function VisitorMonitor() {
     }, []);
 
     useEffect(() => {
+        // `load` is an async data-fetching callback that calls setState internally.
+        // The initial call is intentional — it triggers the first data fetch on mount.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         load();
         const onUpdate = () => load(true);
         window.addEventListener(VISITOR_UPDATE_EVENT, onUpdate);

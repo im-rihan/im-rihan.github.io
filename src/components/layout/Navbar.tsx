@@ -69,7 +69,15 @@ export function Navbar() {
     const [open, setOpen] = useState(false);
     const [exploreOpen, setExploreOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [prevPathname, setPrevPathname] = useState(pathname);
     const exploreRef = useRef<HTMLLIElement>(null);
+
+    // Close all menus on route change during render — avoids an extra useEffect pass.
+    if (prevPathname !== pathname) {
+        setPrevPathname(pathname);
+        if (open) setOpen(false);
+        if (exploreOpen) setExploreOpen(false);
+    }
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 16);
@@ -107,9 +115,7 @@ export function Navbar() {
     const isActive = (href: string) =>
         href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
-    useEffect(() => {
-        closeAll();
-    }, [pathname]);
+    // Note: pathname-driven close is handled above via the state-during-render pattern.
 
     useEffect(() => {
         if (!open) return;

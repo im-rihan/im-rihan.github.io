@@ -27,11 +27,19 @@ export function ThemedSelect({
     "aria-label": ariaLabel,
 }: ThemedSelectProps) {
     const [open, setOpen] = useState(false);
-    const [highlight, setHighlight] = useState(0);
+    const [highlight, setHighlight] = useState(() => Math.max(0, options.findIndex((o) => o.value === value)));
+    const [prevValue, setPrevValue] = useState(value);
     const wrapRef = useRef<HTMLDivElement>(null);
     const listId = useId();
 
     const selected = options.find((o) => o.value === value) ?? options[0];
+
+    // Sync highlight with controlled value during render — avoids an extra useEffect pass.
+    if (prevValue !== value) {
+        setPrevValue(value);
+        const idx = options.findIndex((o) => o.value === value);
+        setHighlight(idx >= 0 ? idx : 0);
+    }
 
     useEffect(() => {
         const onPointerDown = (event: MouseEvent) => {
@@ -42,11 +50,6 @@ export function ThemedSelect({
         document.addEventListener("mousedown", onPointerDown);
         return () => document.removeEventListener("mousedown", onPointerDown);
     }, []);
-
-    useEffect(() => {
-        const idx = options.findIndex((o) => o.value === value);
-        setHighlight(idx >= 0 ? idx : 0);
-    }, [value, options]);
 
     function pick(index: number) {
         const opt = options[index];

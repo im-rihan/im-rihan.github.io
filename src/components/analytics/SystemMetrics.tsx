@@ -132,6 +132,10 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
             raf = requestAnimationFrame(tick);
         };
 
+        // Primes the metrics state with real browser values immediately after mount
+        // (before the first RAF tick arrives). Browser APIs are unavailable on the server
+        // so this cannot be a lazy useState initializer.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMetrics((prev) => ({
             ...prev,
             ...staticM,
