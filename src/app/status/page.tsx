@@ -15,7 +15,7 @@ export default function StatusPage() {
                 title="Status & Analytics"
                 description="Live visitor map, browser telemetry, endpoint probes with uptime history, and backend service status."
             />
-            <div className="container">
+            <div className="container page-content">
                 <StatusDashboard />
             </div>
         </>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useSyncExternalStore, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, m } from "framer-motion";
 import { Navbar } from "./Navbar";
@@ -16,20 +16,26 @@ import { ContactDock } from "./ContactDock";
 import { HashScrollHandler } from "./HashScrollHandler";
 import { shouldLoadScene } from "@/lib/scene-preference";
 
+// Stable subscribe function defined outside the component so useSyncExternalStore
+// never re-subscribes on re-render. It only fires when the user toggles the scene.
+function subscribeScenePreference(cb: () => void) {
+    window.addEventListener("scene-preference-change", cb);
+    return () => window.removeEventListener("scene-preference-change", cb);
+}
+
 export function AppShell({ children }: { children: ReactNode }) {
     const [insightsOpen, setInsightsOpen] = useState(false);
     const pathname = usePathname();
-    // Start false so the first client render always matches the statically
-    // exported server HTML (which has no window/localStorage access), then
-    // resolve the real preference post-mount to avoid a hydration mismatch.
-    const [showScene, setShowScene] = useState(false);
 
-    useEffect(() => {
-        setShowScene(shouldLoadScene(pathname));
-        const sync = () => setShowScene(shouldLoadScene(pathname));
-        window.addEventListener("scene-preference-change", sync);
-        return () => window.removeEventListener("scene-preference-change", sync);
-    }, [pathname]);
+    // useSyncExternalStore is the idiomatic React 18 way to subscribe to external
+    // mutable state. The snapshot closes over `pathname` so it naturally picks up
+    // the latest route on every render — no ref mutation in render needed.
+    // Server snapshot always returns false (no window), matching the static HTML.
+    const showScene = useSyncExternalStore(
+        subscribeScenePreference,
+        () => shouldLoadScene(pathname),
+        () => false,
+    );
 
     return (
         <>

@@ -48,9 +48,17 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
     const { resolvedTheme, setTheme } = useTheme();
     const [query, setQuery] = useState("");
     const [activeIndex, setActiveIndex] = useState(0);
+    const [prevQuery, setPrevQuery] = useState(query);
     const [copied, setCopied] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const listId = useId();
+
+    // State-during-render: reset activeIndex when query changes.
+    // This avoids a useEffect pass and the set-state-in-effect lint warning.
+    if (prevQuery !== query) {
+        setPrevQuery(query);
+        setActiveIndex(0);
+    }
 
     useEffect(() => {
         inputRef.current?.focus();
@@ -164,10 +172,6 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         );
     }, [items, query]);
 
-    useEffect(() => {
-        setActiveIndex(0);
-    }, [query]);
-
     const run = (item: PaletteItem) => {
         item.perform();
         if (item.id === "action-copy-email") {
@@ -199,8 +203,6 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         // The backdrop is a mouse-only convenience for dismissing the palette — the
         // real keyboard equivalent is the Escape handler on the search input plus
         // focus trapping via autofocus, so no keyboard listener belongs here.
-        // Backdrop is dismiss-on-click only — Escape key and autofocus handle keyboard dismissal.
-        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <m.div
             className={styles.backdrop}
             initial={{ opacity: 0 }}
@@ -210,7 +212,6 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
             onClick={onClose}
         >
             {/* Stops backdrop dismiss propagation — not a primary interaction. */}
-            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
             <m.div
                 className={styles.panel}
                 role="dialog"

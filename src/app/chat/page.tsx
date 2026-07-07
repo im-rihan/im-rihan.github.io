@@ -20,7 +20,7 @@ export default function ChatPage() {
                     </>
                 }
             />
-            <div className="container">
+            <div className="container page-content">
                 <ChatWindow />
             </div>
         </>
