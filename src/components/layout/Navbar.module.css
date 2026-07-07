@@ -492,7 +492,12 @@
     }
 }
 
-@media (max-width: 960px) {
+/* The desktop nav packs 7 links + a "Sections" dropdown into a single
+   non-wrapping row (~1080-1100px minimum before it starts overflowing the
+   pill), so the switch to the mobile layout needs real headroom above that —
+   960px was too low and let the links spill outside the navbar on common
+   laptop widths (e.g. 1024px). */
+@media (max-width: 1200px) {
     .navbar,
     .navbar.scrolled {
         top: 0;
