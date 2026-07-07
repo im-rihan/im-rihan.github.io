@@ -5,13 +5,26 @@ export function topCountryShare(countries: CountryStat[], total: number): number
     return Math.round((countries[0].count / total) * 100);
 }
 
+/**
+ * Static exports serve `/` and `/index.html` as the same file, and both URLs
+ * show up in real traffic (direct links, old bookmarks, crawlers) — without
+ * this, "Top pages" double-counts the homepage under two different labels.
+ */
+export function normalizePagePath(page: string): string {
+    const trimmed = (page || "/").trim();
+    if (!trimmed) return "/";
+    const collapsed = trimmed.replace(/\/index\.html$/i, "/") || "/";
+    return collapsed === "index.html" ? "/" : collapsed;
+}
+
 export function aggregateByField(
     visits: VisitRecord[],
     field: "browser" | "page" | "os"
 ): { label: string; count: number }[] {
     const map = new Map<string, number>();
     visits.forEach((v) => {
-        const label = v[field] || "Unknown";
+        const raw = v[field] || "Unknown";
+        const label = field === "page" ? normalizePagePath(raw) : raw;
         map.set(label, (map.get(label) ?? 0) + 1);
     });
     return [...map.entries()]

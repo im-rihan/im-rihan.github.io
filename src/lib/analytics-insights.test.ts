@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aggregateByField, formatVisitTime, topCountryShare } from "./analytics-insights";
+import { aggregateByField, formatVisitTime, normalizePagePath, topCountryShare } from "./analytics-insights";
 import type { CountryStat, VisitRecord } from "@/lib/visitor-analytics";
 
 function makeVisit(overrides: Partial<VisitRecord>): VisitRecord {
@@ -54,6 +54,34 @@ describe("aggregateByField", () => {
 
     it("returns an empty array for no visits", () => {
         expect(aggregateByField([], "page")).toEqual([]);
+    });
+
+    it("merges /index.html and / into a single page label", () => {
+        const visits = [
+            makeVisit({ page: "/" }),
+            makeVisit({ page: "/index.html" }),
+            makeVisit({ page: "/index.html" }),
+        ];
+        expect(aggregateByField(visits, "page")).toEqual([{ label: "/", count: 3 }]);
+    });
+});
+
+describe("normalizePagePath", () => {
+    it("collapses /index.html to /", () => {
+        expect(normalizePagePath("/index.html")).toBe("/");
+    });
+
+    it("collapses nested index.html paths to their directory", () => {
+        expect(normalizePagePath("/blog/index.html")).toBe("/blog/");
+    });
+
+    it("leaves other paths untouched", () => {
+        expect(normalizePagePath("/work/")).toBe("/work/");
+        expect(normalizePagePath("/")).toBe("/");
+    });
+
+    it("defaults to / for empty input", () => {
+        expect(normalizePagePath("")).toBe("/");
     });
 });
 

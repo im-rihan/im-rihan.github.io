@@ -1,6 +1,7 @@
 import { countryNames } from "@/data/country-coordinates";
 import { isSupabaseEnvConfigured } from "@/utils/supabase/env";
 import { getBrowserClient } from "@/utils/supabase/client";
+import { normalizePagePath } from "@/lib/analytics-insights";
 
 export interface VisitRecord {
     id: string;
@@ -311,7 +312,7 @@ export async function trackVisit(page: string): Promise<VisitRecord | null> {
         deviceLabel: device.deviceLabel,
         browser: device.browser,
         os: device.os,
-        page,
+        page: normalizePagePath(page),
         timestamp: new Date().toISOString(),
     };
 
