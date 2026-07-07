@@ -6,13 +6,17 @@ import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { Scene3D } from "@/components/effects/Scene3D";
-import { BackgroundFX } from "@/components/effects/BackgroundFX";
 import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { VisitorTracker } from "@/components/analytics/VisitorTracker";
 import { CommandPaletteLauncher } from "@/components/command-palette/CommandPaletteLauncher";
 import { ContactDock } from "./ContactDock";
 import { HashScrollHandler } from "./HashScrollHandler";
 import { shouldLoadScene } from "@/lib/scene-preference";
+
+const BackgroundFX = dynamic(
+    () => import("@/components/effects/BackgroundFX").then((m) => ({ default: m.BackgroundFX })),
+    { ssr: false },
+);
 
 const CustomCursor = dynamic(
     () => import("@/components/effects/CustomCursor").then((m) => ({ default: m.CustomCursor })),
