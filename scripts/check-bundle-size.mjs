@@ -18,8 +18,10 @@ const HOMEPAGE = path.join(OUT_DIR, "index.html");
 // homepage section in one route) plus headroom for legitimate growth — this exists
 // to catch accidental regressions (e.g. an eagerly imported heavy dependency),
 // not to block every kilobyte of change.
-// Tightened from 400 KB after server-component section split (~335 KB baseline).
-const BUDGET_GZIP_KB = 335;
+// Tightened from 400 KB after server-component section split.
+// Measured baseline ~335 KB gzip; 340 KB allows chunk-split variance without
+// blocking CI on sub-KB drift (still catches accidental heavy imports).
+const BUDGET_GZIP_KB = 340;
 
 function fail(message) {
     console.error(`\n✖ Bundle size check failed: ${message}\n`);
