@@ -72,7 +72,8 @@
 }
 
 .svgCursor {
-    animation: cursorBlink 1.1s step-end infinite;
+    animation: cursorBlink 1s step-end infinite;
+    filter: drop-shadow(0 0 3px var(--primary-light));
 }
 
 @keyframes cursorBlink {

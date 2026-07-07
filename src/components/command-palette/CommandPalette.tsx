@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useId, useMemo, useRef, useState } from "react";
+import { m } from "framer-motion";
 import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import {
@@ -198,17 +199,27 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
         // The backdrop is a mouse-only convenience for dismissing the palette — the
         // real keyboard equivalent is the Escape handler on the search input plus
         // focus trapping via autofocus, so no keyboard listener belongs here.
+        // Backdrop is dismiss-on-click only — Escape key and autofocus handle keyboard dismissal.
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-        <div className={styles.backdrop} onClick={onClose}>
-            {/* This click handler only stops backdrop-close propagation for clicks
-                inside the panel — it's not a real interactive control, so no
-                keyboard listener applies here either. */}
+        <m.div
+            className={styles.backdrop}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={onClose}
+        >
+            {/* Stops backdrop dismiss propagation — not a primary interaction. */}
             {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
-            <div
+            <m.div
                 className={styles.panel}
                 role="dialog"
                 aria-modal="true"
                 aria-label="Command palette"
+                initial={{ opacity: 0, scale: 0.96, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: -10 }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className={styles.header}>
@@ -276,7 +287,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                     <span><kbd>↵</kbd>select</span>
                     <span><kbd>esc</kbd>close</span>
                 </div>
-            </div>
-        </div>
+            </m.div>
+        </m.div>
     );
 }

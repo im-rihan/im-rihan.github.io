@@ -57,6 +57,21 @@
     margin: 0;
     color: #f87171;
     word-break: break-word;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 0;
+    animation: typeReveal 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+}
+
+@keyframes typeReveal {
+    to { max-width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .error {
+        max-width: 100%;
+        animation: none;
+    }
 }
 
 .card h1 {

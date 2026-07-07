@@ -1,9 +1,9 @@
-import Link from "next/link";
-import { ArrowRight, Calendar, FileText, Rss } from "lucide-react";
-import { estimateReadingMinutes, formatBlogDate, sortedBlogPosts } from "@/data/blog-posts";
+import { Rss } from "lucide-react";
+import { sortedBlogPosts } from "@/data/blog-posts";
 import { createPageMetadata, siteUrl } from "@/lib/site-metadata";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PageJsonLd } from "@/components/seo/PageJsonLd";
+import { BlogCardList } from "@/components/blog/BlogCardList";
 import styles from "./blog.module.css";
 
 const baseMetadata = createPageMetadata(
@@ -56,38 +56,7 @@ export default function BlogIndexPage() {
                         RSS feed
                     </a>
                 </div>
-                <div className={styles.grid}>
-                    {posts.map((post) => (
-                        <Link
-                            key={post.slug}
-                            href={`/blog/${post.slug}/`}
-                            prefetch={false}
-                            className={`glass-card ${styles.card}`}
-                            data-cursor="pointer"
-                        >
-                            <div className={styles.cardHead}>
-                                <FileText size={18} className={styles.icon} aria-hidden />
-                                <span className={styles.meta}>
-                                    <Calendar size={12} style={{ verticalAlign: -2, marginRight: 4 }} aria-hidden />
-                                    {formatBlogDate(post.date)} · {estimateReadingMinutes(post.content)} min read
-                                </span>
-                            </div>
-                            <h2>{post.title}</h2>
-                            <p className={styles.excerpt}>{post.excerpt}</p>
-                            <div className={styles.tags}>
-                                {post.tags.map((tag) => (
-                                    <span key={tag} className={styles.tag}>
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                            <span className={styles.cta}>
-                                Read post
-                                <ArrowRight size={16} aria-hidden />
-                            </span>
-                        </Link>
-                    ))}
-                </div>
+                <BlogCardList posts={posts} />
             </div>
         </>
     );

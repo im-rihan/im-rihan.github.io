@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { m, AnimatePresence } from "framer-motion";
 import { galleryCategories, galleryItems, type GalleryCategory } from "@/data/gallery";
 import { FadeIn } from "@/components/effects/FadeIn";
 import styles from "./GalleryGrid.module.css";
@@ -66,47 +67,57 @@ export function GalleryGrid() {
                 ))}
             </div>
 
-            {lightbox && (
-                // Backdrop is a mouse-only convenience for dismissing the modal — the real
-                // keyboard equivalent is the global Escape handler above plus the visible
-                // Close button below, so no keyboard listener is needed directly on it.
-                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-                <div className={styles.lightbox} onClick={() => setLightbox(null)}>
-                    {/* Purely stops the backdrop's dismiss-on-click from bubbling up —
-                        not a real interaction, so no keyboard equivalent is needed. */}
-                    {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
-                    <div
-                        className={`glass-card ${styles.lightboxInner}`}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="gallery-lightbox-title"
-                        onClick={(e) => e.stopPropagation()}
+            <AnimatePresence>
+                {lightbox && (
+                    // Backdrop is a mouse-only convenience — keyboard users close via Escape or the Close button.
+                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+                    <m.div
+                        className={styles.lightbox}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        onClick={() => setLightbox(null)}
                     >
-                        <div
-                            className={styles.lightboxMedia}
-                            style={lightbox.image ? undefined : { background: lightbox.gradient }}
+                        {/* Stops backdrop dismiss from bubbling — not a primary interaction. */}
+                        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
+                        <m.div
+                            className={`glass-card ${styles.lightboxInner}`}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="gallery-lightbox-title"
+                            initial={{ opacity: 0, scale: 0.88, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.88, y: 20 }}
+                            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            {lightbox.image && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img src={lightbox.image} alt="" loading="lazy" className={styles.mediaImg} />
-                            )}
-                        </div>
-                        <div className={styles.lightboxBody}>
-                            <span className={styles.category}>{lightbox.category}</span>
-                            <h2 id="gallery-lightbox-title">{lightbox.title}</h2>
-                            <p>{lightbox.description}</p>
-                            <button
-                                ref={closeRef}
-                                type="button"
-                                className={styles.closeBtn}
-                                onClick={() => setLightbox(null)}
+                            <div
+                                className={styles.lightboxMedia}
+                                style={lightbox.image ? undefined : { background: lightbox.gradient }}
                             >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                                {lightbox.image && (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={lightbox.image} alt="" loading="lazy" className={styles.mediaImg} />
+                                )}
+                            </div>
+                            <div className={styles.lightboxBody}>
+                                <span className={styles.category}>{lightbox.category}</span>
+                                <h2 id="gallery-lightbox-title">{lightbox.title}</h2>
+                                <p>{lightbox.description}</p>
+                                <button
+                                    ref={closeRef}
+                                    type="button"
+                                    className={styles.closeBtn}
+                                    onClick={() => setLightbox(null)}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </m.div>
+                    </m.div>
+                )}
+            </AnimatePresence>
         </>
     );
 }

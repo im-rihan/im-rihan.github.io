@@ -72,7 +72,7 @@ export function Projects() {
                         ))}
                     </div>
                 </FadeIn>
-                <div className={`card-grid ${styles.grid}`}>
+                <div key={filter} className={`card-grid ${styles.grid}`}>
                     {visible.map((p, i) => (
                         <FadeIn key={p.title} delay={i * 0.06} className="card-cell">
                             <TiltCard className={`card-equal ${styles.card}`}>

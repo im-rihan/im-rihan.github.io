@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { AnimatePresence } from "framer-motion";
 
 const CommandPalette = dynamic(() => import("./CommandPalette").then((m) => m.CommandPalette), {
     ssr: false,
@@ -46,7 +47,9 @@ export function CommandPaletteLauncher() {
         };
     }, [open]);
 
-    if (!open) return null;
-
-    return <CommandPalette onClose={() => setOpen(false)} />;
+    return (
+        <AnimatePresence>
+            {open && <CommandPalette key="cmd-palette" onClose={() => setOpen(false)} />}
+        </AnimatePresence>
+    );
 }

@@ -1,0 +1,35 @@
+.bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 50%, var(--accent) 100%);
+    z-index: 9999;
+    pointer-events: none;
+    transform-origin: left;
+    transition: width 0.08s linear;
+    box-shadow: 0 0 6px rgba(20, 184, 166, 0.5);
+}
+
+/* CSS scroll-driven animation — Chrome 115+, Edge 115+ */
+.native {
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    /* stylelint-disable-next-line property-no-unknown */
+    animation: scaleProgress linear;
+    /* stylelint-disable-next-line property-no-unknown */
+    animation-timeline: scroll();
+    transition: none;
+}
+
+@keyframes scaleProgress {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bar {
+        display: none;
+    }
+}

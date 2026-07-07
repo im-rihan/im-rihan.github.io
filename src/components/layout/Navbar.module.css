@@ -29,10 +29,11 @@
     left: 0;
     right: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.6), transparent);
+    background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
     animation: scanBarMove 4s ease-in-out infinite;
     pointer-events: none;
     border-radius: 12px 12px 0 0;
+    opacity: 0.65;
 }
 
 @keyframes scanBarMove {

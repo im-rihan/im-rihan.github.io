@@ -287,6 +287,7 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                 {metrics.pageLoadMs !== null && (
                     <> This page loaded in <code>{metrics.pageLoadMs}ms</code>.</>
                 )}
+                <span className={styles.termCursor} aria-hidden />
             </p>
         </section>
     );

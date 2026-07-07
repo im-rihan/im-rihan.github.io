@@ -37,6 +37,7 @@
     --tooltip-text: #f1f5f9;
     --tooltip-border: rgba(255, 255, 255, 0.12);
     --tooltip-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    --ease-out-quart: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .light {
@@ -598,6 +599,21 @@ section:first-of-type::before {
     .page-header p {
         font-size: 0.85rem;
     }
+}
+
+/* Shared utility: pulsing availability dot */
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.pulse-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: dotPulse 2s infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

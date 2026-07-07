@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { AnimatePresence, m } from "framer-motion";
 import { Send, CheckCircle2, Mail } from "lucide-react";
 import { siteMeta } from "@/data/profile";
 import { ThemedSelect } from "@/components/ui/ThemedSelect";
@@ -56,30 +57,49 @@ export function ContactForm() {
         }
     }
 
-    if (sent) {
-        return (
-            <div className={`glass-card ${styles.success}`}>
-                <div className={styles.successIcon}>
-                    <CheckCircle2 size={28} />
-                </div>
-                <h3>Message sent</h3>
-                <p>Thanks for reaching out — I&apos;ll reply within 24–48 hours.</p>
-                <button
-                    type="button"
-                    className="btn btn-outline"
-                    onClick={() => {
-                        setSent(false);
-                        setTopic(DEFAULT_TOPIC);
-                    }}
-                >
-                    Send another
-                </button>
-            </div>
-        );
-    }
+    const slideIn = { opacity: 0, y: 18 } as const;
+    const slideAnimate = { opacity: 1, y: 0 } as const;
+    const slideExit = { opacity: 0, y: -18 } as const;
+    const slideTx = { duration: 0.32, ease: [0.22, 1, 0.36, 1] as const };
 
     return (
-        <form className={`glass-card ${styles.form}`} onSubmit={handleSubmit} noValidate={false}>
+        <AnimatePresence mode="wait">
+            {sent ? (
+                <m.div
+                    key="success"
+                    className={`glass-card ${styles.success}`}
+                    initial={slideIn}
+                    animate={slideAnimate}
+                    exit={slideExit}
+                    transition={slideTx}
+                >
+                    <div className={styles.successIcon}>
+                        <CheckCircle2 size={28} />
+                    </div>
+                    <h3>Message sent</h3>
+                    <p>Thanks for reaching out — I&apos;ll reply within 24–48 hours.</p>
+                    <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => {
+                            setSent(false);
+                            setTopic(DEFAULT_TOPIC);
+                        }}
+                    >
+                        Send another
+                    </button>
+                </m.div>
+            ) : (
+                <m.form
+                    key="form"
+                    className={`glass-card ${styles.form}`}
+                    initial={slideIn}
+                    animate={slideAnimate}
+                    exit={slideExit}
+                    transition={slideTx}
+                    onSubmit={handleSubmit}
+                    noValidate={false}
+                >
             <div className={styles.header}>
                 <div className={styles.headerIcon} aria-hidden>
                     <Mail size={22} />
@@ -139,6 +159,8 @@ export function ContactForm() {
                 <Send size={18} />
                 {submitting ? "Sending…" : "Send message"}
             </button>
-        </form>
+                </m.form>
+            )}
+        </AnimatePresence>
     );
 }

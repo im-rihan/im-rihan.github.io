@@ -1,5 +1,6 @@
 import { ContributionGraph } from "@/components/github/ContributionGraph";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { FadeIn } from "@/components/effects/FadeIn";
 import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
@@ -23,9 +24,11 @@ export default function GitHubPage() {
                     </>
                 }
             />
-            <div className="container">
-                <ContributionGraph />
-            </div>
+            <FadeIn>
+                <div className="container">
+                    <ContributionGraph />
+                </div>
+            </FadeIn>
         </>
     );
 }

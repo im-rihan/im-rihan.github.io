@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AnimatePresence, m } from "framer-motion";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { Scene3D } from "@/components/effects/Scene3D";
 import { BackgroundFX } from "@/components/effects/BackgroundFX";
 import { CustomCursor } from "@/components/effects/CustomCursor";
+import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { AnalysisOverlay, InsightsButton } from "@/components/overlay/AnalysisOverlay";
 import { VisitorTracker } from "@/components/analytics/VisitorTracker";
 import { CommandPaletteLauncher } from "@/components/command-palette/CommandPaletteLauncher";
@@ -35,6 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <a href="#main-content" className="skip-link">
                 Skip to main content
             </a>
+            <ScrollProgress />
             <VisitorTracker />
             <HashScrollHandler />
             <BackgroundFX />
@@ -42,7 +44,17 @@ export function AppShell({ children }: { children: ReactNode }) {
             <CustomCursor />
             <Navbar />
             <main id="main-content" className="main-content">
-                {children}
+                <AnimatePresence mode="wait" initial={false}>
+                    <m.div
+                        key={pathname}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.18, ease: "easeInOut" }}
+                    >
+                        {children}
+                    </m.div>
+                </AnimatePresence>
             </main>
             <Footer />
             <ContactDock />

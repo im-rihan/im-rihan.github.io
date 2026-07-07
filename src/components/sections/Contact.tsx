@@ -81,7 +81,7 @@ export function Contact() {
                         </div>
 
                         <div className={styles.methods}>
-                            {contactMethods.map((item) => {
+                            {contactMethods.map((item, i) => {
                                 const Icon = item.icon;
                                 const inner = (
                                     <>
@@ -97,23 +97,24 @@ export function Contact() {
 
                                 if (item.href) {
                                     return (
-                                        <a
-                                            key={item.label}
-                                            href={item.href}
-                                            className={`glass-card ${styles.methodCard}`}
-                                            target={item.external ? "_blank" : undefined}
-                                            rel={item.external ? "noopener noreferrer" : undefined}
-                                            data-cursor="pointer"
-                                        >
-                                            {inner}
-                                        </a>
+                                        <FadeIn key={item.label} delay={i * 0.06}>
+                                            <a
+                                                href={item.href}
+                                                className={`glass-card ${styles.methodCard}`}
+                                                target={item.external ? "_blank" : undefined}
+                                                rel={item.external ? "noopener noreferrer" : undefined}
+                                                data-cursor="pointer"
+                                            >
+                                                {inner}
+                                            </a>
+                                        </FadeIn>
                                     );
                                 }
 
                                 return (
-                                    <div key={item.label} className={`glass-card ${styles.methodCard}`}>
-                                        {inner}
-                                    </div>
+                                    <FadeIn key={item.label} delay={i * 0.06}>
+                                        <div className={`glass-card ${styles.methodCard}`}>{inner}</div>
+                                    </FadeIn>
                                 );
                             })}
                         </div>

@@ -89,7 +89,9 @@ export function Hero() {
                             </div>
                         )}
                         <h1>
-                            Hi, I&apos;m <span>{siteMeta.name}</span>
+                            <span className={styles.word}>Hi,</span>{" "}
+                            <span className={styles.word}>I&apos;m</span>{" "}
+                            <span className={`${styles.word} ${styles.gradient}`}>{siteMeta.name}</span>
                         </h1>
                         <p className={styles.subtitle}>{siteMeta.tagline}</p>
                         <p className={styles.desc}>{siteMeta.description}</p>
