@@ -16,9 +16,12 @@ export function CommandPaletteLauncher() {
     const [open, setOpen] = useState(false);
     const pathname = usePathname();
 
-    useEffect(() => {
-        setOpen(false);
-    }, [pathname]);
+    // State-during-render: close the palette as soon as the route changes.
+    const [prevPathname, setPrevPathname] = useState(pathname);
+    if (prevPathname !== pathname) {
+        setPrevPathname(pathname);
+        if (open) setOpen(false);
+    }
 
     useEffect(() => {
         const onKeyDown = (e: KeyboardEvent) => {

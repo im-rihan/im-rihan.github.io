@@ -15,7 +15,7 @@ export default function GalleryPage() {
                 title="Gallery"
                 description="Moments from remote engineering, continuous learning, and life in Puri — filter by Work, Learning, or Life."
             />
-            <div className="container">
+            <div className="container page-content">
                 <GalleryGrid />
             </div>
         </>

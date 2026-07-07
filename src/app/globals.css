@@ -469,6 +469,12 @@ section:first-of-type::before {
     overflow-x: clip;
 }
 
+/* Bottom clearance for subpages that don't use <section> elements (which already
+   carry 80px padding). Apply to the outermost container div of each such page. */
+.page-content {
+    padding-bottom: 80px;
+}
+
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));

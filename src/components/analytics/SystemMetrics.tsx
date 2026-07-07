@@ -87,8 +87,12 @@ const SUMMARY_COPY: Record<SimpleRating, string> = {
     poor: "Running hot — your device or connection is under load.",
 };
 
+// Module-level constant: Date.now() runs once when the module is first imported
+// (always in the browser for this "use client" file), keeping the render pure.
+const MODULE_LOAD_TIME = Date.now();
+
 export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number | null }) {
-    const sessionStart = useRef(Date.now());
+    const sessionStart = useRef(MODULE_LOAD_TIME);
     const [metrics, setMetrics] = useState<ClientMetrics>(() => ({
         fps: 60,
         renderLoad: 8,
@@ -132,11 +136,8 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
             raf = requestAnimationFrame(tick);
         };
 
-        setMetrics((prev) => ({
-            ...prev,
-            ...staticM,
-            ...readMemoryMetrics(),
-        }));
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMetrics((prev) => ({ ...prev, ...staticM, ...readMemoryMetrics() }));
         raf = requestAnimationFrame(tick);
 
         const interval = setInterval(() => {

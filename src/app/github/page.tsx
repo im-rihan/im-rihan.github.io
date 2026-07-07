@@ -25,7 +25,7 @@ export default function GitHubPage() {
                 }
             />
             <FadeIn>
-                <div className="container">
+                <div className="container page-content">
                     <ContributionGraph />
                 </div>
             </FadeIn>

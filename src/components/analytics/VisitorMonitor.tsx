@@ -232,6 +232,9 @@ export function VisitorMonitor() {
     }, []);
 
     useEffect(() => {
+        // Initial async data fetch on mount — setState inside `load` fires only
+        // after the async work completes, so it is not a synchronous cascade.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         load();
         const onUpdate = () => load(true);
         window.addEventListener(VISITOR_UPDATE_EVENT, onUpdate);
