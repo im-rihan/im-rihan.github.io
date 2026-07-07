@@ -75,6 +75,25 @@
     min-width: 0;
     border: 1px solid rgba(20, 184, 166, 0.12);
     transition: border-color 0.2s, box-shadow 0.2s;
+    animation: metricFadeIn 0.5s ease backwards;
+}
+
+.metric:nth-child(1) { animation-delay: 0.02s; }
+.metric:nth-child(2) { animation-delay: 0.06s; }
+.metric:nth-child(3) { animation-delay: 0.1s; }
+.metric:nth-child(4) { animation-delay: 0.14s; }
+.metric:nth-child(5) { animation-delay: 0.18s; }
+.metric:nth-child(6) { animation-delay: 0.22s; }
+
+@keyframes metricFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .metric:hover {
@@ -1075,7 +1094,8 @@
     .mapShine,
     .mapArc,
     .mapPinRing,
-    .mapLiveDot {
+    .mapLiveDot,
+    .metric {
         animation: none;
     }
 }

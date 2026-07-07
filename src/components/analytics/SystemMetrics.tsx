@@ -9,12 +9,32 @@ import {
     readStaticMetrics,
     type ClientMetrics,
 } from "@/lib/client-metrics";
+import { RATING_LABEL, rateHigherIsBetter, rateLowerIsBetter, worstRating, type SimpleRating } from "@/lib/rating";
+import { useAnimatedNumber } from "@/lib/use-animated-number";
 import styles from "./SystemMetrics.module.css";
 
 function loadBarClass(pct: number): string {
     if (pct >= 75) return styles.barFillHot;
     if (pct >= 50) return styles.barFillWarn;
     return styles.barFill;
+}
+
+function ratingClass(rating: SimpleRating): string {
+    if (rating === "poor") return styles.ratingPoor;
+    if (rating === "ok") return styles.ratingOk;
+    return styles.ratingGood;
+}
+
+/**
+ * The bar's fill color must track the metric's actual rating, not a raw
+ * percentage — otherwise "higher is better" metrics like FPS light up red
+ * at their *best* value, which is the opposite of what the color should say.
+ */
+function barFillClass(pct: number, rating?: SimpleRating): string {
+    if (rating === "poor") return styles.barFillHot;
+    if (rating === "ok") return styles.barFillWarn;
+    if (rating === "good") return styles.barFill;
+    return loadBarClass(pct);
 }
 
 function MetricBar({
@@ -24,6 +44,8 @@ function MetricBar({
     unit,
     pct,
     showBar = true,
+    rating,
+    title,
 }: {
     icon: ReactNode;
     label: string;
@@ -31,12 +53,17 @@ function MetricBar({
     unit?: string;
     pct?: number;
     showBar?: boolean;
+    rating?: SimpleRating;
+    title?: string;
 }) {
     return (
-        <div className={styles.metric}>
-            <div className={styles.metricHead}>
-                {icon}
-                <span>{label}</span>
+        <div className={styles.metric} title={title}>
+            <div className={styles.ratingRow}>
+                <div className={styles.metricHead}>
+                    {icon}
+                    <span>{label}</span>
+                </div>
+                {rating && <span className={`${styles.ratingChip} ${ratingClass(rating)}`}>{RATING_LABEL[rating]}</span>}
             </div>
             <div className={styles.value}>
                 {value}
@@ -45,7 +72,7 @@ function MetricBar({
             {showBar && pct !== undefined && (
                 <div className={styles.barTrack} aria-hidden>
                     <div
-                        className={`${styles.barFill} ${loadBarClass(pct)}`}
+                        className={`${styles.barFill} ${barFillClass(pct, rating)}`}
                         style={{ width: `${Math.min(100, Math.max(4, pct))}%` }}
                     />
                 </div>
@@ -53,6 +80,12 @@ function MetricBar({
         </div>
     );
 }
+
+const SUMMARY_COPY: Record<SimpleRating, string> = {
+    good: "Running smoothly — no performance issues detected.",
+    ok: "Mostly smooth, with a little extra load right now.",
+    poor: "Running hot — your device or connection is under load.",
+};
 
 export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number | null }) {
     const sessionStart = useRef(Date.now());
@@ -134,6 +167,18 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
     const latency = networkLatencyMs ?? metrics.networkRtt;
     const latencyPct = latency !== null && latency !== undefined ? Math.min(100, Math.round((latency / 800) * 100)) : null;
 
+    const fpsRating = rateHigherIsBetter(metrics.fps, 50, 30);
+    const loadRating = rateLowerIsBetter(metrics.renderLoad, 35, 65);
+    const heapRating = heapPct !== null ? rateLowerIsBetter(heapPct, 50, 80) : null;
+    const latencyRating =
+        latency !== null && latency !== undefined ? rateLowerIsBetter(latency, 150, 400) : null;
+    const overall =
+        worstRating([fpsRating, loadRating, heapRating, latencyRating].filter((r): r is SimpleRating => r !== null)) ??
+        "good";
+
+    const animatedFps = useAnimatedNumber(metrics.fps);
+    const animatedLoad = useAnimatedNumber(metrics.renderLoad);
+
     return (
         <section className={`glass-card ${styles.panel}`} aria-label="Client system metrics">
             <div className={styles.glowBorder} aria-hidden />
@@ -156,13 +201,25 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                 </span>
             </div>
 
+            <p className={styles.summary}>
+                <span
+                    className={`${styles.summaryDot} ${
+                        overall === "poor" ? styles.summaryDotPoor : overall === "ok" ? styles.summaryDotOk : ""
+                    }`}
+                    aria-hidden
+                />
+                {SUMMARY_COPY[overall]}
+            </p>
+
             <div className={styles.grid}>
                 <MetricBar
                     icon={<Cpu size={15} />}
                     label="Render load"
-                    value={String(metrics.renderLoad)}
+                    value={String(Math.round(animatedLoad))}
                     unit="%"
                     pct={metrics.renderLoad}
+                    rating={loadRating}
+                    title="Estimated GPU/CPU work from the 3D scene and animations — lower is lighter on your device."
                 />
                 <MetricBar
                     icon={<MemoryStick size={15} />}
@@ -171,6 +228,8 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                     unit={metrics.jsHeapMb !== null ? "MB" : undefined}
                     pct={heapPct ?? undefined}
                     showBar={heapPct !== null}
+                    rating={heapRating ?? undefined}
+                    title="Memory this tab is currently using in your browser."
                 />
                 <MetricBar
                     icon={<HardDrive size={15} />}
@@ -179,12 +238,15 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                     unit={metrics.deviceMemoryGb !== null ? "GB" : undefined}
                     pct={metrics.deviceMemoryGb ? Math.min(100, metrics.deviceMemoryGb * 12) : undefined}
                     showBar={metrics.deviceMemoryGb !== null}
+                    title="Total memory reported by your device — not specific to this site."
                 />
                 <MetricBar
                     icon={<Zap size={15} />}
                     label="FPS"
-                    value={String(metrics.fps)}
+                    value={String(Math.round(animatedFps))}
                     pct={Math.min(100, Math.round((metrics.fps / 60) * 100))}
+                    rating={fpsRating}
+                    title="Frames per second — 60 is buttery smooth, under 30 feels sluggish."
                 />
                 <MetricBar
                     icon={<Network size={15} />}
@@ -193,18 +255,22 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                     unit={latency !== null && latency !== undefined ? "ms RTT" : undefined}
                     pct={latencyPct ?? undefined}
                     showBar={latencyPct !== null}
+                    rating={latencyRating ?? undefined}
+                    title="Round-trip time to load data — lower means a snappier connection."
                 />
                 <MetricBar
                     icon={<Timer size={15} />}
                     label="Session"
                     value={formatUptime(metrics.sessionUptimeSec)}
                     showBar={false}
+                    title="How long you've had this page open."
                 />
                 <MetricBar
                     icon={<Cpu size={15} />}
                     label="CPU cores"
                     value={metrics.cpuCores !== null ? String(metrics.cpuCores) : "—"}
                     showBar={false}
+                    title="Logical processor cores reported by your device."
                 />
                 <MetricBar
                     icon={<HardDrive size={15} />}
@@ -212,13 +278,14 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                     value={String(metrics.storageKb)}
                     unit="KB"
                     pct={Math.min(100, Math.round(metrics.storageKb / 50))}
+                    title="Data this site has saved in your browser (theme, cached analytics, etc.)."
                 />
             </div>
 
             <p className={styles.hint}>
-                Live metrics from your browser — <code>render load</code> reflects 3D scene + page performance.
+                Sampled live from your browser — hover any card for what it means.
                 {metrics.pageLoadMs !== null && (
-                    <> Page loaded in <code>{metrics.pageLoadMs}ms</code>.</>
+                    <> This page loaded in <code>{metrics.pageLoadMs}ms</code>.</>
                 )}
             </p>
         </section>

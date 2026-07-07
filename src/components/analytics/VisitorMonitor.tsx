@@ -21,7 +21,8 @@ import {
 } from "@/lib/visitor-analytics";
 import { countryFlagSrc, countryFlagEmoji } from "@/lib/country-flag";
 import { getCountryCoords, hasCountryCoords } from "@/data/country-coordinates";
-import { aggregateByField, formatVisitTime, topCountryShare } from "@/lib/analytics-insights";
+import { aggregateByField, formatVisitTime, normalizePagePath, topCountryShare } from "@/lib/analytics-insights";
+import { useAnimatedNumber } from "@/lib/use-animated-number";
 import styles from "./VisitorMonitor.module.css";
 
 const WORLD_MAP_SRC = "/world-map.png";
@@ -237,6 +238,12 @@ export function VisitorMonitor() {
         return () => window.removeEventListener(VISITOR_UPDATE_EVENT, onUpdate);
     }, [load]);
 
+    // Hooks must run unconditionally, before the loading/empty early returns below.
+    const animatedTotal = useAnimatedNumber(stats?.total ?? 0);
+    const animatedGlobal = useAnimatedNumber(stats?.globalTotal ?? stats?.total ?? 0);
+    const animatedCountries = useAnimatedNumber(stats?.countries.length ?? 0);
+    const animatedRecent = useAnimatedNumber(stats?.recent.length ?? 0);
+
     if (loading && !stats) {
         return (
             <div className={`glass-card ${styles.card}`}>
@@ -247,7 +254,6 @@ export function VisitorMonitor() {
 
     if (!stats) return null;
 
-    const countryCount = stats.countries.length;
     const topDevice = stats.devices[0]?.label ?? "—";
     const isDemo = stats.isDemo || stats.source === "demo";
     const supabase = stats.supabase;
@@ -278,23 +284,21 @@ export function VisitorMonitor() {
                 <div className={`glass-card ${styles.metric}`}>
                     <Users size={20} />
                     <div>
-                        <span className={styles.metricNum}>{stats.total}</span>
+                        <span className={styles.metricNum}>{Math.round(animatedTotal)}</span>
                         <span className={styles.metricLabel}>Total visits</span>
                     </div>
                 </div>
                 <div className={`glass-card ${styles.metric}`}>
                     <Globe size={20} />
                     <div>
-                        <span className={styles.metricNum}>
-                            {stats.globalTotal ?? stats.total}
-                        </span>
+                        <span className={styles.metricNum}>{Math.round(animatedGlobal)}</span>
                         <span className={styles.metricLabel}>Global reach</span>
                     </div>
                 </div>
                 <div className={`glass-card ${styles.metric}`}>
                     <Flag size={20} />
                     <div>
-                        <span className={styles.metricNum}>{countryCount}</span>
+                        <span className={styles.metricNum}>{Math.round(animatedCountries)}</span>
                         <span className={styles.metricLabel}>Countries</span>
                     </div>
                 </div>
@@ -315,7 +319,7 @@ export function VisitorMonitor() {
                 <div className={`glass-card ${styles.metric}`}>
                     <Activity size={20} />
                     <div>
-                        <span className={styles.metricNum}>{stats.recent.length}</span>
+                        <span className={styles.metricNum}>{Math.round(animatedRecent)}</span>
                         <span className={styles.metricLabel}>Recent sessions</span>
                     </div>
                 </div>
@@ -452,7 +456,7 @@ export function VisitorMonitor() {
                                     <div className={styles.recentBody}>
                                         <strong>{v.city ? `${v.city}, ` : ""}{v.countryName}</strong>
                                         <span>
-                                            {v.page} · {v.browser} · {v.deviceLabel}
+                                            {normalizePagePath(v.page)} · {v.browser} · {v.deviceLabel}
                                         </span>
                                     </div>
                                     <span className={styles.recentTime}>{formatVisitTime(v.timestamp)}</span>
