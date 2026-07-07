@@ -1,7 +1,7 @@
 "use client";
 
-import { m } from "framer-motion";
-import { useEffect, useState, type ReactNode } from "react";
+import { m, useInView } from "framer-motion";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { prefersReducedEffects } from "@/lib/device-capabilities";
 
 interface FadeInProps {
@@ -11,14 +11,14 @@ interface FadeInProps {
 }
 
 export function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
+    const ref = useRef<HTMLDivElement>(null);
     // Default to the static (no-animation) branch so SSR/first paint never
     // shows an opacity:0 element waiting on a client-only viewport check.
     const [reduceEffects, setReduceEffects] = useState(true);
+    // once:false so returning to the homepage re-triggers visibility after remount.
+    const isInView = useInView(ref, { once: false, margin: "-32px 0px -32px 0px", amount: 0.01 });
 
     useEffect(() => {
-        // prefersReducedEffects() reads window.matchMedia, which is unavailable
-        // during the static build. Initialising to `true` (no animation) matches
-        // the server HTML; this effect corrects the value post-hydration.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setReduceEffects(prefersReducedEffects());
     }, []);
@@ -29,10 +29,10 @@ export function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
 
     return (
         <m.div
+            ref={ref}
             className={className}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-32px" }}
+            initial={false}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
         >
             {children}

@@ -1,20 +1,13 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 interface RevealProps {
     children: ReactNode;
     className?: string;
-    /** Stagger delay in seconds (scroll-driven animation). */
+    /** Reserved for API compatibility — scroll reveal removed (SPA-safe). */
     delay?: number;
 }
 
-/** Server-safe scroll reveal — CSS `animation-timeline: view()` with no JS hydration. */
+/** Layout wrapper for page content — no opacity enter/exit (breaks SPA return to home). */
 export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
-    const style: CSSProperties | undefined =
-        delay > 0 ? { animationDelay: `${delay}s` } : undefined;
-
-    return (
-        <div className={className ? `reveal ${className}` : "reveal"} style={style}>
-            {children}
-        </div>
-    );
+    return <div className={className}>{children}</div>;
 }

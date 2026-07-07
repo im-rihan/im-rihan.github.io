@@ -2,7 +2,6 @@
 
 import { useSyncExternalStore, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { AnimatePresence, m } from "framer-motion";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { Scene3D } from "@/components/effects/Scene3D";
@@ -50,16 +49,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <CustomCursor />
             <Navbar />
             <main id="main-content" className="main-content">
-                <AnimatePresence mode="wait" initial={false}>
-                    <m.div
-                        key={pathname}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.12, ease: "easeInOut" }}
-                    >
-                        {children}
-                    </m.div>
-                </AnimatePresence>
+                <div key={pathname}>{children}</div>
             </main>
             <Footer />
             <ContactDock />

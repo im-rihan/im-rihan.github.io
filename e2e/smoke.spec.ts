@@ -28,4 +28,18 @@ test.describe("portfolio smoke", () => {
         const skip = page.getByRole("link", { name: /skip to main content/i });
         await expect(skip).toHaveAttribute("href", "#main-content");
     });
+
+    test("home content stays visible after navigating away and back", async ({ page }) => {
+        await page.goto("/");
+        await expect(page.locator("#about")).toBeVisible();
+
+        await page.goto("/work/");
+        await expect(page.locator("#main-content")).toBeVisible();
+
+        await page.goto("/");
+        await expect(page.locator("#main-content")).toBeVisible();
+        await expect(page.locator("#about")).toBeVisible();
+        await expect(page.locator("#about")).toHaveCSS("opacity", "1");
+        await expect(page.getByRole("heading", { name: /Hi,/i })).toBeVisible();
+    });
 });
