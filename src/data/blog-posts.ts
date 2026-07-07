@@ -32,7 +32,7 @@ Three production footguns were fixed first:
 
 Four homepage sections — **About, Skills, Experience, Testimonials** — moved from client components to **server components**. Animation wrappers (\`TiltCard\`) stay client-only where interactivity is needed; the text and structure render as static HTML at build time.
 
-A bundle gate tightened from **400 KB → 340 KB gzip** (measured baseline ~335 KB). Lighthouse performance floor moved from a **0.5 warn** to a **0.75 error** so regressions can't slip through quietly.
+A bundle gate tightened from **400 KB → 340 KB gzip** (measured baseline ~335 KB). Lighthouse performance floor moved from a **0.5 warn** to a **0.7 error** (homepage LHCI baseline ~0.71 on desktop preset).
 
 ## Phase 2 — honest analytics and smoke tests
 
