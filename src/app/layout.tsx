@@ -5,6 +5,7 @@ import { AppShell } from "@/components/layout/AppShell";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { AnalyticsScript } from "@/components/seo/AnalyticsScript";
 import { WebVitalsReporter } from "@/components/seo/WebVitalsReporter";
+import { ServiceWorkerRegistration } from "@/components/seo/ServiceWorkerRegistration";
 import { rootMetadata, rootViewport } from "@/lib/site-metadata";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <JsonLd />
                 <AnalyticsScript />
                 <WebVitalsReporter />
+                <ServiceWorkerRegistration />
                 <Providers>
                     <AppShell>{children}</AppShell>
                 </Providers>

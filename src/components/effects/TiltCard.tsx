@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { m, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect, useState, type ReactNode, type MouseEvent } from "react";
 import { prefersReducedEffects } from "@/lib/device-capabilities";
 import styles from "./TiltCard.module.css";
@@ -46,7 +46,7 @@ function TiltCardInteractive({ children, className = "" }: TiltCardProps) {
     };
 
     return (
-        <motion.div
+        <m.div
             data-tilt-card
             data-cursor="card"
             className={`${styles.card} glass-card ${className}`}
@@ -57,6 +57,6 @@ function TiltCardInteractive({ children, className = "" }: TiltCardProps) {
             transition={{ type: "spring", stiffness: 300, damping: 20 }}
         >
             {children}
-        </motion.div>
+        </m.div>
     );
 }

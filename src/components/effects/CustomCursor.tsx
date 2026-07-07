@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { motion, useSpring } from "framer-motion";
+import { m, useSpring } from "framer-motion";
 import {
     emitCursorBurst,
     setCursorCharge,
@@ -503,13 +503,13 @@ export function CustomCursor() {
                     Click · hold to charge · drag to paint
                 </div>
             )}
-            <motion.div
+            <m.div
                 className={styles.glow}
                 style={{ x: glowX, y: glowY, scale: chargeScale + speed * 0.15 }}
                 aria-hidden
             />
             {speed > 0.012 && mode === "default" && !clicking && (
-                <motion.div
+                <m.div
                     className={styles.cometTail}
                     style={{
                         x: dotX,
@@ -522,7 +522,7 @@ export function CustomCursor() {
                 />
             )}
             {speed > 0.04 && mode === "default" && (
-                <motion.div
+                <m.div
                     className={styles.cometCore}
                     style={{
                         x: dotX,
@@ -535,20 +535,20 @@ export function CustomCursor() {
                 />
             )}
             {mode === "default" && (
-                <motion.div className={styles.microOrbit} style={{ x: dotX, y: dotY }} aria-hidden>
+                <m.div className={styles.microOrbit} style={{ x: dotX, y: dotY }} aria-hidden>
                     {Array.from({ length: MICRO_PARTICLE_COUNT }, (_, i) => (
                         <span key={i} className={styles.microParticle} style={{ ["--i" as string]: i }} />
                     ))}
-                </motion.div>
+                </m.div>
             )}
             {mode === "default" && (
-                <motion.div
+                <m.div
                     className={`${styles.hexRing} ${charge > 0.35 ? styles.hexCharged : ""}`}
                     style={{ x: orbitX, y: orbitY, rotate: velocityAngle * 0.5 + charge * 45 }}
                     aria-hidden
                 />
             )}
-            <motion.div
+            <m.div
                 className={`${styles.orbit} ${modeClass} ${charge > 0.2 ? styles.charging : ""} ${idle ? styles.idle : ""}`}
                 style={{ x: orbitX, y: orbitY, scale: chargeScale }}
                 aria-hidden
@@ -562,18 +562,18 @@ export function CustomCursor() {
                             aria-hidden
                         />
                     ))}
-            </motion.div>
+            </m.div>
             {mode === "default" && !clicking && charge < 0.12 && (
                 <>
-                    <motion.div
+                    <m.div
                         className={styles.crosshair}
                         style={{ x: dotX, y: dotY, rotate: speed * 12 }}
                         aria-hidden
                     >
                         <span className={styles.crossH} style={{ width: crossLen * 2 }} />
                         <span className={styles.crossV} style={{ height: crossLen * 2 }} />
-                    </motion.div>
-                    <motion.div
+                    </m.div>
+                    <m.div
                         className={`${styles.ringOuter} ${charge > 0.3 ? styles.charging : ""}`}
                         style={{ x: ringOuterX, y: ringOuterY, scale: 1 + speed * 0.2 }}
                         aria-hidden
@@ -618,18 +618,18 @@ export function CustomCursor() {
                     aria-hidden
                 />
             ))}
-            <motion.div
+            <m.div
                 className={`${styles.ring} ${modeClass} ${clicking ? styles.clicking : ""} ${charge > 0.55 ? styles.charged : ""}`}
                 style={{ x: ringX, y: ringY, scale: chargeScale }}
                 aria-hidden
             />
-            <motion.div
+            <m.div
                 className={`${styles.dot} ${modeClass} ${clicking ? styles.clicking : ""}`}
                 style={{ x: dotX, y: dotY }}
                 aria-hidden
             />
             {charge > 0.08 && mode === "default" && (
-                <motion.div
+                <m.div
                     className={styles.chargeTicks}
                     style={{ x: ringX, y: ringY, rotate: charge * 120 }}
                     aria-hidden
@@ -644,17 +644,17 @@ export function CustomCursor() {
                             }}
                         />
                     ))}
-                </motion.div>
+                </m.div>
             )}
             {charge > 0.15 && mode === "default" && (
-                <motion.div
+                <m.div
                     className={styles.chargeArc}
                     style={{ x: ringX, y: ringY, rotate: charge * 360 }}
                     aria-hidden
                 />
             )}
             {idle && mode === "default" && (
-                <motion.div
+                <m.div
                     className={styles.idlePulse}
                     style={{ x: ringX, y: ringY }}
                     aria-hidden

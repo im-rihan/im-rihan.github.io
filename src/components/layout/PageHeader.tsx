@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
 import { useRef, type ReactNode } from "react";
 import styles from "./PageHeader.module.css";
 
@@ -20,10 +20,10 @@ export function PageHeader({ title, description }: PageHeaderProps) {
 
     return (
         <header className={`page-header container ${styles.header}`} ref={ref}>
-            <motion.div className={styles.copy} style={{ y: copyY }}>
+            <m.div className={styles.copy} style={{ y: copyY }}>
                 <h1>{title}</h1>
                 <p>{description}</p>
-            </motion.div>
+            </m.div>
         </header>
     );
 }

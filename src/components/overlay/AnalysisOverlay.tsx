@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { X, BarChart3 } from "lucide-react";
 import { portfolioStats, skillGroups, siteMeta } from "@/data/profile";
 import { certifications, certFilterCounts } from "@/data/certifications";
@@ -37,14 +37,14 @@ export function AnalysisOverlay({ open, onClose }: AnalysisOverlayProps) {
     return (
         <AnimatePresence>
             {open && (
-                <motion.div
+                <m.div
                     className={styles.backdrop}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={onClose}
                 >
-                    <motion.div
+                    <m.div
                         className={`glass-card ${styles.modal}`}
                         initial={{ opacity: 0, scale: 0.92, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -98,8 +98,8 @@ export function AnalysisOverlay({ open, onClose }: AnalysisOverlayProps) {
                             <h3>Latest certification</h3>
                             <p>{certifications[0]?.title} ({certifications[0]?.dateLabel})</p>
                         </div>
-                    </motion.div>
-                </motion.div>
+                    </m.div>
+                </m.div>
             )}
         </AnimatePresence>
     );

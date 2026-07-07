@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { m, AnimatePresence, LayoutGroup } from "framer-motion";
 import { Calendar, Award, GraduationCap, ChevronDown } from "lucide-react";
 import { certifications, certFilterCounts, type CertIssuer, type Certification } from "@/data/certifications";
 import { education } from "@/data/profile";
@@ -163,7 +163,7 @@ export function Education() {
                         </div>
 
                         <LayoutGroup id="cert-grid">
-                            <motion.div
+                            <m.div
                                 className={styles.certGrid}
                                 layout
                                 transition={{ layout: { duration: 0.35, ease: [0.22, 1, 0.36, 1] } }}
@@ -173,7 +173,7 @@ export function Education() {
                                         if (!expanded && i >= INITIAL_VISIBLE) return null;
 
                                         return (
-                                            <motion.div
+                                            <m.div
                                                 key={`${filter}-${cert.title}`}
                                                 layout
                                                 className={styles.certCell}
@@ -188,15 +188,15 @@ export function Education() {
                                                 }}
                                             >
                                                 <CertCard cert={cert} index={i} />
-                                            </motion.div>
+                                            </m.div>
                                         );
                                     })}
                                 </AnimatePresence>
-                            </motion.div>
+                            </m.div>
                         </LayoutGroup>
 
                         {hasMore && (
-                            <motion.button
+                            <m.button
                                 ref={toggleRef}
                                 type="button"
                                 className={styles.viewMoreBtn}
@@ -206,15 +206,15 @@ export function Education() {
                                 whileTap={{ scale: 0.98 }}
                                 transition={{ layout: { duration: 0.3 } }}
                             >
-                                <motion.span
+                                <m.span
                                     className={styles.viewMoreIcon}
                                     animate={{ rotate: expanded ? 180 : 0 }}
                                     transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                                 >
                                     <ChevronDown size={18} />
-                                </motion.span>
+                                </m.span>
                                 <AnimatePresence mode="wait" initial={false}>
-                                    <motion.span
+                                    <m.span
                                         key={expanded ? "less" : "more"}
                                         className={styles.viewMoreLabel}
                                         initial={{ opacity: 0, y: 8 }}
@@ -225,9 +225,9 @@ export function Education() {
                                         {expanded
                                             ? "Show fewer certifications"
                                             : `View all ${visible.length} certifications`}
-                                    </motion.span>
+                                    </m.span>
                                 </AnimatePresence>
-                            </motion.button>
+                            </m.button>
                         )}
                     </div>
                 </FadeIn>

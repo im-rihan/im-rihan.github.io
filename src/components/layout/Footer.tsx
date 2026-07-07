@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteMeta } from "@/data/profile";
+import { CommandPaletteTrigger } from "@/components/command-palette/CommandPaletteTrigger";
 import styles from "./Footer.module.css";
 
 export function Footer() {
@@ -29,6 +30,7 @@ export function Footer() {
                         GitHub Pages
                     </a>
                 </p>
+                <CommandPaletteTrigger />
             </div>
         </footer>
     );

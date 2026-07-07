@@ -10,6 +10,7 @@ import { BackgroundFX } from "@/components/effects/BackgroundFX";
 import { CustomCursor } from "@/components/effects/CustomCursor";
 import { AnalysisOverlay, InsightsButton } from "@/components/overlay/AnalysisOverlay";
 import { VisitorTracker } from "@/components/analytics/VisitorTracker";
+import { CommandPaletteLauncher } from "@/components/command-palette/CommandPaletteLauncher";
 import { ContactDock } from "./ContactDock";
 import { HashScrollHandler } from "./HashScrollHandler";
 import { shouldLoadScene } from "@/lib/scene-preference";
@@ -47,6 +48,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <ContactDock />
             <InsightsButton onClick={() => setInsightsOpen(true)} />
             <AnalysisOverlay open={insightsOpen} onClose={() => setInsightsOpen(false)} />
+            <CommandPaletteLauncher />
         </>
     );
 }

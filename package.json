@@ -11,6 +11,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "check:bundle-size": "node scripts/check-bundle-size.mjs",
+    "lighthouse": "lhci autorun",
     "generate:brand": "node scripts/generate-og.mjs",
     "setup:resume": "pip install -r resume/requirements.txt && python -m playwright install chromium",
     "generate:resume": "python resume/generate_resume.py"
@@ -30,6 +32,7 @@
     "web-vitals": "^5.3.0"
   },
   "devDependencies": {
+    "@lhci/cli": "^0.15.1",
     "@resvg/resvg-js": "^2.6.2",
     "@types/node": "^26.0.1",
     "@types/react": "^19.0.0",
