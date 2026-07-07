@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { siteMeta } from "@/data/profile";
 import { SectionScrollLink } from "@/components/layout/SectionScrollLink";
-import { resumeHtmlUrl, resumePdfUrl, resumeDocxUrl } from "@/lib/resume";
+import { resumeHtmlUrl } from "@/lib/resume";
 import { FadeIn } from "@/components/effects/FadeIn";
 import { TiltCard } from "@/components/effects/TiltCard";
 import { SocialLinks } from "@/components/ui/SocialLinks";

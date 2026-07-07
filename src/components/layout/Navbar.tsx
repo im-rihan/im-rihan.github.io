@@ -107,9 +107,14 @@ export function Navbar() {
     const isActive = (href: string) =>
         href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
-    useEffect(() => {
-        closeAll();
-    }, [pathname]);
+    // State-during-render: close dropdowns as soon as pathname changes.
+    // Avoids a separate useEffect pass and the set-state-in-effect warning.
+    const [prevPathname, setPrevPathname] = useState(pathname);
+    if (prevPathname !== pathname) {
+        setPrevPathname(pathname);
+        if (open) setOpen(false);
+        if (exploreOpen) setExploreOpen(false);
+    }
 
     useEffect(() => {
         if (!open) return;

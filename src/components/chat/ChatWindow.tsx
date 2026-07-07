@@ -110,6 +110,9 @@ export function ChatWindow() {
     useEffect(() => {
         const stored = loadStoredMessages();
         if (stored) {
+            // Intentional post-hydration localStorage restore — localStorage is
+            // unavailable during the static build, so this must run in an effect.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setMessages(stored);
             stored
                 .filter((m) => m.role === "user")

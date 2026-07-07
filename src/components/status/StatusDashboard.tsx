@@ -151,6 +151,9 @@ export function StatusDashboard() {
     }, []);
 
     useEffect(() => {
+        // Kicks off the initial async link-health probes on mount. setState calls
+        // inside runChecks are deferred (async), not synchronous cascades.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         runChecks();
     }, [runChecks]);
 

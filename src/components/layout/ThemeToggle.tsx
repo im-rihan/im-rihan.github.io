@@ -12,7 +12,12 @@ export function ThemeToggle() {
     const [sceneOn, setSceneOn] = useState(false);
 
     useEffect(() => {
+        // SSR hydration guard — setMounted reveals the real UI only after the
+        // client has taken over, preventing a flash of mismatched server HTML.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setMounted(true);
+        // Reads localStorage, so must run post-mount; the listener keeps state
+        // in sync whenever the user toggles the 3D scene.
         setSceneOn(isSceneEnabled());
         const sync = () => setSceneOn(isSceneEnabled());
         window.addEventListener("scene-preference-change", sync);

@@ -16,6 +16,10 @@ export function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
     const [reduceEffects, setReduceEffects] = useState(true);
 
     useEffect(() => {
+        // prefersReducedEffects() reads window.matchMedia, which is unavailable
+        // during the static build. Initialising to `true` (no animation) matches
+        // the server HTML; this effect corrects the value post-hydration.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setReduceEffects(prefersReducedEffects());
     }, []);
 
