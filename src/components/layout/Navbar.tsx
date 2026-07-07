@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { ChevronDown, Mail, ArrowUpRight, Terminal } from "lucide-react";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
@@ -176,7 +176,7 @@ export function Navbar() {
 
                             <AnimatePresence>
                                 {exploreOpen && (
-                                    <motion.div
+                                    <m.div
                                         className={styles.dropdownWrap}
                                         initial={{ opacity: 0, y: 10, scale: 0.97 }}
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -198,7 +198,7 @@ export function Navbar() {
                                             </p>
                                             <div className={styles.dropdownGrid}>
                                                 {sectionLinks.map((link, i) => (
-                                                    <motion.button
+                                                    <m.button
                                                         key={link.id}
                                                         type="button"
                                                         role="menuitem"
@@ -217,11 +217,11 @@ export function Navbar() {
                                                             <span className={styles.itemFile}>{link.file}</span>
                                                         </span>
                                                         <ArrowUpRight size={14} className={styles.itemArrow} />
-                                                    </motion.button>
+                                                    </m.button>
                                                 ))}
                                             </div>
                                         </div>
-                                    </motion.div>
+                                    </m.div>
                                 )}
                             </AnimatePresence>
                         </li>

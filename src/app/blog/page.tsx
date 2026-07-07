@@ -1,16 +1,24 @@
 import Link from "next/link";
-import { ArrowRight, Calendar, FileText } from "lucide-react";
+import { ArrowRight, Calendar, FileText, Rss } from "lucide-react";
 import { estimateReadingMinutes, formatBlogDate, sortedBlogPosts } from "@/data/blog-posts";
 import { createPageMetadata, siteUrl } from "@/lib/site-metadata";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PageJsonLd } from "@/components/seo/PageJsonLd";
 import styles from "./blog.module.css";
 
-export const metadata = createPageMetadata(
+const baseMetadata = createPageMetadata(
     "Blog",
     "Notes on building this portfolio and shipping production fintech/real-estate systems — architecture, debugging stories, and lessons learned.",
     "/blog",
 );
+
+export const metadata = {
+    ...baseMetadata,
+    alternates: {
+        ...baseMetadata.alternates,
+        types: { "application/rss+xml": `${siteUrl}/blog/rss.xml` },
+    },
+};
 
 const breadcrumb = {
     "@context": "https://schema.org",
@@ -37,6 +45,17 @@ export default function BlogIndexPage() {
                 }
             />
             <div className={`container ${styles.page}`}>
+                <div className={styles.toolbar}>
+                    <a
+                        href="/blog/rss.xml"
+                        className={styles.rssLink}
+                        data-cursor="pointer"
+                        aria-label="Subscribe via RSS"
+                    >
+                        <Rss size={14} aria-hidden />
+                        RSS feed
+                    </a>
+                </div>
                 <div className={styles.grid}>
                     {posts.map((post) => (
                         <Link

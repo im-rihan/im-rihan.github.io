@@ -23,3 +23,6 @@ yarn-error.log*
 # Resume build intermediate
 docs/resume-page.png
 resume/resume.docx
+
+# Lighthouse CI local reports
+.lighthouseci/

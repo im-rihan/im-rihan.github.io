@@ -205,7 +205,7 @@ export async function probeSupabase(): Promise<SupabaseProbeResult> {
         return { configured: false, ok: false, message: "Supabase env vars not set" };
     }
 
-    const supabase = getBrowserClient();
+    const supabase = await getBrowserClient();
     if (!supabase) {
         return { configured: false, ok: false, message: "Supabase client unavailable" };
     }
@@ -223,7 +223,7 @@ export async function probeSupabase(): Promise<SupabaseProbeResult> {
 }
 
 async function fetchSupabaseVisits(): Promise<VisitRecord[] | null> {
-    const supabase = getBrowserClient();
+    const supabase = await getBrowserClient();
     if (!supabase) return null;
 
     try {
@@ -248,7 +248,7 @@ async function fetchSupabaseVisits(): Promise<VisitRecord[] | null> {
 }
 
 async function pushSupabaseVisit(visit: VisitRecord): Promise<boolean> {
-    const supabase = getBrowserClient();
+    const supabase = await getBrowserClient();
     if (!supabase) return false;
 
     try {
