@@ -53,10 +53,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <AnimatePresence mode="wait" initial={false}>
                     <m.div
                         key={pathname}
-                        initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        transition={{ duration: 0.18, ease: "easeInOut" }}
+                        transition={{ duration: 0.12, ease: "easeInOut" }}
                     >
                         {children}
                     </m.div>
