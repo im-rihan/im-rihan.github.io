@@ -462,7 +462,6 @@ section:first-of-type::before {
 .main-content {
     position: relative;
     z-index: 1;
-    padding-bottom: 20px;
     width: 100%;
     max-width: 100%;
     min-width: 0;
