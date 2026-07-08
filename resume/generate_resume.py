@@ -6,9 +6,11 @@ Output: docs/ and public/ — resume.html, resume.pdf, resume.docx
 Word (.docx) embeds a high-DPI raster of the PDF so it matches HTML/PDF exactly.
 """
 
+import re
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -20,9 +22,40 @@ OUTPUT_HTML = DOCS_DIR / "resume.html"
 OUTPUT_PDF = DOCS_DIR / "resume.pdf"
 OUTPUT_DOCX = DOCS_DIR / "resume.docx"
 OUTPUT_PNG = DOCS_DIR / "resume-page.png"
+RESUME_TS = REPO_ROOT / "src" / "lib" / "resume.ts"
 
 A4_HEIGHT_PX = 1123  # ~297mm at 96dpi
 DOCX_RASTER_DPI = 220
+
+
+def _resume_date_from_git() -> str:
+    """Return YYYYMMDD of the last git commit that touched resume.html, or today."""
+    try:
+        out = subprocess.check_output(
+            ["git", "log", "-1", "--format=%cd", "--date=format:%Y%m%d", str(HTML_SOURCE)],
+            cwd=REPO_ROOT,
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+        return out if out else datetime.now(timezone.utc).strftime("%Y%m%d")
+    except Exception:
+        return datetime.now(timezone.utc).strftime("%Y%m%d")
+
+
+def update_resume_version() -> None:
+    """Patch RESUME_VERSION in src/lib/resume.ts to match last git commit date."""
+    if not RESUME_TS.exists():
+        return
+    version = _resume_date_from_git()
+    content = RESUME_TS.read_text(encoding="utf-8")
+    patched = re.sub(
+        r'(const RESUME_VERSION = ")[^"]+(")',
+        rf'\g<1>{version}\g<2>',
+        content,
+    )
+    if patched != content:
+        RESUME_TS.write_text(patched, encoding="utf-8")
+        print(f"[OK] RESUME_VERSION updated → {version}")
 
 
 def sync_html():
@@ -237,4 +270,5 @@ if __name__ == "__main__":
     except Exception as exc:
         print(f"[WARN] Word generation skipped: {exc!s}")
     sync_to_public()
+    update_resume_version()
     print(f"\nDone! Files in: {DOCS_DIR} and {PUBLIC_DIR}")

@@ -1,7 +1,7 @@
 import { assetPath } from "@/lib/paths";
 
 /** Bump when resume files in public/ are regenerated (cache bust for CDN/browsers). */
-const RESUME_VERSION = "20250628";
+const RESUME_VERSION = "20260708";
 
 function resumeAsset(path: string): string {
     return `${assetPath(path)}?v=${RESUME_VERSION}`;

@@ -213,7 +213,8 @@ import { getChatResponse } from "@/lib/chat-engine";
 ```
 im-rihan.github.io/
 ├── .github/workflows/
-│   └── deploy-gh-pages.yml     # CI: build + publish out/ → gh-pages
+│   ├── ci.yml                  # PR gate: lint, type-check, tests, build, bundle, E2E, Lighthouse
+│   └── deploy-gh-pages.yml     # Deploy on merge to main: build with secrets → gh-pages
 ├── public/                     # Static files copied as-is to out/
 │   ├── favicon.svg
 │   ├── brand-logo-*.svg/png/gif
@@ -461,6 +462,9 @@ Case study URLs in `status-targets.ts` are generated from `case-studies.ts` auto
 | `/work/[slug]/` | `app/work/[slug]/page.tsx` | Individual case study (problem, approach, results) |
 | `/chat/` | `app/chat/page.tsx` | Portfolio FAQ chat with streaming replies |
 | `/github/` | `app/github/page.tsx` | Contribution heatmap + rule-based insights |
+| `/blog/` | `app/blog/page.tsx` | Blog post index |
+| `/blog/[slug]/` | `app/blog/[slug]/page.tsx` | Individual blog post |
+| `/blog/rss.xml` | `app/blog/rss.xml/route.ts` | Auto-generated RSS feed |
 | `/gallery/` | `app/gallery/page.tsx` | Personal gallery (placeholder gradient tiles + lightbox) |
 | `/status/` | `app/status/page.tsx` | Visitor map, browser telemetry, service health, link probes + uptime history |
 | *(404)* | `app/not-found.tsx` | Custom not-found page |
@@ -633,10 +637,22 @@ This repo is a **GitHub user site** (`im-rihan.github.io`) served at the root do
 
 ### How deployment works
 
-1. Push to `main` triggers `.github/workflows/deploy-gh-pages.yml`
+1. Pull requests to `main` run `.github/workflows/ci.yml` (lint, type-check, unit tests, build, bundle budget, E2E, Lighthouse) — **CI must pass before merging**.
+2. Merge to `main` triggers `.github/workflows/deploy-gh-pages.yml`
 2. CI runs `npm ci` + `npm run build` with Supabase secrets
 3. `peaceiris/actions-gh-pages` publishes `out/` to the **`gh-pages`** branch
 4. GitHub Pages serves files from `gh-pages` / root
+
+### Branch protection (recommended)
+
+Configure in **Settings → Branches → Branch protection rules** for `main`:
+
+- ✅ Require a pull request before merging
+- ✅ Require status checks to pass before merging → select **`ci`** (the `ci.yml` workflow)
+- ✅ Require branches to be up to date before merging
+- ✅ Do not allow bypassing the above settings
+
+This ensures the CI gate (`lint + type-check + tests + build + Lighthouse`) always runs before any merge.
 
 ### One-time Pages configuration
 
