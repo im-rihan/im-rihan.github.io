@@ -1,9 +1,23 @@
 import { countryNames } from "@/data/country-coordinates";
 import { isCountApiEnabled } from "@/lib/count-api";
+import { parseDevice } from "@/lib/device-parse";
+import { inferUnresolvedVisits } from "@/lib/geo-inference";
+import { fetchGeo, isUnknownCountryCode } from "@/lib/geo-lookup";
+
+export { isUnknownCountryCode } from "@/lib/geo-lookup";
 import { isSupabaseEnvConfigured } from "@/utils/supabase/env";
 import { getBrowserClient } from "@/utils/supabase/client";
 import { normalizePagePath } from "@/lib/analytics-insights";
 
+export const UNRESOLVED_COUNTRY_CODE = "XX";
+export const UNRESOLVED_COUNTRY_NAME = "Location unavailable";
+
+export function formatVisitGeo(
+    visit: Pick<VisitRecord, "countryCode" | "countryName" | "city">,
+): string {
+    if (isUnknownCountryCode(visit.countryCode)) return UNRESOLVED_COUNTRY_NAME;
+    return visit.city ? `${visit.city}, ${visit.countryName}` : visit.countryName;
+}
 export interface VisitRecord {
     id: string;
     countryCode: string;
@@ -42,6 +56,7 @@ export interface VisitorStats {
 const STORAGE_KEY = "rm-portfolio-visits";
 const SESSION_KEY = "rm-portfolio-tracked";
 const SEEN_COUNTRIES_KEY = "rm-seen-countries";
+const BACKFILL_KEY = "rm-portfolio-geo-backfill";
 const COUNTAPI_NS = "im-rihan-portfolio";
 const FETCH_TIMEOUT_MS = 5000;
 const COUNTAPI_TIMEOUT_MS = 3000;
@@ -109,41 +124,6 @@ function getSeenCountries(): string[] {
     }
 }
 
-interface GeoResponse {
-    success?: boolean;
-    country_code?: string;
-    country?: string;
-    city?: string;
-    region?: string;
-}
-
-function parseDevice(ua: string): Pick<VisitRecord, "deviceType" | "deviceLabel" | "browser" | "os"> {
-    const lower = ua.toLowerCase();
-    let deviceType: VisitRecord["deviceType"] = "desktop";
-    if (/ipad|tablet/.test(lower)) deviceType = "tablet";
-    else if (/mobile|android|iphone|ipod/.test(lower)) deviceType = "mobile";
-
-    let browser = "Browser";
-    if (lower.includes("edg/")) browser = "Edge";
-    else if (lower.includes("chrome/")) browser = "Chrome";
-    else if (lower.includes("firefox/")) browser = "Firefox";
-    else if (lower.includes("safari/") && !lower.includes("chrome")) browser = "Safari";
-
-    let os = "Unknown";
-    if (lower.includes("windows")) os = "Windows";
-    else if (lower.includes("mac os")) os = "macOS";
-    else if (lower.includes("android")) os = "Android";
-    else if (/iphone|ipad|ipod/.test(lower)) os = "iOS";
-    else if (lower.includes("linux")) os = "Linux";
-
-    const deviceLabel =
-        deviceType === "mobile" ? `Mobile · ${os}` :
-        deviceType === "tablet" ? `Tablet · ${os}` :
-        `Desktop · ${os}`;
-
-    return { deviceType, deviceLabel, browser, os };
-}
-
 function readVisits(): VisitRecord[] {
     if (typeof window === "undefined") return [];
     try {
@@ -167,17 +147,6 @@ function sortVisitsByRecent(visits: VisitRecord[], limit = 8): VisitRecord[] {
 
 function newestVisit(visits: VisitRecord[]): VisitRecord | null {
     return sortVisitsByRecent(visits, 1)[0] ?? null;
-}
-
-async function fetchGeo(): Promise<GeoResponse | null> {
-    try {
-        const res = await fetchWithTimeout("https://ipwho.is/", { cache: "no-store" }, 6000);
-        if (!res.ok) return null;
-        const data = (await res.json()) as GeoResponse;
-        return data.success === false ? null : data;
-    } catch {
-        return null;
-    }
 }
 
 export function isSupabaseConfigured(): boolean {
@@ -275,11 +244,16 @@ function aggregate(visits: VisitRecord[], current: VisitRecord | null): Omit<Vis
     const deviceMap = new Map<string, DeviceStat>();
 
     for (const v of visits) {
-        const cKey = v.countryCode || "XX";
+        const cKey = v.countryCode || UNRESOLVED_COUNTRY_CODE;
         const existing = countryMap.get(cKey);
         if (existing) existing.count += 1;
-        else countryMap.set(cKey, { code: cKey, name: v.countryName || "Unknown", count: 1 });
-
+        else {
+            countryMap.set(cKey, {
+                code: cKey,
+                name: isUnknownCountryCode(cKey) ? UNRESOLVED_COUNTRY_NAME : (v.countryName || cKey),
+                count: 1,
+            });
+        }
         const dKey = v.deviceType;
         const dExisting = deviceMap.get(dKey);
         if (dExisting) dExisting.count += 1;
@@ -288,7 +262,12 @@ function aggregate(visits: VisitRecord[], current: VisitRecord | null): Omit<Vis
 
     return {
         total: visits.length,
-        countries: [...countryMap.values()].sort((a, b) => b.count - a.count),
+        countries: [...countryMap.values()].sort((a, b) => {
+            const aUnknown = isUnknownCountryCode(a.code);
+            const bUnknown = isUnknownCountryCode(b.code);
+            if (aUnknown !== bUnknown) return aUnknown ? 1 : -1;
+            return b.count - a.count;
+        }),
         devices: [...deviceMap.values()].sort((a, b) => b.count - a.count),
         recent: sortVisitsByRecent(visits, 8),
         current,
@@ -301,12 +280,14 @@ export async function trackVisit(page: string): Promise<VisitRecord | null> {
     sessionStorage.setItem(SESSION_KEY, "1");
 
     const geo = await fetchGeo();
-    const device = parseDevice(navigator.userAgent);
+    const device = parseDevice(navigator.userAgent, {
+        maxTouchPoints: navigator.maxTouchPoints,
+    });
 
     const visit: VisitRecord = {
         id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        countryCode: geo?.country_code ?? "XX",
-        countryName: geo?.country ?? "Unknown",
+        countryCode: geo?.countryCode ?? UNRESOLVED_COUNTRY_CODE,
+        countryName: geo?.countryName ?? UNRESOLVED_COUNTRY_NAME,
         city: geo?.city ?? "",
         region: geo?.region ?? "",
         deviceType: device.deviceType,
@@ -323,15 +304,19 @@ export async function trackVisit(page: string): Promise<VisitRecord | null> {
     await pushSupabaseVisit(visit);
 
     const code = visit.countryCode.toLowerCase();
-    addSeenCountry(visit.countryCode);
-    if (isCountApiEnabled()) {
-        await Promise.all([
-            countApiHit("visits"),
-            countApiHit(`country-${code}`),
-            countApiHit(`device-${visit.deviceType}`),
-        ]);
+    if (!isUnknownCountryCode(visit.countryCode)) {
+        addSeenCountry(visit.countryCode);
     }
-
+    if (isCountApiEnabled()) {
+        const hits = [
+            countApiHit("visits"),
+            countApiHit(`device-${visit.deviceType}`),
+        ];
+        if (!isUnknownCountryCode(visit.countryCode)) {
+            hits.push(countApiHit(`country-${code}`));
+        }
+        await Promise.all(hits);
+    }
     window.dispatchEvent(new CustomEvent(VISITOR_UPDATE_EVENT));
     return visit;
 }
@@ -348,8 +333,9 @@ async function fetchGlobalStats(localVisits: VisitRecord[]): Promise<{
     const seenCodes = [...new Set([
         ...getSeenCountries(),
         ...localVisits.map((v) => v.countryCode),
-    ])].slice(0, 12);
-
+    ])]
+        .filter((code) => !isUnknownCountryCode(code))
+        .slice(0, 12);
     const deviceTypes = ["desktop", "mobile", "tablet", "unknown"] as const;
 
     const [globalTotal, ...rest] = await Promise.all([
@@ -464,8 +450,12 @@ export async function getVisitorStats(_forceRefresh = false): Promise<
 
     const visitSource =
         supabase.ok && remoteVisits && remoteVisits.length > 0 ? remoteVisits : local;
-    const current = newestVisit(visitSource) ?? newestVisit(local);
-    const localAgg = aggregate(visitSource, current);
+    const enrichedVisits = await enrichVisitsForDisplay(visitSource);
+    if (visitSource === local) {
+        persistInferredLocalVisits(visitSource, enrichedVisits);
+    }
+    const current = newestVisit(enrichedVisits) ?? newestVisit(local);
+    const localAgg = aggregate(enrichedVisits, current);
 
     const countries =
         localAgg.countries.length > 0
@@ -533,4 +523,65 @@ function mergeCountryStats(local: CountryStat[], global: CountryStat[]): Country
         }
     }
     return [...map.values()].sort((a, b) => b.count - a.count);
+}
+
+function hasUnresolvedVisits(visits: VisitRecord[]): boolean {
+    return visits.some((visit) => isUnknownCountryCode(visit.countryCode));
+}
+
+async function enrichVisitsForDisplay(visits: VisitRecord[]): Promise<VisitRecord[]> {
+    if (!hasUnresolvedVisits(visits)) return visits;
+
+    const hints: Parameters<typeof inferUnresolvedVisits>[1] = {};
+    if (typeof navigator !== "undefined") {
+        const device = parseDevice(navigator.userAgent, {
+            maxTouchPoints: navigator.maxTouchPoints,
+        });
+        hints.currentDevice = {
+            browser: device.browser,
+            os: device.os,
+            deviceType: device.deviceType,
+        };
+        hints.currentGeo = await fetchGeo();
+    }
+
+    return inferUnresolvedVisits(visits, hints);
+}
+
+function persistInferredLocalVisits(
+    original: VisitRecord[],
+    enriched: VisitRecord[],
+): void {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem(BACKFILL_KEY)) return;
+
+    const patches = new Map<string, VisitRecord>();
+    for (let i = 0; i < original.length; i++) {
+        const before = original[i];
+        const after = enriched[i];
+        if (
+            before &&
+            after &&
+            isUnknownCountryCode(before.countryCode) &&
+            !isUnknownCountryCode(after.countryCode)
+        ) {
+            patches.set(before.id, after);
+        }
+    }
+    if (patches.size === 0) return;
+
+    const local = readVisits();
+    let changed = false;
+    for (let i = 0; i < local.length; i++) {
+        const patch = patches.get(local[i].id);
+        if (patch) {
+            local[i] = { ...patch };
+            changed = true;
+        }
+    }
+    if (!changed) return;
+
+    writeVisits(local);
+    sessionStorage.setItem(BACKFILL_KEY, "1");
+    window.dispatchEvent(new CustomEvent(VISITOR_UPDATE_EVENT));
 }
