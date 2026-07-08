@@ -1,11 +1,10 @@
 name: Deploy Next.js to gh-pages
 
-# Publishes out/ to gh-pages after CI passes on main (or manual dispatch).
+# Publishes out/ to gh-pages when main is updated (merge) or on manual dispatch.
+# CI runs on the PR before merge; this workflow is the only post-merge build.
 
 on:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
+  push:
     branches: [main]
   workflow_dispatch:
 
@@ -18,7 +17,6 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
