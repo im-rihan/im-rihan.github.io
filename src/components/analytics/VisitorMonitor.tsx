@@ -15,7 +15,10 @@ import {
     Clock,
 } from "lucide-react";
 import {
+    formatVisitGeo,
     getVisitorStats,
+    isUnknownCountryCode,
+    UNRESOLVED_COUNTRY_NAME,
     VISITOR_UPDATE_EVENT,
     type VisitorStats,
 } from "@/lib/visitor-analytics";
@@ -150,7 +153,7 @@ function FlatWorldMap({ countries }: { countries: VisitorStats["countries"] }) {
                 </span>
                 <span className={styles.mapStat}>{totalHits} sessions</span>
                 {unknownCount > 0 && (
-                    <span className={styles.mapStat}>{unknownCount} unknown geo</span>
+                    <span className={styles.mapStat}>{unknownCount} unresolved</span>
                 )}
                 {hubCode && pins.length > 1 && (
                     <span className={styles.mapStat}>Hub · {hubCode}</span>
@@ -355,7 +358,7 @@ export function VisitorMonitor() {
                         <CountryFlag code={stats.current.countryCode} size="sm" className={styles.currentFlag} title={stats.current.countryName} />
                         <MapPin size={16} />
                         <span>
-                            You: <strong>{stats.current.city ? `${stats.current.city}, ` : ""}{stats.current.countryName}</strong>
+                            You: <strong>{formatVisitGeo(stats.current)}</strong>
                             {" · "}{stats.current.deviceLabel} · {stats.current.browser}
                         </span>
                     </div>
@@ -369,9 +372,9 @@ export function VisitorMonitor() {
                     </div>
                 )}
 
-                {stats.countries.length > 0 && (
+                {stats.countries.some((c) => hasCountryCoords(c.code)) && (
                     <div className={styles.shareBars}>
-                        {stats.countries.slice(0, 5).map((c) => {
+                        {stats.countries.filter((c) => hasCountryCoords(c.code)).slice(0, 5).map((c) => {
                             const pct = Math.round((c.count / stats.total) * 100);
                             return (
                                 <div key={c.code} className={styles.shareRow}>
@@ -393,14 +396,17 @@ export function VisitorMonitor() {
                         <ul>
                             {stats.countries.length === 0 && <li className={styles.muted}>No data yet</li>}
                             {stats.countries.map((c) => {
-                                const [lon, lat] = getCountryCoords(c.code);
+                                const unresolved = isUnknownCountryCode(c.code);
+                                const [lon, lat] = unresolved ? [0, 0] : getCountryCoords(c.code);
                                 return (
                                     <li key={c.code}>
                                         <span className={styles.countryRow}>
                                             <CountryFlag code={c.code} size="md" className={styles.countryFlag} title={c.name} />
                                             <span>
                                                 <strong>{c.name}</strong>
-                                                <span className={styles.coords}>{lat.toFixed(1)}°, {lon.toFixed(1)}°</span>
+                                                <span className={styles.coords}>
+                                                    {unresolved ? "Geo lookup failed" : `${lat.toFixed(1)}°, ${lon.toFixed(1)}°`}
+                                                </span>
                                             </span>
                                         </span>
                                         <span className={styles.count}>{c.count}</span>
@@ -459,9 +465,13 @@ export function VisitorMonitor() {
                         <ul className={styles.recentList}>
                             {stats.recent.slice(0, 8).map((v) => (
                                 <li key={v.id}>
-                                    <CountryFlag code={v.countryCode} size="sm" title={v.countryName} />
+                                    <CountryFlag
+                                        code={v.countryCode}
+                                        size="sm"
+                                        title={isUnknownCountryCode(v.countryCode) ? UNRESOLVED_COUNTRY_NAME : v.countryName}
+                                    />
                                     <div className={styles.recentBody}>
-                                        <strong>{v.city ? `${v.city}, ` : ""}{v.countryName}</strong>
+                                        <strong>{formatVisitGeo(v)}</strong>
                                         <span>
                                             {normalizePagePath(v.page)} · {v.browser} · {v.deviceLabel}
                                         </span>
