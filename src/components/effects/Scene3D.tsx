@@ -12,9 +12,15 @@ const SceneCanvas = dynamic(() => import("./SceneCanvas").then((m) => m.SceneCan
 });
 
 export function Scene3D() {
-    const [container, setContainer] = useState<HTMLDivElement | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [canvasHost, setCanvasHost] = useState<HTMLDivElement | null>(null);
     const [ready, setReady] = useState(false);
     const opacityRef = useRef(0.92);
+
+    const setContainerRef = useCallback((node: HTMLDivElement | null) => {
+        containerRef.current = node;
+        setCanvasHost(node);
+    }, []);
 
     useEffect(() => {
         if (ready) return;
@@ -52,18 +58,19 @@ export function Scene3D() {
     useEffect(() => bindSceneScrollTracker(), []);
 
     const handleViewportFrame = useCallback((snapshot: { mobileBlend: number }) => {
-        if (!container) return;
+        const el = containerRef.current;
+        if (!el) return;
         const isLight = document.documentElement.classList.contains("light");
         const next = sceneWrapperOpacity(snapshot.mobileBlend, isLight);
         if (Math.abs(opacityRef.current - next) < 0.001) return;
         opacityRef.current = next;
-        container.style.opacity = String(next);
-    }, [container]);
+        el.style.opacity = String(next);
+    }, []);
 
     return (
-        <div ref={setContainer} className={styles.wrapper} aria-hidden>
-            {ready && container ? (
-                <SceneCanvas container={container} onViewportFrame={handleViewportFrame} />
+        <div ref={setContainerRef} className={styles.wrapper} aria-hidden>
+            {ready && canvasHost ? (
+                <SceneCanvas container={canvasHost} onViewportFrame={handleViewportFrame} />
             ) : null}
         </div>
     );
