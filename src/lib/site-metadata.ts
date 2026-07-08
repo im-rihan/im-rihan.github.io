@@ -5,7 +5,7 @@ const siteUrl = "https://im-rihan.github.io";
 
 const ogImageAlt = `${siteMeta.name} — ${siteMeta.title}`;
 
-const ogImages = [
+const defaultOgImages = [
     {
         url: "/og-image-dark.png",
         width: 1200,
@@ -28,25 +28,43 @@ function pagePath(path?: string): string {
     return `${siteUrl}${normalized.endsWith("/") ? normalized : `${normalized}/`}`;
 }
 
-function socialMetadata(page: string, description?: string, path?: string) {
+function resolveOgImages(custom?: string) {
+    if (!custom) return [...defaultOgImages];
+    const image = {
+        url: custom,
+        width: 1200,
+        height: 630,
+        alt: ogImageAlt,
+        type: custom.endsWith(".svg") ? "image/svg+xml" : "image/png",
+    };
+    return [image, ...defaultOgImages];
+}
+
+function socialMetadata(
+    page: string,
+    description?: string,
+    path?: string,
+    opts?: { ogImage?: string; ogType?: "website" | "article" },
+) {
     const title = pageTitle(page);
     const desc = description ?? siteMeta.description;
     const url = pagePath(path);
+    const images = resolveOgImages(opts?.ogImage);
     return {
         openGraph: {
             title,
             description: desc,
             url,
             siteName: siteMeta.name,
-            type: "website" as const,
+            type: opts?.ogType ?? ("website" as const),
             locale: "en_US",
-            images: [...ogImages],
+            images,
         },
         twitter: {
             card: "summary_large_image" as const,
             title,
             description: desc,
-            images: [ogImages[0].url, ogImages[1].url],
+            images: images.map((img) => img.url),
         },
         alternates: {
             canonical: url,
@@ -59,7 +77,12 @@ export function pageTitle(page?: string): string {
     return `${page} · ${siteMeta.name}`;
 }
 
-export function createPageMetadata(page: string, description?: string, path?: string): Metadata {
+export function createPageMetadata(
+    page: string,
+    description?: string,
+    path?: string,
+    opts?: { ogImage?: string; ogType?: "website" | "article" },
+): Metadata {
     return {
         title: page,
         description: description ?? siteMeta.description,
@@ -85,7 +108,7 @@ export function createPageMetadata(page: string, description?: string, path?: st
             apple: [{ url: "/icon-192.png", sizes: "192x192", type: "image/png" }],
         },
         manifest: "/manifest.json",
-        ...socialMetadata(page, description, path),
+        ...socialMetadata(page, description, path, opts),
     };
 }
 
@@ -107,4 +130,4 @@ export const rootViewport: Viewport = {
     ],
 };
 
-export { siteUrl, ogImages };
+export { siteUrl, defaultOgImages as ogImages };

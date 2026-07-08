@@ -16,6 +16,15 @@ test.describe("portfolio smoke", () => {
     test("status page renders analytics dashboard", async ({ page }) => {
         await page.goto("/status/");
         await expect(page.getByRole("heading", { name: /Portfolio Stats/i })).toBeVisible();
+        await expect(page.getByText(/Recent activity|Recent sessions/i).first()).toBeVisible();
+    });
+
+    test("chat returns a portfolio answer", async ({ page }) => {
+        await page.goto("/chat/");
+        const input = page.getByRole("textbox");
+        await input.fill("What is Rihan's tech stack?");
+        await page.getByRole("button", { name: "Send message" }).click();
+        await expect(page.getByText(/React|Next|TypeScript|NestJS/i).first()).toBeVisible({ timeout: 10000 });
     });
 
     test("blog index is reachable", async ({ page }) => {

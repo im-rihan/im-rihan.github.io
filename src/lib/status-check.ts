@@ -1,4 +1,5 @@
 import type { StatusTarget } from "@/data/status-targets";
+import { INFORMATIONAL_EXTERNAL_URLS } from "@/data/status-targets";
 import { appendStatusHistory } from "@/lib/status-history";
 
 export type LinkStatus = "online" | "slow" | "offline" | "unknown";
@@ -158,9 +159,17 @@ export async function checkAllLinks(
 
 export type OverallHealth = "operational" | "degraded" | "outage";
 
+/** Returns true for external probes that are informational-only and should not
+ *  affect the overall health status (e.g. social profile links that block automated checks). */
+export function isInformationalResult(result: StatusResult): boolean {
+    return INFORMATIONAL_EXTERNAL_URLS.has(result.url);
+}
+
 export function computeOverallHealth(results: StatusResult[]): OverallHealth {
     if (results.length === 0) return "degraded";
-    if (results.some((r) => r.status === "offline")) return "outage";
-    if (results.some((r) => r.status === "slow" || r.status === "unknown")) return "degraded";
+    const counted = results.filter((r) => !isInformationalResult(r));
+    if (counted.length === 0) return "degraded";
+    if (counted.some((r) => r.status === "offline")) return "outage";
+    if (counted.some((r) => r.status === "slow" || r.status === "unknown")) return "degraded";
     return "operational";
 }

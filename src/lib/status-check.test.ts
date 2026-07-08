@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeOverallHealth, sortStatusResults, type StatusResult } from "./status-check";
+import { computeOverallHealth, isInformationalResult, sortStatusResults, type StatusResult } from "./status-check";
 
 function makeResult(overrides: Partial<StatusResult>): StatusResult {
     return {
@@ -36,6 +36,31 @@ describe("computeOverallHealth", () => {
 
     it("treats an empty result set as degraded", () => {
         expect(computeOverallHealth([])).toBe("degraded");
+    });
+
+    it("ignores informational external URLs when computing health", () => {
+        const results = [
+            makeResult({ status: "online" }),
+            makeResult({ url: "https://linkedin.com/in/im-rihan", status: "unknown" }),
+        ];
+        expect(computeOverallHealth(results)).toBe("operational");
+    });
+
+    it("returns outage when a non-informational result is offline", () => {
+        const results = [
+            makeResult({ status: "offline", url: "https://im-rihan.github.io/" }),
+            makeResult({ url: "https://linkedin.com/in/im-rihan", status: "unknown" }),
+        ];
+        expect(computeOverallHealth(results)).toBe("outage");
+    });
+});
+
+describe("isInformationalResult", () => {
+    it("flags LinkedIn as informational", () => {
+        expect(isInformationalResult(makeResult({ url: "https://linkedin.com/in/im-rihan" }))).toBe(true);
+    });
+    it("does not flag a core page as informational", () => {
+        expect(isInformationalResult(makeResult({ url: "https://im-rihan.github.io/" }))).toBe(false);
     });
 });
 

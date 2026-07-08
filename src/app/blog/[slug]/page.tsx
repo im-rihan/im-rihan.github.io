@@ -17,7 +17,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const { slug } = await params;
     const post = getBlogPost(slug);
     if (!post) return {};
-    return createPageMetadata(post.title, post.excerpt, `/blog/${slug}`);
+    return createPageMetadata(post.title, post.excerpt, `/blog/${slug}`, {
+        ogImage: post.ogImage,
+        ogType: "article",
+    });
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {

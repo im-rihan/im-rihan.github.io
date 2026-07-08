@@ -24,8 +24,6 @@ export const suggestedPromptPool = [
     "What AI or LangChain work has he done?",
 ];
 
-/** @deprecated use suggestedPromptPool */
-export const suggestedPrompts = suggestedPromptPool.slice(0, 5);
 
 const PROMPT_DISPLAY_COUNT = 4;
 

@@ -14,7 +14,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const { slug } = await params;
     const study = getCaseStudy(slug);
     if (!study) return {};
-    return createPageMetadata(study.title, study.subtitle, `/work/${slug}`);
+    return createPageMetadata(study.title, study.subtitle, `/work/${slug}`, {
+        ogImage: study.ogImage,
+    });
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {

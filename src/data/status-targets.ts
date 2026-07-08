@@ -2,6 +2,13 @@ import { caseStudies } from "@/data/case-studies";
 
 export type StatusGroup = "page" | "asset" | "case-study" | "seo" | "external";
 
+/** External probes in this set use no-cors and routinely return opaque responses.
+ *  They are shown as informational only and excluded from overall health calculation. */
+export const INFORMATIONAL_EXTERNAL_URLS = new Set([
+    "https://github.com/im-rihan",
+    "https://linkedin.com/in/im-rihan",
+]);
+
 export interface StatusTarget {
     name: string;
     url: string;

@@ -12,32 +12,53 @@ const SceneCanvas = dynamic(() => import("./SceneCanvas").then((m) => m.SceneCan
 });
 
 export function Scene3D() {
-    const hostRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [canvasHost, setCanvasHost] = useState<HTMLDivElement | null>(null);
     const [ready, setReady] = useState(false);
     const opacityRef = useRef(0.92);
 
+    const setContainerRef = useCallback((node: HTMLDivElement | null) => {
+        containerRef.current = node;
+        setCanvasHost(node);
+    }, []);
+
     useEffect(() => {
-        // Mount the heavy three.js/drei bundle once the browser is idle (or after
-        // a max wait) so it doesn't compete with the initial page paint and
-        // above-the-fold content for the main thread.
-        const win = window as typeof window & {
-            requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
-            cancelIdleCallback?: (handle: number) => void;
+        if (ready) return;
+
+        let mounted = true;
+        const activate = () => {
+            if (mounted) setReady(true);
+            cleanup();
         };
 
-        if (typeof win.requestIdleCallback === "function") {
-            const handle = win.requestIdleCallback(() => setReady(true), { timeout: 1500 });
-            return () => win.cancelIdleCallback?.(handle);
-        }
+        const onScroll = () => {
+            if (window.scrollY > 80) activate();
+        };
 
-        const timeout = window.setTimeout(() => setReady(true), 200);
-        return () => window.clearTimeout(timeout);
-    }, []);
+        let fallbackId = 0;
+
+        const cleanup = () => {
+            window.removeEventListener("scroll", onScroll);
+            window.removeEventListener("pointerdown", activate);
+            window.removeEventListener("keydown", activate);
+            if (fallbackId) window.clearTimeout(fallbackId);
+        };
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("pointerdown", activate, { once: true });
+        window.addEventListener("keydown", activate, { once: true });
+        fallbackId = window.setTimeout(activate, 8000);
+
+        return () => {
+            mounted = false;
+            cleanup();
+        };
+    }, [ready]);
 
     useEffect(() => bindSceneScrollTracker(), []);
 
     const handleViewportFrame = useCallback((snapshot: { mobileBlend: number }) => {
-        const el = hostRef.current;
+        const el = containerRef.current;
         if (!el) return;
         const isLight = document.documentElement.classList.contains("light");
         const next = sceneWrapperOpacity(snapshot.mobileBlend, isLight);
@@ -47,9 +68,9 @@ export function Scene3D() {
     }, []);
 
     return (
-        <div ref={hostRef} className={styles.wrapper} aria-hidden>
-            {ready && hostRef.current ? (
-                <SceneCanvas container={hostRef.current} onViewportFrame={handleViewportFrame} />
+        <div ref={setContainerRef} className={styles.wrapper} aria-hidden>
+            {ready && canvasHost ? (
+                <SceneCanvas container={canvasHost} onViewportFrame={handleViewportFrame} />
             ) : null}
         </div>
     );

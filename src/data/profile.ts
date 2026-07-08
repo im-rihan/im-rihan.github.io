@@ -1,3 +1,5 @@
+import { certifications } from "@/data/certifications";
+
 export const siteMeta = {
     name: "Rihan Mohammed",
     title: "Full Stack Developer",
@@ -215,10 +217,11 @@ export const education = [
     },
 ];
 
+/** Computed from live data files — no manual sync needed. */
 export const portfolioStats = {
-    certifications: 14,
+    certifications: certifications.length,
     yearsExperience: "4+",
-    projects: 9,
+    projects: projects.length,
     companies: 2,
     skillCategories: skillGroups.length,
 };

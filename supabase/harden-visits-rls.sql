@@ -11,8 +11,9 @@
 --   1. Anonymous SELECT is capped to a rolling 90-day window instead of the
 --      entire historical table, so a raw REST/PostgREST call can't bypass the
 --      app's own "last 200 visits" dashboard limit and scrape years of data.
---   2. UPDATE/DELETE are explicitly revoked for anon/authenticated (the app
---      never needs them; visits are insert-only + read-only).
+--   2. UPDATE is limited to geo backfill on unresolved rows — see
+--      allow-geo-backfill-update.sql (run after this file).
+--      DELETE stays revoked for anon/authenticated.
 --   3. CHECK constraints reject malformed inserts: bad countryCode length,
 --      unknown deviceType, oversized strings, or wildly backdated/future
 --      timestamps — the kind of junk a scripted spam-insert would send.
@@ -25,7 +26,9 @@ create policy "Allow anonymous read recent"
   to anon, authenticated
   using (timestamp > now() - interval '90 days');
 
-revoke update, delete on public.visits from anon, authenticated;
+revoke delete on public.visits from anon, authenticated;
+-- UPDATE revoked here; geo backfill UPDATE is granted in allow-geo-backfill-update.sql
+revoke update on public.visits from anon, authenticated;
 
 alter table public.visits
   drop constraint if exists visits_country_code_len;

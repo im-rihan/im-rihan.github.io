@@ -1,12 +1,23 @@
 import { knowledgeBase, offTopicMessage } from "@/data/chat-knowledge";
 
-// Tokens shorter than this (e.g. the stray "s" left over from stripping the
-// apostrophe in "What's"/"Rihan's") are dropped — a single letter is a
-// substring of almost every keyword, which was inflating unrelated scores.
 const MIN_TOKEN_LENGTH = 2;
-// Below this length, only exact token matches count — fuzzy prefix matching
-// on very short keywords (e.g. "hi", "cv") would match unrelated words too.
 const MIN_FUZZY_LENGTH = 3;
+
+/** Lightweight paraphrase hints — expands query tokens before keyword scoring. */
+const QUERY_SYNONYMS: Record<string, string[]> = {
+    stack: ["tech", "technologies", "skills", "tools", "frameworks"],
+    experience: ["background", "years", "career", "work", "history"],
+    contact: ["email", "reach", "hire", "message", "phone"],
+    projects: ["work", "built", "portfolio", "case", "studies"],
+    resume: ["cv", "download", "pdf"],
+    certifications: ["certs", "credentials", "certificates"],
+    nestjs: ["nestjs", "nest", "api"],
+    aws: ["cloud", "lambda", "devops", "s3"],
+    python: ["django", "scraping", "pipelines"],
+    php: ["webhooks", "laravel"],
+    ziffy: ["property", "real", "estate", "search"],
+    open: ["available", "hiring", "roles", "job"],
+};
 
 function tokenize(text: string): string[] {
     return text
@@ -16,9 +27,46 @@ function tokenize(text: string): string[] {
         .filter((token) => token.length >= MIN_TOKEN_LENGTH);
 }
 
+function expandTokens(tokens: Set<string>): Set<string> {
+    const expanded = new Set(tokens);
+    for (const token of tokens) {
+        const syns = QUERY_SYNONYMS[token];
+        if (syns) syns.forEach((s) => expanded.add(s));
+        for (const [key, values] of Object.entries(QUERY_SYNONYMS)) {
+            if (values.includes(token)) {
+                expanded.add(key);
+                values.forEach((s) => expanded.add(s));
+            }
+        }
+    }
+    return expanded;
+}
+
+function bigrams(text: string): Set<string> {
+    const grams = new Set<string>();
+    const compact = text.replace(/\s+/g, "");
+    for (let i = 0; i < compact.length - 1; i++) {
+        grams.add(compact.slice(i, i + 2));
+    }
+    return grams;
+}
+
+/** Sørensen–Dice coefficient on character bigrams (0–1). */
+function diceSimilarity(a: string, b: string): number {
+    if (a === b) return 1;
+    if (a.length < 2 || b.length < 2) return 0;
+    const aGrams = bigrams(a);
+    const bGrams = bigrams(b);
+    let overlap = 0;
+    for (const g of aGrams) {
+        if (bGrams.has(g)) overlap++;
+    }
+    return (2 * overlap) / (aGrams.size + bGrams.size);
+}
+
 export function getChatResponse(input: string): string {
     const normalized = input.toLowerCase();
-    const tokens = new Set(tokenize(input));
+    const tokens = expandTokens(new Set(tokenize(input)));
     if (tokens.size === 0) {
         return offTopicMessage;
     }
@@ -32,8 +80,6 @@ export function getChatResponse(input: string): string {
             const kw = keyword.toLowerCase();
 
             if (kw.includes(" ")) {
-                // Multi-word keyword (e.g. "who are you") — only makes sense
-                // matched as a phrase against the raw input, not token-by-token.
                 if (normalized.includes(kw)) {
                     score += kw.split(" ").length + 2;
                 }
@@ -46,13 +92,16 @@ export function getChatResponse(input: string): string {
             }
 
             if (kw.length < MIN_FUZZY_LENGTH) continue;
-            // Fuzzy prefix match (handles simple plurals/tense, e.g.
-            // "certifications" vs "certification") — deliberately not a
-            // mid-word substring check, which was matching unrelated words.
+
             for (const token of tokens) {
                 if (token.length < MIN_FUZZY_LENGTH) continue;
                 if (token.startsWith(kw) || kw.startsWith(token)) {
                     score += 2;
+                    break;
+                }
+                const sim = diceSimilarity(token, kw);
+                if (sim >= 0.55) {
+                    score += 1 + Math.round(sim);
                     break;
                 }
             }

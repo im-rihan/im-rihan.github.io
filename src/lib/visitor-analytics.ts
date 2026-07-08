@@ -57,6 +57,7 @@ const STORAGE_KEY = "rm-portfolio-visits";
 const SESSION_KEY = "rm-portfolio-tracked";
 const SEEN_COUNTRIES_KEY = "rm-seen-countries";
 const BACKFILL_KEY = "rm-portfolio-geo-backfill";
+const DEDUP_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
 const COUNTAPI_NS = "im-rihan-portfolio";
 const FETCH_TIMEOUT_MS = 5000;
 const COUNTAPI_TIMEOUT_MS = 3000;
@@ -274,10 +275,23 @@ function aggregate(visits: VisitRecord[], current: VisitRecord | null): Omit<Vis
     };
 }
 
+function isDuplicateVisit(page: string, visits: VisitRecord[]): boolean {
+    const cutoff = Date.now() - DEDUP_WINDOW_MS;
+    const normalizedPage = normalizePagePath(page);
+    return visits.some(
+        (v) =>
+            normalizePagePath(v.page) === normalizedPage &&
+            new Date(v.timestamp).getTime() > cutoff,
+    );
+}
+
 export async function trackVisit(page: string): Promise<VisitRecord | null> {
     if (typeof window === "undefined") return null;
     if (sessionStorage.getItem(SESSION_KEY)) return null;
     sessionStorage.setItem(SESSION_KEY, "1");
+
+    const existing = readVisits();
+    if (isDuplicateVisit(page, existing)) return null;
 
     const geo = await fetchGeo();
     const device = parseDevice(navigator.userAgent, {
@@ -379,10 +393,15 @@ function isLocalhost(): boolean {
 /** True when localhost should show sample analytics (use ?live=1 to disable). */
 export function shouldUseDemoAnalytics(): boolean {
     if (typeof window === "undefined") return false;
-    if (!isLocalhost()) return false;
+    // Explicit env flag — set NEXT_PUBLIC_DEMO_ANALYTICS=false to disable in prod-like dev
+    if (process.env.NEXT_PUBLIC_DEMO_ANALYTICS === "false") return false;
+    if (process.env.NEXT_PUBLIC_DEMO_ANALYTICS === "true") return true;
+    // Query param overrides: ?live=1 forces live data, ?demo=1 forces demo
     const params = new URLSearchParams(window.location.search);
     if (params.get("live") === "1") return false;
-    return params.get("demo") === "1" || params.get("demo") !== "0";
+    if (params.get("demo") === "1") return true;
+    // Default: demo mode only on localhost
+    return isLocalhost();
 }
 
 export function getDemoVisitorStats(): VisitorStats & { source: "demo"; isDemo: true } {
@@ -429,6 +448,7 @@ export function getDemoVisitorStats(): VisitorStats & { source: "demo"; isDemo: 
     };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function getVisitorStats(_forceRefresh = false): Promise<
     VisitorStats & {
         source: "supabase" | "local" | "global" | "merged" | "demo";
@@ -584,4 +604,32 @@ function persistInferredLocalVisits(
     writeVisits(local);
     sessionStorage.setItem(BACKFILL_KEY, "1");
     window.dispatchEvent(new CustomEvent(VISITOR_UPDATE_EVENT));
+    void persistInferredSupabaseVisits([...patches.values()]);
+}
+
+async function patchSupabaseVisitGeo(visit: VisitRecord): Promise<boolean> {
+    const supabase = await getBrowserClient();
+    if (!supabase) return false;
+
+    try {
+        const { error } = await supabase
+            .from("visits")
+            .update({
+                countryCode: visit.countryCode,
+                countryName: visit.countryName,
+                city: visit.city,
+                region: visit.region,
+            })
+            .eq("id", visit.id)
+            .eq("countryCode", UNRESOLVED_COUNTRY_CODE);
+
+        return !error;
+    } catch {
+        return false;
+    }
+}
+
+async function persistInferredSupabaseVisits(patches: VisitRecord[]): Promise<void> {
+    if (patches.length === 0 || !isSupabaseEnvConfigured()) return;
+    await Promise.all(patches.map((visit) => patchSupabaseVisitGeo(visit)));
 }

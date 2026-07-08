@@ -5,9 +5,143 @@ export interface BlogPost {
     date: string; // ISO date
     tags: string[];
     content: string; // markdown
+    /** Optional social preview — defaults to site OG images when omitted. */
+    ogImage?: string;
 }
 
 export const blogPosts: BlogPost[] = [
+    {
+        slug: "enhancement-phases-a-through-e",
+        title: "Phases A–E: analytics accuracy, CI efficiency, and portfolio hardening",
+        excerpt:
+            "A full pass across debt clearance, visitor geo inference, Supabase backfill, gallery self-hosting, chat paraphrase matching, and test coverage — with PR-only CI and deploy-on-merge.",
+        date: "2026-07-08",
+        tags: ["Analytics", "CI/CD", "Supabase", "Next.js"],
+        ogImage: "/og/blog-enhancement-phases.svg",
+        content: `
+After the geo lookup and resume icon fixes, I ran a **five-phase enhancement plan** (A through E) across the whole portfolio codebase — not just bug fixes, but accuracy, reliability, content, and test coverage.
+
+## Phase A — quick wins
+
+- **Resume cache bust** — \`RESUME_VERSION\` bumped; \`generate_resume.py\` now auto-patches it from the last git commit date of \`resume.html\`.
+- **Deprecated API removed** — \`suggestedPrompts\` dropped from \`chat-knowledge.ts\`; use \`suggestedPromptPool\` + \`pickSuggestedPrompts()\`.
+- **README synced** — \`ci.yml\`, blog routes, and branch protection docs updated.
+- **Gallery self-hosted** — Unsplash CDN URLs replaced with local SVG tiles under \`public/gallery/\`.
+
+## Phase B — analytics accuracy
+
+- **Multi-provider geo** — ipwho.is → ipapi.co → geojs.io fallback (from the prior geo PR).
+- **Geo inference** — sibling visits and current-session geo backfill \`XX\` rows in localStorage.
+- **Supabase backfill** — new SQL migration (\`allow-geo-backfill-update.sql\`) lets the client PATCH unresolved rows when inference succeeds.
+- **Stale cleanup** — \`cleanup-unresolved-visits.sql\` purges \`XX\` rows older than 30 days (manual or pg_cron).
+- **Visit deduplication** — same page within 30 minutes no longer double-counts.
+- **Explicit demo mode** — \`NEXT_PUBLIC_DEMO_ANALYTICS=true/false\` overrides localhost defaults.
+- **85+ country centroids** — map pins for most real visitor countries.
+
+## Phase C — reliability
+
+- **PR-only CI** — \`ci.yml\` runs on pull requests; merge triggers **deploy only** (build + gh-pages), not a second full CI suite.
+- **Lighthouse** — \`numberOfRuns: 3\` for stabler medians; perf floor 0.72 warn.
+- **Service worker** — cache version bumped; HTML stays network-first so deploys are picked up immediately.
+- **3D scene deferral** — React Three Fiber loads after scroll, pointer, or keydown — not on idle — so it does not compete with LCP.
+- **Status health** — LinkedIn/GitHub profile probes are informational only; they no longer mark the site \`degraded\`.
+
+## Phase D — content depth
+
+- **Chat paraphrase matching** — synonym expansion + bigram similarity so "what technologies does he use?" maps to the tech stack entry.
+- **Case study depth** — expanded write-ups for \`estimate-calculator\` and \`php-3rdpartycomms\`.
+- **Per-post OG images** — blog posts and case studies can set a custom \`ogImage\` for social cards.
+
+## Phase E — tests
+
+- \`visitor-analytics.test.ts\` — \`formatVisitGeo\`, \`shouldUseDemoAnalytics\`
+- \`status-check.test.ts\` — informational probe exclusion
+- E2E — status map + chat response smoke tests
+- Resume HTML regression — contact icon size attributes
+
+## Supabase migration order
+
+Run in SQL Editor, once each:
+
+1. \`visits.sql\`
+2. \`harden-visits-rls.sql\`
+3. \`allow-geo-backfill-update.sql\`
+4. \`cleanup-unresolved-visits.sql\` (manual or scheduled)
+
+The static client never needs server-side code — RLS policies bound what the publishable key can do.
+`,
+    },
+    {
+        slug: "visitor-geo-inference-and-multi-provider-lookup",
+        title: "Fixing unknown visitor countries: multi-provider geo and sibling inference",
+        excerpt:
+            "When ipwho.is fails, every visit becomes countryCode XX. Here is the fallback chain, iOS UA parsing fix, and how unresolved rows get backfilled from sibling visits.",
+        date: "2026-07-08",
+        tags: ["Analytics", "Supabase", "Debugging"],
+        ogImage: "/og/blog-visitor-geo.svg",
+        content: `
+The **/status** dashboard showed \`Unknown\` / \`XX\` for real visitors — especially iPhone Safari sessions. Two separate bugs stacked.
+
+## Single provider fragility
+
+Only **ipwho.is** was queried. Ad blockers, rate limits, and CI headless runs all returned failures → \`countryCode: "XX"\`.
+
+**Fix:** sequential fallback across ipwho.is, ipapi.co, and geojs.io with a short retry pause.
+
+## iOS mislabeled as macOS
+
+iPhone Safari UAs contain \`like Mac OS X\`, so \`parseDevice\` reported \`Mobile · macOS\` instead of iOS. iPadOS desktop-mode UAs needed \`navigator.maxTouchPoints\` to distinguish from real Macs.
+
+## Inference for old rows
+
+Rows already stored as \`XX\` cannot be re-fetched by IP retroactively. Two heuristics help:
+
+1. **Sibling inference** — if the same browser/OS/device type has a resolved visit within a time window, copy that geo.
+2. **Current session** — if this browser now resolves geo, patch older unresolved rows from the same fingerprint.
+
+LocalStorage backfill runs once per session. Supabase rows get the same patch when \`allow-geo-backfill-update.sql\` is applied.
+
+## Display honesty
+
+Unresolved visits show **"Location unavailable"**, are excluded from country share bars, and do not plot at \`0°, 0°\` on the map.
+`,
+    },
+    {
+        slug: "resume-generation-with-playwright",
+        title: "One HTML source, three exports: resume PDF and Word with Playwright",
+        excerpt:
+            "How resume.html becomes pixel-matched PDF and DOCX exports, syncs to public/ for Next.js, and auto-bumps RESUME_VERSION from git.",
+        date: "2026-07-08",
+        tags: ["Python", "Playwright", "Resume", "Tooling"],
+        ogImage: "/og/blog-resume-playwright.svg",
+        content: `
+My resume lives as **one HTML file** (\`resume/resume.html\`). Everything else is generated.
+
+## Pipeline
+
+\`python resume/generate_resume.py\`:
+
+1. Sync HTML to \`docs/\` and \`public/\`
+2. Render PDF via Playwright + Chromium (A4, print CSS)
+3. Rasterize PDF page to PNG at 220 DPI
+4. Embed PNG in DOCX so Word matches PDF visually
+5. Patch \`src/lib/resume.ts\` \`RESUME_VERSION\` from \`git log\` date of the HTML file
+
+CI and deploy run the same script so live \`/resume.pdf\` never 404s.
+
+## Why Playwright instead of wkhtmltopdf?
+
+The resume uses modern CSS — flexbox sidebar, stroke icons, print media queries. Headless Chromium respects the same layout engine as Chrome print preview.
+
+## Cache busting
+
+Download links append \`?v=YYYYMMDD\` from \`RESUME_VERSION\`. Auto-deriving from git removes the manual bump step that was always forgotten after icon or address edits.
+
+## Contact icon alignment
+
+Lucide-style stroke SVGs at a fixed 12px column keep email, phone, LinkedIn, and GitHub labels aligned in HTML, PDF, and DOCX — verified with a small HTML regression test in CI.
+`,
+    },
     {
         slug: "portfolio-v2-hardening-spa-navigation",
         title: "Portfolio v2 hardening: CI gates, bundle budgets, and a SPA navigation bug",

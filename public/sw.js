@@ -12,7 +12,7 @@
 //
 // Bump CACHE_VERSION whenever this strategy changes to drop old caches on activate.
 
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const CACHE_NAME = `portfolio-${CACHE_VERSION}`;
 
 self.addEventListener("install", (event) => {

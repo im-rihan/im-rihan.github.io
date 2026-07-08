@@ -47,4 +47,10 @@ describe("getChatResponse", () => {
         const answer = getChatResponse("how many years of experience does he have");
         expect(answer).toContain("4+ years");
     });
+
+    it("matches paraphrased questions via synonym expansion", () => {
+        const answer = getChatResponse("what technologies does he use?");
+        expect(answer).not.toBe(offTopicMessage);
+        expect(answer.toLowerCase()).toMatch(/react|next|typescript|nestjs/);
+    });
 });
