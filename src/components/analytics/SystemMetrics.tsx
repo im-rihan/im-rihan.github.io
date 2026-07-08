@@ -97,6 +97,11 @@ const MODULE_LOAD_TIME = Date.now();
 
 export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number | null }) {
     const sessionStart = useRef(MODULE_LOAD_TIME);
+    // Browser-capability copy (metricUnavailableCopy) differs between the SSR
+    // pre-render (Node) and the client (real browser APIs), which would cause a
+    // hydration text mismatch. Gate it behind a post-mount flag so the first
+    // client render matches the server, then swap in the real labels.
+    const [mounted, setMounted] = useState(false);
     const [metrics, setMetrics] = useState<ClientMetrics>(() => ({
         fps: 60,
         renderLoad: 8,
@@ -110,6 +115,12 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
         pageLoadMs: null,
         storageKb: 0,
     }));
+
+    useEffect(() => {
+        // Mount flag for SSR-safe capability copy — see state declaration above.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setMounted(true);
+    }, []);
 
     useEffect(() => {
         const staticM = readStaticMetrics();
@@ -229,7 +240,7 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                 <MetricBar
                     icon={<MemoryStick size={15} />}
                     label="JS heap"
-                    value={metrics.jsHeapMb !== null ? String(metrics.jsHeapMb) : metricUnavailableCopy("heap")}
+                    value={metrics.jsHeapMb !== null ? String(metrics.jsHeapMb) : mounted ? metricUnavailableCopy("heap") : "—"}
                     unit={metrics.jsHeapMb !== null ? "MB" : undefined}
                     pct={heapPct ?? undefined}
                     showBar={heapPct !== null}
@@ -242,7 +253,9 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                     value={
                         metrics.deviceMemoryGb !== null
                             ? String(metrics.deviceMemoryGb)
-                            : metricUnavailableCopy("deviceMemory")
+                            : mounted
+                              ? metricUnavailableCopy("deviceMemory")
+                              : "—"
                     }
                     unit={metrics.deviceMemoryGb !== null ? "GB" : undefined}
                     pct={metrics.deviceMemoryGb ? Math.min(100, metrics.deviceMemoryGb * 12) : undefined}
@@ -263,9 +276,11 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                     value={
                         latency !== null && latency !== undefined
                             ? String(latency)
-                            : supportsNetworkInformation()
+                            : !mounted
                               ? metrics.networkType
-                              : metricUnavailableCopy("network")
+                              : supportsNetworkInformation()
+                                ? metrics.networkType
+                                : metricUnavailableCopy("network")
                     }
                     unit={latency !== null && latency !== undefined ? "ms RTT" : undefined}
                     pct={latencyPct ?? undefined}
