@@ -17,22 +17,37 @@ export function Scene3D() {
     const opacityRef = useRef(0.92);
 
     useEffect(() => {
-        // Mount the heavy three.js/drei bundle once the browser is idle (or after
-        // a max wait) so it doesn't compete with the initial page paint and
-        // above-the-fold content for the main thread.
-        const win = window as typeof window & {
-            requestIdleCallback?: (cb: IdleRequestCallback, opts?: IdleRequestOptions) => number;
-            cancelIdleCallback?: (handle: number) => void;
+        if (ready) return;
+
+        let mounted = true;
+        const activate = () => {
+            if (mounted) setReady(true);
+            cleanup();
         };
 
-        if (typeof win.requestIdleCallback === "function") {
-            const handle = win.requestIdleCallback(() => setReady(true), { timeout: 1500 });
-            return () => win.cancelIdleCallback?.(handle);
-        }
+        const onScroll = () => {
+            if (window.scrollY > 80) activate();
+        };
 
-        const timeout = window.setTimeout(() => setReady(true), 200);
-        return () => window.clearTimeout(timeout);
-    }, []);
+        let fallbackId = 0;
+
+        const cleanup = () => {
+            window.removeEventListener("scroll", onScroll);
+            window.removeEventListener("pointerdown", activate);
+            window.removeEventListener("keydown", activate);
+            if (fallbackId) window.clearTimeout(fallbackId);
+        };
+
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("pointerdown", activate, { once: true });
+        window.addEventListener("keydown", activate, { once: true });
+        fallbackId = window.setTimeout(activate, 8000);
+
+        return () => {
+            mounted = false;
+            cleanup();
+        };
+    }, [ready]);
 
     useEffect(() => bindSceneScrollTracker(), []);
 

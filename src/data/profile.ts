@@ -1,3 +1,5 @@
+import { certifications } from "@/data/certifications";
+
 export const siteMeta = {
     name: "Rihan Mohammed",
     title: "Full Stack Developer",
@@ -217,7 +219,7 @@ export const education = [
 
 /** Computed from live data files — no manual sync needed. */
 export const portfolioStats = {
-    certifications: 15,      // synced from certifications.ts — update if certs are added
+    certifications: certifications.length,
     yearsExperience: "4+",
     projects: projects.length,
     companies: 2,

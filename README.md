@@ -237,8 +237,10 @@ im-rihan.github.io/
 │   ├── lib/                    # Business logic & utilities
 │   └── utils/supabase/         # Supabase client + env helpers
 ├── supabase/
-│   ├── visits.sql              # Analytics table schema + RLS
-│   └── fix-migrations-schema.sql
+│   ├── visits.sql                      # Analytics table schema + RLS
+│   ├── harden-visits-rls.sql           # 90-day read window + insert validation
+│   ├── allow-geo-backfill-update.sql   # PATCH XX rows when geo resolves
+│   └── cleanup-unresolved-visits.sql   # Purge stale XX rows (manual or pg_cron)
 ├── next.config.ts
 ├── tsconfig.json
 ├── package.json
@@ -554,10 +556,12 @@ cp .env.example .env.local
 
 1. Create a Supabase project
 2. Run `supabase/visits.sql` in the SQL editor
-3. Run `supabase/harden-visits-rls.sql` in the SQL editor (bounds anonymous reads to a rolling 90-day window, revokes update/delete, and rejects malformed/spam inserts via `check` constraints — see comments in the file)
-4. Add keys to `.env.local` locally
-5. Add same keys as **GitHub Actions secrets** for production builds
-6. Verify: `node scripts/test-supabase.mjs`
+3. Run `supabase/harden-visits-rls.sql` (90-day read window, insert validation)
+4. Run `supabase/allow-geo-backfill-update.sql` (lets the client patch unresolved `XX` rows when geo inference succeeds)
+5. Optionally schedule `supabase/cleanup-unresolved-visits.sql` (deletes `XX` rows older than 30 days)
+6. Add keys to `.env.local` locally
+7. Add same keys as **GitHub Actions secrets** for production builds
+8. Verify: `node scripts/test-supabase.mjs`
 
 > Variables are embedded at **build time**. Changing secrets requires a rebuild and redeploy.
 
@@ -637,22 +641,21 @@ This repo is a **GitHub user site** (`im-rihan.github.io`) served at the root do
 
 ### How deployment works
 
-1. Pull requests to `main` run `.github/workflows/ci.yml` (lint, type-check, unit tests, build, bundle budget, E2E, Lighthouse) — **CI must pass before merging**.
-2. Merge to `main` triggers `.github/workflows/deploy-gh-pages.yml`
-2. CI runs `npm ci` + `npm run build` with Supabase secrets
-3. `peaceiris/actions-gh-pages` publishes `out/` to the **`gh-pages`** branch
-4. GitHub Pages serves files from `gh-pages` / root
+1. **Pull requests to `main`** run `.github/workflows/ci.yml` only — lint, type-check, unit tests, build, bundle budget, E2E, and Lighthouse. **CI must pass before merging.**
+2. **Merge to `main`** triggers `.github/workflows/deploy-gh-pages.yml` — build with Supabase secrets and publish `out/` to **`gh-pages`**. **No second CI run on merge** (no duplicate lint/tests/Lighthouse).
+3. GitHub Pages serves files from `gh-pages` / root.
+
+This split keeps quality gates on the PR while avoiding the old double-wait (CI on PR + CI again on merge).
 
 ### Branch protection (recommended)
 
 Configure in **Settings → Branches → Branch protection rules** for `main`:
 
 - ✅ Require a pull request before merging
-- ✅ Require status checks to pass before merging → select **`ci`** (the `ci.yml` workflow)
+- ✅ Require status checks to pass before merging → select the **`CI`** workflow jobs from pull requests (not deploy)
 - ✅ Require branches to be up to date before merging
-- ✅ Do not allow bypassing the above settings
 
-This ensures the CI gate (`lint + type-check + tests + build + Lighthouse`) always runs before any merge.
+Deploy does **not** need to be a required status check — it runs after merge automatically.
 
 ### One-time Pages configuration
 

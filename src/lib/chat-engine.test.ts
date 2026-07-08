@@ -33,7 +33,7 @@ describe("getChatResponse", () => {
     it("handles simple plural/tense variation via fuzzy prefix match", () => {
         const answer = getChatResponse("certifications please");
         expect(answer).not.toBe(offTopicMessage);
-        expect(answer).toContain("14 certifications");
+        expect(answer).toContain("15 certifications");
     });
 
     it("does not let a single short token inflate unrelated scores", () => {
@@ -46,5 +46,11 @@ describe("getChatResponse", () => {
     it("picks the highest-scoring entry when multiple keywords could match", () => {
         const answer = getChatResponse("how many years of experience does he have");
         expect(answer).toContain("4+ years");
+    });
+
+    it("matches paraphrased questions via synonym expansion", () => {
+        const answer = getChatResponse("what technologies does he use?");
+        expect(answer).not.toBe(offTopicMessage);
+        expect(answer.toLowerCase()).toMatch(/react|next|typescript|nestjs/);
     });
 });

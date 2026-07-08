@@ -16,6 +16,9 @@ export interface CaseStudy {
 
     links: { label: string; href: string }[];
 
+    /** Optional social preview image (path under public/). */
+    ogImage?: string;
+
 }
 
 
@@ -132,6 +135,10 @@ export const caseStudies: CaseStudy[] = [
 
             "Secured agent tooling behind Cloudflare Zero Trust with Redis-backed session and queue patterns.",
 
+            "Standardized payload validation and idempotency keys so duplicate webhook deliveries do not double-write CRM records.",
+
+            "Routed high-volume Twilio/SendGrid events through Redis queues with dead-letter logging for ops replay.",
+
         ],
 
         results: [
@@ -142,6 +149,10 @@ export const caseStudies: CaseStudy[] = [
 
             "Reliable async processing for high-volume inbound webhooks and scheduled jobs.",
 
+            "Ops teams debug failed integrations from structured logs instead of grep across PHP error files.",
+
+            "New lender or CRM integrations ship as isolated webhook modules instead of forked one-offs.",
+
         ],
 
         links: [
@@ -151,6 +162,8 @@ export const caseStudies: CaseStudy[] = [
             { label: "Back to projects", href: "/#projects" },
 
         ],
+
+        ogImage: "/og/case-php-3rdpartycomms.svg",
 
     },
 
@@ -260,6 +273,10 @@ export const caseStudies: CaseStudy[] = [
 
             "Consumed the package from appi, mortgage-pricer, and frontend calculators for one source of truth.",
 
+            "Versioned pricing tables separately from code so lender rule changes do not require API redeploys.",
+
+            "Documented scenario fixtures (purchase vs refi, DSCR thresholds, liquidity reserves) as named Jest cases.",
+
         ],
 
         results: [
@@ -270,6 +287,10 @@ export const caseStudies: CaseStudy[] = [
 
             "Test-backed scenarios for edge cases in fees and liquidity thresholds.",
 
+            "Loan officers see the same numbers in NestJS estimates, React calculators, and Lambda scraper output.",
+
+            "Regression tests catch Excel column drift before it reaches production pricing.",
+
         ],
 
         links: [
@@ -279,6 +300,8 @@ export const caseStudies: CaseStudy[] = [
             { label: "Back to projects", href: "/#projects" },
 
         ],
+
+        ogImage: "/og/case-estimate-calculator.svg",
 
     },
 

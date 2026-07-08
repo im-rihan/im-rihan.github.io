@@ -604,4 +604,32 @@ function persistInferredLocalVisits(
     writeVisits(local);
     sessionStorage.setItem(BACKFILL_KEY, "1");
     window.dispatchEvent(new CustomEvent(VISITOR_UPDATE_EVENT));
+    void persistInferredSupabaseVisits([...patches.values()]);
+}
+
+async function patchSupabaseVisitGeo(visit: VisitRecord): Promise<boolean> {
+    const supabase = await getBrowserClient();
+    if (!supabase) return false;
+
+    try {
+        const { error } = await supabase
+            .from("visits")
+            .update({
+                countryCode: visit.countryCode,
+                countryName: visit.countryName,
+                city: visit.city,
+                region: visit.region,
+            })
+            .eq("id", visit.id)
+            .eq("countryCode", UNRESOLVED_COUNTRY_CODE);
+
+        return !error;
+    } catch {
+        return false;
+    }
+}
+
+async function persistInferredSupabaseVisits(patches: VisitRecord[]): Promise<void> {
+    if (patches.length === 0 || !isSupabaseEnvConfigured()) return;
+    await Promise.all(patches.map((visit) => patchSupabaseVisitGeo(visit)));
 }
