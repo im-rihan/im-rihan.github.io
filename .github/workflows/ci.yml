@@ -1,12 +1,10 @@
 name: CI
 
-# Validates every PR/push before it can reach main — lint, type-check, tests, and a
-# full static export build, so a broken change can never merge and auto-deploy.
+# Gate for pull requests only — lint, type-check, tests, build, bundle budget, e2e, Lighthouse.
+# Main deploys via deploy-gh-pages.yml on merge (no second CI run on push to main).
 
 on:
   pull_request:
-    branches: [main]
-  push:
     branches: [main]
 
 permissions:
