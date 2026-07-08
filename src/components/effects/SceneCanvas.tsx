@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { Group, Mesh, Points } from "three";
 import * as THREE from "three";
 import { getCursorCharge, getCursorPointer, getCursorVelocity } from "@/lib/cursor-signals";
+import { isLowMemoryDevice } from "@/lib/browser-capabilities";
 import { getScrollProgress, advanceScrollProgress } from "@/lib/scene-scroll";
 import { getSceneTheme } from "@/lib/scene-theme";
 import { SceneInteractions } from "./scene-interactions";
@@ -213,7 +214,7 @@ function ParticleField({ isLight, isCompact, viewportRef }: { isLight: boolean; 
     const theme = getSceneTheme(isLight);
     const ref = useRef<Points>(null);
     const matRef = useRef<THREE.PointsMaterial>(null);
-    const count = isCompact ? (isLight ? 1800 : 2200) : isLight ? 1800 : 2800;
+    const count = isCompact ? (isLight ? 900 : 1100) : isLight ? 1800 : 2800;
 
     const { positions, colors } = useMemo(() => {
         const rand = seededRandom(0x9e37 + count);
@@ -935,7 +936,7 @@ function SceneContent({ isLight, isCompact, viewportRef }: { isLight: boolean; i
             <Stars
                 radius={110}
                 depth={55}
-                count={isCompact ? 4000 : isLight ? 2200 : 4500}
+                count={isCompact ? 2200 : isLight ? 2200 : 4500}
                 factor={isCompact ? 3.6 : isLight ? 3.2 : 4.2}
                 saturation={isLight ? 0.02 : 0.08}
                 fade
@@ -998,6 +999,8 @@ export function SceneCanvas({
 }) {
     const isLight = useIsLightTheme();
     const [isCompact, setIsCompact] = useState(false);
+    const lowMemory = useMemo(() => isLowMemoryDevice(), []);
+    const perfCompact = isCompact || lowMemory;
     const viewportRef = useViewportTracker(container, (target) => setIsCompact(target === 1));
 
     // Stop the render loop entirely while the tab is hidden — no visible frames
@@ -1020,9 +1023,9 @@ export function SceneCanvas({
             eventSource={container}
             eventPrefix="client"
             camera={{ position: DESKTOP.camera.position, fov: DESKTOP.camera.fov }}
-            gl={{ alpha: true, antialias: !isCompact, powerPreference: "high-performance" }}
+            gl={{ alpha: true, antialias: !perfCompact, powerPreference: perfCompact ? "default" : "high-performance" }}
             style={{ width: "100%", height: "100%", background: "transparent", display: "block" }}
-            dpr={isCompact ? 1 : [1, 1.4]}
+            dpr={perfCompact ? 1 : [1, 1.4]}
             resize={{ scroll: false, debounce: { scroll: 50, resize: 0 } }}
             frameloop={frameloop}
         >
@@ -1030,7 +1033,7 @@ export function SceneCanvas({
             <ResponsiveCamera viewportRef={viewportRef} />
             <AdaptiveFog viewportRef={viewportRef} isLight={isLight} />
             <ViewportFrameRelay viewportRef={viewportRef} onFrame={onViewportFrame} />
-            <SceneContent isLight={isLight} isCompact={isCompact} viewportRef={viewportRef} />
+            <SceneContent isLight={isLight} isCompact={perfCompact} viewportRef={viewportRef} />
         </Canvas>
     );
 }

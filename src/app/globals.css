@@ -361,6 +361,19 @@ section:first-of-type::before {
     }
 }
 
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass-card {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        transform-style: flat;
+        background: rgba(30, 41, 59, 0.94);
+    }
+
+    .light .glass-card {
+        background: rgba(255, 255, 255, 0.96);
+    }
+}
+
 @media (pointer: fine) {
     .glass-card:hover {
         border-color: rgba(20, 184, 166, 0.3);
@@ -630,5 +643,22 @@ section:first-of-type::before {
     *, *::before, *::after {
         animation-duration: 0.01ms !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+/* View Transitions API — Chrome 111+, Safari 18+ (graceful no-op elsewhere) */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.22s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation: none;
     }
 }

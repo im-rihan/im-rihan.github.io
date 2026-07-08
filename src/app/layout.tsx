@@ -7,6 +7,7 @@ import { WebVitalsReporter } from "@/components/seo/WebVitalsReporter";
 import { ServiceWorkerRegistration } from "@/components/seo/ServiceWorkerRegistration";
 import { rootMetadata, rootViewport } from "@/lib/site-metadata";
 import "./globals.css";
+import "@/styles/touch-blur-fallback.css";
 
 const spaceGrotesk = Space_Grotesk({
     subsets: ["latin"],

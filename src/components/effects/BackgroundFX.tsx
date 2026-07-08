@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { prefersReducedEffects } from "@/lib/device-capabilities";
 import styles from "./BackgroundFX.module.css";
 
 /** CSS-only ambient effects — aurora, grid, scanlines, glow orbs, vignette. */
 export function BackgroundFX() {
     const pointerRef = useRef({ nx: 0, ny: 0 });
+    const [reduced, setReduced] = useState(true);
 
     useEffect(() => {
-        if (prefersReducedEffects()) return;
+        setReduced(prefersReducedEffects());
+    }, []);
+
+    useEffect(() => {
+        if (reduced) return;
 
         const onMove = (clientX: number, clientY: number) => {
             pointerRef.current = {
@@ -67,25 +72,29 @@ export function BackgroundFX() {
             window.removeEventListener("mousemove", onMouse);
             window.removeEventListener("touchmove", onTouch);
         };
-    }, []);
+    }, [reduced]);
 
     return (
         <div className={styles.fx} aria-hidden>
             <div className={styles.depthMesh} />
-            <div className={styles.aurora} />
-            <div className={styles.lightBeams} />
-            <div className={styles.orbs}>
-                <span className={styles.orbA} />
-                <span className={styles.orbB} />
-                <span className={styles.orbC} />
-            </div>
-            <div className={styles.starDust} />
-            <div className={styles.horizon} />
-            <div className={styles.gridPulse} />
-            <div className={styles.scanlines} />
-            <div className={styles.noise} />
+            {!reduced && (
+                <>
+                    <div className={styles.aurora} />
+                    <div className={styles.lightBeams} />
+                    <div className={styles.orbs}>
+                        <span className={styles.orbA} />
+                        <span className={styles.orbB} />
+                        <span className={styles.orbC} />
+                    </div>
+                    <div className={styles.starDust} />
+                    <div className={styles.horizon} />
+                    <div className={styles.gridPulse} />
+                    <div className={styles.scanlines} />
+                    <div className={styles.noise} />
+                    <div className={styles.interactiveGlow} />
+                </>
+            )}
             <div className={styles.vignette} />
-            <div className={styles.interactiveGlow} />
         </div>
     );
 }

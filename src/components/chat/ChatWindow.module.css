@@ -4,7 +4,7 @@
     margin: 0 auto 80px;
     display: flex;
     flex-direction: column;
-    height: min(78vh, 720px);
+    height: min(78dvh, 720px);
     overflow: hidden;
     border-radius: 20px;
     background: var(--bg-card);
@@ -743,5 +743,21 @@
     .scrollDown,
     .promptGrid {
         animation: none;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .shell,
+    .scrollDown {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .shell,
+    .scrollDown {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 }

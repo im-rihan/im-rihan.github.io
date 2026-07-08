@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Activity, Cpu, HardDrive, MemoryStick, Network, Timer, Zap } from "lucide-react";
 import {
+    metricUnavailableCopy,
+    supportsNetworkInformation,
+} from "@/lib/browser-capabilities";
+import {
     computeRenderLoad,
     formatUptime,
     readMemoryMetrics,
@@ -225,7 +229,7 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                 <MetricBar
                     icon={<MemoryStick size={15} />}
                     label="JS heap"
-                    value={metrics.jsHeapMb !== null ? String(metrics.jsHeapMb) : "—"}
+                    value={metrics.jsHeapMb !== null ? String(metrics.jsHeapMb) : metricUnavailableCopy("heap")}
                     unit={metrics.jsHeapMb !== null ? "MB" : undefined}
                     pct={heapPct ?? undefined}
                     showBar={heapPct !== null}
@@ -235,7 +239,11 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                 <MetricBar
                     icon={<HardDrive size={15} />}
                     label="Device RAM"
-                    value={metrics.deviceMemoryGb !== null ? String(metrics.deviceMemoryGb) : "—"}
+                    value={
+                        metrics.deviceMemoryGb !== null
+                            ? String(metrics.deviceMemoryGb)
+                            : metricUnavailableCopy("deviceMemory")
+                    }
                     unit={metrics.deviceMemoryGb !== null ? "GB" : undefined}
                     pct={metrics.deviceMemoryGb ? Math.min(100, metrics.deviceMemoryGb * 12) : undefined}
                     showBar={metrics.deviceMemoryGb !== null}
@@ -252,7 +260,13 @@ export function SystemMetrics({ networkLatencyMs }: { networkLatencyMs?: number 
                 <MetricBar
                     icon={<Network size={15} />}
                     label="Network"
-                    value={latency !== null && latency !== undefined ? String(latency) : metrics.networkType}
+                    value={
+                        latency !== null && latency !== undefined
+                            ? String(latency)
+                            : supportsNetworkInformation()
+                              ? metrics.networkType
+                              : metricUnavailableCopy("network")
+                    }
                     unit={latency !== null && latency !== undefined ? "ms RTT" : undefined}
                     pct={latencyPct ?? undefined}
                     showBar={latencyPct !== null}

@@ -260,6 +260,10 @@
     background: linear-gradient(90deg, var(--primary-dark), var(--primary-light));
 }
 
+.shareFillBrowser {
+    background: linear-gradient(90deg, #2563eb, #38bdf8);
+}
+
 .sharePct {
     font-family: var(--font-mono), monospace;
     font-size: 0.72rem;
@@ -1097,5 +1101,23 @@
     .mapLiveDot,
     .metric {
         animation: none;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .mapLiveBadge,
+    .mapZoomBadge,
+    .mapPin {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .mapLiveBadge,
+    .mapZoomBadge,
+    .mapPin {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 }

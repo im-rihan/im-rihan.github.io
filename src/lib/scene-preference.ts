@@ -1,8 +1,12 @@
+import { isLowMemoryDevice, isWebGLAvailable } from "@/lib/browser-capabilities";
+
 const SCENE_KEY = "portfolio-scene-enabled";
 
 export function isSceneEnabled(): boolean {
     if (typeof window === "undefined") return false;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+    if (!isWebGLAvailable()) return false;
+    if (isLowMemoryDevice()) return false;
     const stored = localStorage.getItem(SCENE_KEY);
     if (stored === "false") return false;
     if (stored === "true") return true;
@@ -18,5 +22,6 @@ export function setSceneEnabled(enabled: boolean): void {
 
 export function shouldLoadScene(pathname: string): boolean {
     if (pathname.startsWith("/status")) return false;
+    if (typeof window !== "undefined" && !isWebGLAvailable()) return false;
     return isSceneEnabled();
 }

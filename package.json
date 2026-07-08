@@ -16,6 +16,7 @@
     "test:e2e:ui": "playwright test --ui",
     "check:bundle-size": "node scripts/check-bundle-size.mjs",
     "lighthouse": "lhci autorun",
+    "lighthouse:mobile": "lhci autorun --config=lighthouserc.mobile.json",
     "generate:brand": "node scripts/generate-og.mjs",
     "setup:resume": "pip install -r resume/requirements.txt && python -m playwright install chromium",
     "generate:resume": "python resume/generate_resume.py"
