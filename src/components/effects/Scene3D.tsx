@@ -12,7 +12,7 @@ const SceneCanvas = dynamic(() => import("./SceneCanvas").then((m) => m.SceneCan
 });
 
 export function Scene3D() {
-    const hostRef = useRef<HTMLDivElement>(null);
+    const [container, setContainer] = useState<HTMLDivElement | null>(null);
     const [ready, setReady] = useState(false);
     const opacityRef = useRef(0.92);
 
@@ -52,19 +52,18 @@ export function Scene3D() {
     useEffect(() => bindSceneScrollTracker(), []);
 
     const handleViewportFrame = useCallback((snapshot: { mobileBlend: number }) => {
-        const el = hostRef.current;
-        if (!el) return;
+        if (!container) return;
         const isLight = document.documentElement.classList.contains("light");
         const next = sceneWrapperOpacity(snapshot.mobileBlend, isLight);
         if (Math.abs(opacityRef.current - next) < 0.001) return;
         opacityRef.current = next;
-        el.style.opacity = String(next);
-    }, []);
+        container.style.opacity = String(next);
+    }, [container]);
 
     return (
-        <div ref={hostRef} className={styles.wrapper} aria-hidden>
-            {ready && hostRef.current ? (
-                <SceneCanvas container={hostRef.current} onViewportFrame={handleViewportFrame} />
+        <div ref={setContainer} className={styles.wrapper} aria-hidden>
+            {ready && container ? (
+                <SceneCanvas container={container} onViewportFrame={handleViewportFrame} />
             ) : null}
         </div>
     );
