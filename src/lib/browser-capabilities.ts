@@ -9,16 +9,26 @@ export function isLowMemoryDevice(): boolean {
     return false;
 }
 
+// Cache the probe result. Creating a canvas + WebGL context on every call
+// leaks contexts (browsers cap at ~16), and this is called from
+// useSyncExternalStore's getSnapshot which runs on every render.
+let webglAvailable: boolean | null = null;
+
 export function isWebGLAvailable(): boolean {
+    if (webglAvailable !== null) return webglAvailable;
     if (typeof document === "undefined") return false;
     try {
         const canvas = document.createElement("canvas");
-        return Boolean(
-            canvas.getContext("webgl2") ||
-                canvas.getContext("webgl") ||
-                canvas.getContext("experimental-webgl"),
-        );
+        const gl = (canvas.getContext("webgl2") ||
+            canvas.getContext("webgl") ||
+            canvas.getContext("experimental-webgl")) as WebGLRenderingContext | null;
+        webglAvailable = Boolean(gl);
+        // Release the probe context immediately so it doesn't count toward the
+        // browser's active-context limit.
+        gl?.getExtension("WEBGL_lose_context")?.loseContext();
+        return webglAvailable;
     } catch {
+        webglAvailable = false;
         return false;
     }
 }
