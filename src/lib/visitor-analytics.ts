@@ -1,6 +1,6 @@
 import { countryNames } from "@/data/country-coordinates";
 import { isCountApiEnabled } from "@/lib/count-api";
-import { parseDevice } from "@/lib/device-parse";
+import { normalizeBrowserLabel, parseDevice } from "@/lib/device-parse";
 import { inferUnresolvedVisits } from "@/lib/geo-inference";
 import { fetchGeo, isUnknownCountryCode } from "@/lib/geo-lookup";
 
@@ -44,11 +44,17 @@ export interface DeviceStat {
     count: number;
 }
 
+export interface BrowserStat {
+    label: string;
+    count: number;
+}
+
 export interface VisitorStats {
     total: number;
     globalTotal: number | null;
     countries: CountryStat[];
     devices: DeviceStat[];
+    browsers: BrowserStat[];
     recent: VisitRecord[];
     current: VisitRecord | null;
 }
@@ -243,6 +249,7 @@ async function pushSupabaseVisit(visit: VisitRecord): Promise<boolean> {
 function aggregate(visits: VisitRecord[], current: VisitRecord | null): Omit<VisitorStats, "globalTotal"> {
     const countryMap = new Map<string, CountryStat>();
     const deviceMap = new Map<string, DeviceStat>();
+    const browserMap = new Map<string, BrowserStat>();
 
     for (const v of visits) {
         const cKey = v.countryCode || UNRESOLVED_COUNTRY_CODE;
@@ -259,6 +266,11 @@ function aggregate(visits: VisitRecord[], current: VisitRecord | null): Omit<Vis
         const dExisting = deviceMap.get(dKey);
         if (dExisting) dExisting.count += 1;
         else deviceMap.set(dKey, { type: dKey, label: v.deviceLabel, count: 1 });
+
+        const bKey = normalizeBrowserLabel(v.browser);
+        const bExisting = browserMap.get(bKey);
+        if (bExisting) bExisting.count += 1;
+        else browserMap.set(bKey, { label: bKey, count: 1 });
     }
 
     return {
@@ -270,6 +282,7 @@ function aggregate(visits: VisitRecord[], current: VisitRecord | null): Omit<Vis
             return b.count - a.count;
         }),
         devices: [...deviceMap.values()].sort((a, b) => b.count - a.count),
+        browsers: [...browserMap.values()].sort((a, b) => b.count - a.count),
         recent: sortVisitsByRecent(visits, 8),
         current,
     };
@@ -441,6 +454,12 @@ export function getDemoVisitorStats(): VisitorStats & { source: "demo"; isDemo: 
             { type: "mobile", label: "Mobile", count: 278 },
             { type: "tablet", label: "Tablet", count: 49 },
         ],
+        browsers: [
+            { label: "Chrome family", count: 512 },
+            { label: "Safari", count: 198 },
+            { label: "Firefox", count: 67 },
+            { label: "Other", count: 70 },
+        ],
         recent: recentSorted,
         current: recentSorted[0] ?? null,
         source: "demo",
@@ -507,6 +526,7 @@ export async function getVisitorStats(_forceRefresh = false): Promise<
         globalTotal: global.globalTotal,
         countries,
         devices,
+        browsers: localAgg.browsers,
         recent: localAgg.recent,
         current,
         source,

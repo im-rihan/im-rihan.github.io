@@ -39,6 +39,22 @@ const eslintConfig = [
       "react-hooks/set-state-in-effect": "warn",
     },
   },
+  {
+    // The 3D scene modules are built entirely on react-three-fiber, whose
+    // core rendering model *requires* the exact patterns the React Compiler
+    // rules forbid: mutating the mutable three.js scene graph and refs inside
+    // useFrame, reading refs during render to mount pooled meshes, and seeding
+    // geometry with randomness. These are correct-by-design for r3f and cannot
+    // be rewritten to satisfy the compiler rules, so they're disabled here
+    // rather than scattering dozens of inline disables across the files.
+    files: ["src/components/effects/**/*.{ts,tsx}"],
+    rules: {
+      "react-hooks/purity": "off",
+      "react-hooks/immutability": "off",
+      "react-hooks/refs": "off",
+      "react-hooks/set-state-in-effect": "off",
+    },
+  },
 ];
 
 export default eslintConfig;

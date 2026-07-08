@@ -10,6 +10,7 @@ import { ScrollProgress } from "@/components/effects/ScrollProgress";
 import { VisitorTracker } from "@/components/analytics/VisitorTracker";
 import { CommandPaletteLauncher } from "@/components/command-palette/CommandPaletteLauncher";
 import { ContactDock } from "./ContactDock";
+import { PwaInstallHint } from "./PwaInstallHint";
 import { HashScrollHandler } from "./HashScrollHandler";
 import { shouldLoadScene } from "@/lib/scene-preference";
 
@@ -70,6 +71,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <InsightsButton onClick={() => setInsightsOpen(true)} />
             <AnalysisOverlay open={insightsOpen} onClose={() => setInsightsOpen(false)} />
             <CommandPaletteLauncher />
+            <PwaInstallHint />
         </>
     );
 }

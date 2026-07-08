@@ -1,0 +1,56 @@
+.banner {
+    position: fixed;
+    left: max(16px, var(--safe-left));
+    right: max(16px, var(--safe-right));
+    bottom: max(16px, var(--safe-bottom));
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(20, 184, 166, 0.28);
+    background: rgba(15, 23, 42, 0.94);
+    color: var(--text);
+    box-shadow: var(--shadow);
+}
+
+:global(html.light) .banner {
+    background: rgba(255, 255, 255, 0.96);
+}
+
+.banner p {
+    flex: 1;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    color: var(--text-muted);
+}
+
+.install {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: var(--gradient);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.close {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+
+@media (max-width: 640px) {
+    .banner {
+        flex-wrap: wrap;
+    }
+
+    .install {
+        width: 100%;
+    }
+}

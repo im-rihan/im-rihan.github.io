@@ -17,7 +17,6 @@ export function TiltCard({ children, className = "" }: TiltCardProps) {
         // prefersReducedEffects() reads window.matchMedia — unavailable during
         // static build. Starting at `true` prevents opacity:0 flashes; this
         // effect corrects the value after hydration.
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setReduceEffects(prefersReducedEffects());
     }, []);
 

@@ -1,0 +1,32 @@
+/**
+ * Shared backdrop-filter fallbacks for touch/coarse input and browsers
+ * without backdrop-filter support. Import from globals.css.
+ *
+ * Apply class `blur-surface` alongside module styles on blur-heavy panels.
+ */
+
+.blur-surface {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .blur-surface {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+@media (hover: none), (pointer: coarse) {
+    .blur-surface {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+/* Safe viewport height fallbacks for iOS Safari chrome */
+.min-h-screen-safe {
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
+}

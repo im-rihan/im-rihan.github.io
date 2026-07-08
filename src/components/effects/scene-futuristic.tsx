@@ -128,7 +128,7 @@ function ParallaxShells({ isLight, viewportRef }: { isLight: boolean; viewportRe
     );
 }
 
-function OrbitLattice({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+function OrbitLattice({ isLight }: { isLight: boolean; viewportRef: ViewportRef }) {
     const theme = getSceneTheme(isLight);
     const groupRef = useRef<Group>(null);
     const nodes = useMemo(

@@ -396,7 +396,7 @@ function CursorGravityDust() {
         return pos;
     }, []);
 
-    useFrame((state) => {
+    useFrame(() => {
         if (!ref.current) return;
         const charge = getCursorCharge();
         const { nx, ny } = getCursorPointer();

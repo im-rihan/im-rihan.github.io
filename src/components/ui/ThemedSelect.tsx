@@ -32,6 +32,7 @@ export function ThemedSelect({
     const listId = useId();
 
     const selected = options.find((o) => o.value === value) ?? options[0];
+    const currentIndex = Math.max(0, options.findIndex((o) => o.value === value));
 
     useEffect(() => {
         const onPointerDown = (event: MouseEvent) => {
@@ -43,10 +44,13 @@ export function ThemedSelect({
         return () => document.removeEventListener("mousedown", onPointerDown);
     }, []);
 
-    useEffect(() => {
-        const idx = options.findIndex((o) => o.value === value);
-        setHighlight(idx >= 0 ? idx : 0);
-    }, [value, options]);
+    // Sync the keyboard highlight to the current value when the menu opens,
+    // instead of in an effect — avoids a synchronous setState cascade on every
+    // value/options change while the menu is closed.
+    function openMenu() {
+        setHighlight(currentIndex);
+        setOpen(true);
+    }
 
     function pick(index: number) {
         const opt = options[index];
@@ -58,7 +62,7 @@ export function ThemedSelect({
     function onKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
         if (!open && (event.key === "ArrowDown" || event.key === "Enter" || event.key === " ")) {
             event.preventDefault();
-            setOpen(true);
+            openMenu();
             return;
         }
         if (!open) return;
@@ -87,7 +91,7 @@ export function ThemedSelect({
                 aria-haspopup="listbox"
                 aria-expanded={open}
                 aria-controls={listId}
-                onClick={() => setOpen((o) => !o)}
+                onClick={() => (open ? setOpen(false) : openMenu())}
                 onKeyDown={onKeyDown}
             >
                 <span>{selected.label}</span>
@@ -100,7 +104,7 @@ export function ThemedSelect({
                         // (Arrow keys move `highlight`, Enter calls pick()); options are
                         // intentionally not individually focusable, so no separate keyboard
                         // listener belongs on this element.
-                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+                        // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                         <li
                             key={opt.value}
                             role="option"

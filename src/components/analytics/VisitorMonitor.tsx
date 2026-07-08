@@ -221,6 +221,7 @@ export function VisitorMonitor() {
                 globalTotal: null,
                 countries: [],
                 devices: [],
+                browsers: [],
                 recent: [],
                 current: null,
                 source: "local",
@@ -266,8 +267,14 @@ export function VisitorMonitor() {
     const showBackendStatus = isAnalyticsDebugMode();
     const topShare = topCountryShare(stats.countries, stats.total);
     const topCountry = stats.countries[0]?.name ?? "—";
-    const browsers = aggregateByField(stats.recent, "browser").slice(0, 5);
+    const browsers = stats.browsers.length > 0
+        ? stats.browsers.slice(0, 5)
+        : aggregateByField(stats.recent, "browser").slice(0, 5);
     const pages = aggregateByField(stats.recent, "page").slice(0, 5);
+    const topBrowser = browsers[0]?.label ?? "—";
+    const topBrowserShare = browsers[0] && stats.total > 0
+        ? Math.round((browsers[0].count / stats.total) * 100)
+        : null;
     return (
         <div className={styles.wrapper}>
             {isDemo && (
@@ -327,6 +334,13 @@ export function VisitorMonitor() {
                     </div>
                 </div>
                 <div className={`glass-card ${styles.metric}`}>
+                    <Globe size={20} />
+                    <div>
+                        <span className={styles.metricNum}>{topBrowserShare !== null ? `${topBrowserShare}%` : topBrowser}</span>
+                        <span className={styles.metricLabel}>Top browser</span>
+                    </div>
+                </div>
+                <div className={`glass-card ${styles.metric}`}>
                     <Activity size={20} />
                     <div>
                         <span className={styles.metricNum}>{Math.round(animatedRecent)}</span>
@@ -382,6 +396,23 @@ export function VisitorMonitor() {
                                     <span className={styles.shareLabel}>{c.name}</span>
                                     <div className={styles.shareTrack} aria-hidden>
                                         <span className={styles.shareFill} style={{ width: `${pct}%` }} />
+                                    </div>
+                                    <span className={styles.sharePct}>{pct}%</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+
+                {browsers.length > 0 && (
+                    <div className={styles.shareBars} aria-label="Browser share">
+                        {browsers.map((b) => {
+                            const pct = Math.round((b.count / stats.total) * 100);
+                            return (
+                                <div key={b.label} className={styles.shareRow}>
+                                    <span className={styles.shareLabel}>{b.label}</span>
+                                    <div className={styles.shareTrack} aria-hidden>
+                                        <span className={`${styles.shareFill} ${styles.shareFillBrowser}`} style={{ width: `${pct}%` }} />
                                     </div>
                                     <span className={styles.sharePct}>{pct}%</span>
                                 </div>

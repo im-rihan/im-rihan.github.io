@@ -1,9 +1,10 @@
 .wrap {
-    min-height: 60vh;
+    min-height: calc(100vh - var(--nav-h));
+    min-height: calc(100dvh - var(--nav-h));
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 48px 20px 80px;
+    padding: calc(var(--nav-h) + var(--safe-top) + 32px) 20px 80px;
 }
 
 .card {

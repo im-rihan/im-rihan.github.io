@@ -13,7 +13,12 @@ export function parseDevice(ua: string, hints: DeviceParseHints = {}): DeviceInf
     const lower = ua.toLowerCase();
 
     let browser = "Browser";
-    if (lower.includes("edg/")) browser = "Edge";
+    if (lower.includes("linkedinapp") || lower.includes("linkedin")) browser = "LinkedIn";
+    else if (lower.includes("fbav") || lower.includes("fban") || lower.includes("facebook")) browser = "Facebook";
+    else if (lower.includes("instagram")) browser = "Instagram";
+    else if (lower.includes("samsungbrowser")) browser = "Samsung Internet";
+    else if (lower.includes("edg/")) browser = "Edge";
+    else if (lower.includes("opr/") || lower.includes("opera")) browser = "Opera";
     else if (lower.includes("chrome/")) browser = "Chrome";
     else if (lower.includes("firefox/")) browser = "Firefox";
     else if (lower.includes("safari/") && !lower.includes("chrome")) browser = "Safari";
@@ -47,4 +52,14 @@ export function parseDevice(ua: string, hints: DeviceParseHints = {}): DeviceInf
         `Desktop · ${os}`;
 
     return { deviceType, deviceLabel, browser, os };
+}
+
+/** Normalize browser names for analytics grouping. */
+export function normalizeBrowserLabel(browser: string): string {
+    const b = browser.trim();
+    if (/chrome|edge|samsung|opera/i.test(b)) return "Chrome family";
+    if (/safari/i.test(b)) return "Safari";
+    if (/firefox/i.test(b)) return "Firefox";
+    if (/linkedin|facebook|instagram/i.test(b)) return "In-app browser";
+    return "Other";
 }

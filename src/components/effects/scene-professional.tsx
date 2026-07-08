@@ -252,7 +252,7 @@ function FloatingDiamonds({ isLight }: { isLight: boolean }) {
     const groupRef = useRef<Group>(null);
     const items = useMemo(
         () =>
-            Array.from({ length: 8 }, (_, i) => ({
+            Array.from({ length: 8 }, () => ({
                 x: (Math.random() - 0.5) * 14,
                 y: (Math.random() - 0.5) * 8,
                 z: -6 - Math.random() * 8,

@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { bindSceneScrollTracker } from "@/lib/scene-scroll";
+import { isWebGLAvailable } from "@/lib/browser-capabilities";
 import { sceneWrapperOpacity } from "./scene-viewport";
 import styles from "./Scene3D.module.css";
 
@@ -23,7 +24,7 @@ export function Scene3D() {
     }, []);
 
     useEffect(() => {
-        if (ready) return;
+        if (ready || !isWebGLAvailable()) return;
 
         let mounted = true;
         const activate = () => {

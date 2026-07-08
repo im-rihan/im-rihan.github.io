@@ -58,9 +58,7 @@ function parseDay(d: ApiDay): ContributionDay {
 
 function padWeek(week: ContributionDay[], weekIndex: number): ContributionDay[] {
     const padded = [...week];
-    let pad = 0;
     while (padded.length < 7) {
-        pad += 1;
         padded.push({ date: `pad-w${weekIndex}-d${padded.length}`, count: 0, level: 0 });
     }
     return padded.slice(0, 7);
