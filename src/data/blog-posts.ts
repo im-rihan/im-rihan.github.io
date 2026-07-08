@@ -12,11 +12,11 @@ export interface BlogPost {
 export const blogPosts: BlogPost[] = [
     {
         slug: "enhancement-phases-a-through-e",
-        title: "Phases A–E: analytics accuracy, CI efficiency, and portfolio hardening",
+        title: "Phases A–E + cross-browser hardening: analytics, CI, and Safari/mobile support",
         excerpt:
-            "A full pass across debt clearance, visitor geo inference, Supabase backfill, gallery self-hosting, chat paraphrase matching, and test coverage — with PR-only CI and deploy-on-merge.",
-        date: "2026-07-08",
-        tags: ["Analytics", "CI/CD", "Supabase", "Next.js"],
+            "A full pass across debt clearance, visitor geo inference, Supabase backfill, and test coverage — followed by six cross-browser phases: backdrop-filter fallbacks, multi-browser CI, WebGL/low-memory gating, PWA install, and browser analytics.",
+        date: "2026-07-09",
+        tags: ["Analytics", "CI/CD", "Supabase", "Next.js", "Cross-browser", "Safari"],
         ogImage: "/og/blog-enhancement-phases.svg",
         content: `
 After the geo lookup and resume icon fixes, I ran a **five-phase enhancement plan** (A through E) across the whole portfolio codebase — not just bug fixes, but accuracy, reliability, content, and test coverage.
@@ -69,6 +69,48 @@ Run in SQL Editor, once each:
 4. \`cleanup-unresolved-visits.sql\` (manual or scheduled)
 
 The static client never needs server-side code — RLS policies bound what the publishable key can do.
+
+---
+
+# Cross-browser hardening (phases 1–6)
+
+After A–E merged, real-world usage exposed how much of the experience was quietly Chrome-first. Global share is roughly **65–70% Chrome, 15–18% Safari** (higher on mobile/tablet), **~5% Edge**, and **~2–3% Firefox** — so Safari and mobile were the biggest gaps. A follow-up ran six focused phases.
+
+## Phase 1 — Safari & touch compatibility
+
+- **Blur fallbacks everywhere** — a shared \`touch-blur-fallback.css\` plus \`@supports not (backdrop-filter)\` and \`(hover: none)/(pointer: coarse)\` guards were added to every glass surface (ContactDock, ChatWindow, SystemMetrics, GalleryGrid, AnalysisOverlay, ThemedSelect, Contact, Education, VisitorMonitor).
+- **Navbar cascade fix** — the mobile \`.links\` menu no longer re-applied \`backdrop-filter\` on top of the touch fallback.
+- **Honest telemetry labels** — \`SystemMetrics\` shows *"Chrome only" / "Not in this browser"* for JS heap, network, and \`deviceMemory\` instead of pretending Safari/Firefox report them, via a new \`browser-capabilities.ts\`.
+
+## Phase 2 — multi-browser CI
+
+- **Playwright matrix** — smoke tests now run on Desktop Chrome, **Firefox**, **Mobile Chrome (Pixel 5)**, and **Mobile Safari (iPhone 13/WebKit)**.
+- **Mobile Lighthouse** — a second \`lighthouserc.mobile.json\` config + \`lighthouse-mobile\` CI job catches mobile-only perf regressions.
+
+## Phase 3 — viewport & WebGL
+
+- **Safe-area / dynamic viewport** — \`100dvh\` and \`-webkit-fill-available\` audited across Hero and the 404 page so iOS Safari's collapsing chrome doesn't clip content.
+- **WebGL probe** — the 3D scene is gated behind an actual WebGL capability check, not just a preference flag.
+- **UA test coverage** — \`device-parse\` now recognizes Edge, Samsung Internet, and in-app browsers (LinkedIn/Facebook/Instagram), with tests to match.
+
+## Phase 4 — mobile performance
+
+- **Low-memory gating** — \`isLowMemoryDevice()\` (\`deviceMemory\` / \`hardwareConcurrency\`) disables the 3D scene and cuts particle counts, DPR, and antialiasing on constrained devices.
+- **Decorative-layer skip** — \`BackgroundFX\` drops aurora/orbs/scanlines on reduced-effect and touch-first devices.
+
+## Phase 5 — modern navigation & PWA
+
+- **View Transitions** — cross-document navigation fades via \`@view-transition\`, a graceful no-op on unsupported browsers.
+- **Prefetch** — primary navbar links prefetch for instant route changes.
+- **Install hint** — a dismissible, \`standalone\`-aware \`PwaInstallHint\` surfaces the native install prompt.
+
+## Phase 6 — browser analytics on /status
+
+- **Browser breakdown** — \`visitor-analytics\` aggregates a normalized \`BrowserStat\` (Chrome family / Safari / Firefox / in-app / other), rendered as a share breakdown plus a *"Top browser"* metric on the Visitor Monitor.
+
+## Lint cleanup
+
+The React Compiler-readiness lint rules in \`eslint-plugin-react-hooks\` v7 flagged ~40 warnings, almost all inside the react-three-fiber scene modules — mutating the three.js scene graph and refs inside \`useFrame\`, reading refs during render to mount pooled meshes, seeding geometry with \`Math.random\`. Those are **correct by design** for r3f, so the four compiler rules are scoped off for \`src/components/effects/**\`; the genuine warnings elsewhere (unused vars, stale disable directives, \`exhaustive-deps\`, \`setState\`-in-effect) were fixed properly. Result: **0 lint warnings**.
 `,
     },
     {
