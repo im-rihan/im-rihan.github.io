@@ -50,7 +50,7 @@ function NavLink({
     return (
         <Link
             href={href}
-            prefetch
+            prefetch={false}
             className={`${styles.navLink} ${active ? styles.activeLink : ""}`}
             onClick={onClick}
             data-cursor="nav"
