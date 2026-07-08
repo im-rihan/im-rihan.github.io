@@ -101,7 +101,7 @@ After A–E merged, real-world usage exposed how much of the experience was quie
 ## Phase 5 — modern navigation & PWA
 
 - **View Transitions** — cross-document navigation fades via \`@view-transition\`, a graceful no-op on unsupported browsers.
-- **Route prefetch off** — navbar links keep `prefetch={false}` on this static export so Next.js does not eagerly preload other routes' CSS chunks on the homepage (avoids Chrome "preloaded but not used" warnings and wasted bandwidth).
+- **Route prefetch off** — navbar links keep \`prefetch={false}\` on this static export so Next.js does not eagerly preload other routes' CSS chunks on the homepage (avoids Chrome "preloaded but not used" warnings and wasted bandwidth).
 - **Install hint** — a dismissible, \`standalone\`-aware \`PwaInstallHint\` surfaces the native install prompt.
 
 ## Phase 6 — browser analytics on /status
