@@ -43,6 +43,18 @@ const DESKTOP = {
     pointer: { x: 1.15, y: 0.78, lookX: 0.45, lookY: 0.3, z: 0.25 },
 } as const;
 
+/** Deterministic PRNG (mulberry32). Used instead of Math.random() so scene
+ *  geometry generated inside useMemo is pure/idempotent across re-renders. */
+function seededRandom(seed: number): () => number {
+    let state = seed >>> 0;
+    return () => {
+        state = (state + 0x6d2b79f5) | 0;
+        let t = Math.imul(state ^ (state >>> 15), 1 | state);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+}
+
 function ViewportDriver({ viewportRef }: { viewportRef: ViewportRef }) {
     useFrame((_, delta) => {
         advanceScrollProgress(delta);
@@ -141,21 +153,20 @@ function SceneFocal({ viewportRef, children }: { viewportRef: ViewportRef; child
     return <group ref={ref}>{children}</group>;
 }
 
-function NebulaMist({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+function NebulaMist({ isLight, isCompact, viewportRef }: { isLight: boolean; isCompact: boolean; viewportRef: ViewportRef }) {
     const theme = getSceneTheme(isLight);
     const ref = useRef<Group>(null);
-    const clouds = useMemo(
-        () =>
-            Array.from({ length: 6 }, (_, i) => ({
-                x: (Math.random() - 0.5) * 24,
-                y: (Math.random() - 0.5) * 16,
-                z: -8 - Math.random() * 8,
-                scale: 6 + Math.random() * 9,
-                speed: 0.012 + Math.random() * 0.018,
-                hue: i % 3 === 0 ? theme.primary : i % 3 === 1 ? theme.accent : theme.purple,
-            })),
-        [theme.primary, theme.accent, theme.purple]
-    );
+    const clouds = useMemo(() => {
+        const rand = seededRandom(0x4e65);
+        return Array.from({ length: 6 }, (_, i) => ({
+            x: (rand() - 0.5) * 24,
+            y: (rand() - 0.5) * 16,
+            z: -8 - rand() * 8,
+            scale: 6 + rand() * 9,
+            speed: 0.012 + rand() * 0.018,
+            hue: i % 3 === 0 ? theme.primary : i % 3 === 1 ? theme.accent : theme.purple,
+        }));
+    }, [theme.primary, theme.accent, theme.purple]);
 
     useFrame((state) => {
         if (!ref.current) return;
@@ -181,7 +192,9 @@ function NebulaMist({ isLight, viewportRef }: { isLight: boolean; viewportRef: V
                         opacity={
                             isLight
                                 ? theme.nebula * 0.85
-                                : THREE.MathUtils.lerp(theme.nebula, theme.nebula * 1.1, viewportRef.current?.mobileBlend ?? 0)
+                                : isCompact
+                                    ? theme.nebula * 1.1
+                                    : theme.nebula
                         }
                         depthWrite={false}
                     />
@@ -191,14 +204,14 @@ function NebulaMist({ isLight, viewportRef }: { isLight: boolean; viewportRef: V
     );
 }
 
-function ParticleField({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+function ParticleField({ isLight, isCompact, viewportRef }: { isLight: boolean; isCompact: boolean; viewportRef: ViewportRef }) {
     const theme = getSceneTheme(isLight);
     const ref = useRef<Points>(null);
     const matRef = useRef<THREE.PointsMaterial>(null);
-    const isCompact = (viewportRef.current?.mobileTarget ?? 0) === 1;
     const count = isCompact ? (isLight ? 1800 : 2200) : isLight ? 1800 : 2800;
 
     const { positions, colors } = useMemo(() => {
+        const rand = seededRandom(0x9e37 + count);
         const pos = new Float32Array(count * 3);
         const col = new Float32Array(count * 3);
         const c1 = new THREE.Color(theme.primary);
@@ -206,13 +219,13 @@ function ParticleField({ isLight, viewportRef }: { isLight: boolean; viewportRef
         const c3 = new THREE.Color(theme.muted);
         const c4 = new THREE.Color(theme.warm);
         for (let i = 0; i < count; i++) {
-            const radius = 12 + Math.random() * 20;
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos(2 * Math.random() - 1);
+            const radius = 12 + rand() * 20;
+            const theta = rand() * Math.PI * 2;
+            const phi = Math.acos(2 * rand() - 1);
             pos[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
             pos[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.65;
             pos[i * 3 + 2] = radius * Math.cos(phi);
-            const pick = Math.random();
+            const pick = rand();
             const c = pick < 0.45 ? c1 : pick < 0.7 ? c2 : pick < 0.9 ? c3 : c4;
             col[i * 3] = c.r;
             col[i * 3 + 1] = c.g;
@@ -344,19 +357,18 @@ function BrokenStar({
 }
 
 function BrokenStarField({ count }: { count: number }) {
-    const stars = useMemo(
-        () =>
-            Array.from({ length: count }, (_, i) => ({
-                position: [
-                    (Math.random() - 0.5) * 22,
-                    (Math.random() - 0.5) * 14,
-                    -5 - Math.random() * 10,
-                ] as Vec3,
-                cycleOffset: i * 1.7 + Math.random() * 2,
-                color: i % 2 === 0 ? "#22d3ee" : "#fbbf24",
-            })),
-        [count]
-    );
+    const stars = useMemo(() => {
+        const rand = seededRandom(0xb705 + count);
+        return Array.from({ length: count }, (_, i) => ({
+            position: [
+                (rand() - 0.5) * 22,
+                (rand() - 0.5) * 14,
+                -5 - rand() * 10,
+            ] as Vec3,
+            cycleOffset: i * 1.7 + rand() * 2,
+            color: i % 2 === 0 ? "#22d3ee" : "#fbbf24",
+        }));
+    }, [count]);
 
     return (
         <group>
@@ -369,18 +381,17 @@ function BrokenStarField({ count }: { count: number }) {
 
 function ShootingStars({ count = 8 }: { count?: number }) {
     const group = useRef<Group>(null);
-    const stars = useMemo(
-        () =>
-            Array.from({ length: count }, (_, i) => ({
-                x: (Math.random() - 0.5) * 22,
-                y: 4 + Math.random() * 9,
-                z: -6 - Math.random() * 10,
-                len: 1.4 + Math.random() * 2.2,
-                speed: 2.2 + Math.random() * 2.2,
-                delay: i * 2.1 + Math.random() * 3,
-            })),
-        [count]
-    );
+    const stars = useMemo(() => {
+        const rand = seededRandom(0xc0de + count);
+        return Array.from({ length: count }, (_, i) => ({
+            x: (rand() - 0.5) * 22,
+            y: 4 + rand() * 9,
+            z: -6 - rand() * 10,
+            len: 1.4 + rand() * 2.2,
+            speed: 2.2 + rand() * 2.2,
+            delay: i * 2.1 + rand() * 3,
+        }));
+    }, [count]);
 
     useFrame((state) => {
         if (!group.current) return;
@@ -408,18 +419,17 @@ function ShootingStars({ count = 8 }: { count?: number }) {
 
 function Comets({ count = 4 }: { count?: number }) {
     const group = useRef<Group>(null);
-    const comets = useMemo(
-        () =>
-            Array.from({ length: count }, (_, i) => ({
-                startX: 8 + Math.random() * 6,
-                startY: -2 + Math.random() * 12,
-                z: -7 - Math.random() * 6,
-                speed: 0.35 + Math.random() * 0.25,
-                delay: i * 5.5,
-                tail: 2.5 + Math.random() * 2,
-            })),
-        [count]
-    );
+    const comets = useMemo(() => {
+        const rand = seededRandom(0xd1ce + count);
+        return Array.from({ length: count }, (_, i) => ({
+            startX: 8 + rand() * 6,
+            startY: -2 + rand() * 12,
+            z: -7 - rand() * 6,
+            speed: 0.35 + rand() * 0.25,
+            delay: i * 5.5,
+            tail: 2.5 + rand() * 2,
+        }));
+    }, [count]);
 
     useFrame((state) => {
         if (!group.current) return;
@@ -502,8 +512,7 @@ function Planet({
     );
 }
 
-function Planets({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
-    const isCompact = (viewportRef.current?.mobileTarget ?? 0) === 1;
+function Planets({ isLight, isCompact }: { isLight: boolean; isCompact: boolean }) {
     if (isLight) {
         return (
             <group>
@@ -536,22 +545,20 @@ function Planets({ isLight, viewportRef }: { isLight: boolean; viewportRef: View
     );
 }
 
-function AsteroidBelt({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+function AsteroidBelt({ isLight, isCompact }: { isLight: boolean; isCompact: boolean }) {
     const theme = getSceneTheme(isLight);
     const ref = useRef<Group>(null);
-    const isCompact = (viewportRef.current?.mobileTarget ?? 0) === 1;
     const count = isCompact ? (isLight ? 18 : 22) : isLight ? 18 : 32;
-    const asteroids = useMemo(
-        () =>
-            Array.from({ length: count }, (_, i) => ({
-                angle: (i / count) * Math.PI * 2 + Math.random() * 0.4,
-                radius: 11 + Math.random() * 2.5,
-                y: (Math.random() - 0.5) * 1.2,
-                size: 0.04 + Math.random() * 0.07,
-                spin: (Math.random() - 0.5) * 2,
-            })),
-        [count]
-    );
+    const asteroids = useMemo(() => {
+        const rand = seededRandom(0xa57e + count);
+        return Array.from({ length: count }, (_, i) => ({
+            angle: (i / count) * Math.PI * 2 + rand() * 0.4,
+            radius: 11 + rand() * 2.5,
+            y: (rand() - 0.5) * 1.2,
+            size: 0.04 + rand() * 0.07,
+            spin: (rand() - 0.5) * 2,
+        }));
+    }, [count]);
 
     useFrame((state) => {
         if (!ref.current) return;
@@ -603,19 +610,18 @@ function OrbitingMoon({ viewportRef }: { viewportRef: ViewportRef }) {
 
 function DataStreams({ count = 14 }: { count?: number }) {
     const group = useRef<Group>(null);
-    const streams = useMemo(
-        () =>
-            Array.from({ length: count }, (_, i) => ({
-                x: (Math.random() - 0.5) * 16,
-                y: (Math.random() - 0.5) * 10,
-                z: -4 - Math.random() * 5,
-                len: 1.8 + Math.random() * 3.5,
-                speed: 0.45 + Math.random() * 0.9,
-                phase: i * 0.7,
-                color: i % 3 === 0 ? "#22d3ee" : "#14b8a6",
-            })),
-        [count]
-    );
+    const streams = useMemo(() => {
+        const rand = seededRandom(0xda7a + count);
+        return Array.from({ length: count }, (_, i) => ({
+            x: (rand() - 0.5) * 16,
+            y: (rand() - 0.5) * 10,
+            z: -4 - rand() * 5,
+            len: 1.8 + rand() * 3.5,
+            speed: 0.45 + rand() * 0.9,
+            phase: i * 0.7,
+            color: i % 3 === 0 ? "#22d3ee" : "#14b8a6",
+        }));
+    }, [count]);
 
     useFrame((state) => {
         if (!group.current) return;
@@ -916,9 +922,8 @@ function ViewportFrameRelay({
     return null;
 }
 
-function SceneContent({ isLight, viewportRef }: { isLight: boolean; viewportRef: ViewportRef }) {
+function SceneContent({ isLight, isCompact, viewportRef }: { isLight: boolean; isCompact: boolean; viewportRef: ViewportRef }) {
     const theme = getSceneTheme(isLight);
-    const isCompact = (viewportRef.current?.mobileTarget ?? 0) === 1;
 
     return (
         <>
@@ -954,13 +959,13 @@ function SceneContent({ isLight, viewportRef }: { isLight: boolean; viewportRef:
             <pointLight position={[8, 8, 8]} intensity={isLight ? 0.3 : isCompact ? 0.44 : 0.48} color={theme.primary} />
             <pointLight position={[-6, -4, 5]} intensity={isLight ? 0.16 : isCompact ? 0.26 : 0.28} color={theme.accent} />
             <pointLight position={[0, -6, 2]} intensity={isLight ? 0.1 : 0.15} color={theme.primaryDark} />
-            <NebulaMist isLight={isLight} viewportRef={viewportRef} />
-            <ParticleField isLight={isLight} viewportRef={viewportRef} />
+            <NebulaMist isLight={isLight} isCompact={isCompact} viewportRef={viewportRef} />
+            <ParticleField isLight={isLight} isCompact={isCompact} viewportRef={viewportRef} />
             <BrokenStarField count={isCompact ? 7 : isLight ? 4 : 7} />
             <ShootingStars count={8} />
             <Comets count={4} />
-            <Planets isLight={isLight} viewportRef={viewportRef} />
-            <AsteroidBelt isLight={isLight} viewportRef={viewportRef} />
+            <Planets isLight={isLight} isCompact={isCompact} />
+            <AsteroidBelt isLight={isLight} isCompact={isCompact} />
             <DataStreams count={14} />
             <SceneFocal viewportRef={viewportRef}>
                 <WireGlobe isLight={isLight} viewportRef={viewportRef} />
@@ -1020,7 +1025,7 @@ export function SceneCanvas({
             <ResponsiveCamera viewportRef={viewportRef} />
             <AdaptiveFog viewportRef={viewportRef} isLight={isLight} />
             <ViewportFrameRelay viewportRef={viewportRef} onFrame={onViewportFrame} />
-            <SceneContent isLight={isLight} viewportRef={viewportRef} />
+            <SceneContent isLight={isLight} isCompact={isCompact} viewportRef={viewportRef} />
         </Canvas>
     );
 }
