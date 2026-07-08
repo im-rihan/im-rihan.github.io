@@ -1,0 +1,8 @@
+1:"$Sreact.fragment"
+2:I[22706,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js","/_next/static/chunks/2_2mj39_kpd5-.js"],"PageHeader"]
+3:I[48218,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js","/_next/static/chunks/2_2mj39_kpd5-.js"],"GalleryGrid"]
+4:I[97367,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+:HL["/_next/static/chunks/1ejwvjidd4s2a.css","style"]
+0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{"title":"Gallery","description":"Moments from remote engineering, continuous learning, and life in Puri — filter by Work, Learning, or Life."}],["$","div",null,{"className":"container page-content","children":["$","$L3",null,{}]}]],[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/1ejwvjidd4s2a.css","precedence":"next"}],["$","script","script-0",{"src":"/_next/static/chunks/2_2mj39_kpd5-.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"T4zp67QXh_IK4G5iVcXV3"}
+6:null

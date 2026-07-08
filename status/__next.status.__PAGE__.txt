@@ -1,0 +1,8 @@
+1:"$Sreact.fragment"
+2:I[22706,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js","/_next/static/chunks/3ia_g4c_fxoig.js","/_next/static/chunks/0i00fs6rwqaar.js"],"PageHeader"]
+3:I[78579,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js","/_next/static/chunks/3ia_g4c_fxoig.js","/_next/static/chunks/0i00fs6rwqaar.js"],"StatusDashboard"]
+4:I[97367,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+:HL["/_next/static/chunks/008rhv6adgxzr.css","style"]
+0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{"title":"Status & Analytics","description":"Live visitor map, browser telemetry, endpoint probes with uptime history, and backend service status."}],["$","div",null,{"className":"container page-content","children":["$","$L3",null,{}]}]],[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/008rhv6adgxzr.css","precedence":"next"}],["$","script","script-0",{"src":"/_next/static/chunks/3ia_g4c_fxoig.js","async":true}],["$","script","script-1",{"src":"/_next/static/chunks/0i00fs6rwqaar.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"T4zp67QXh_IK4G5iVcXV3"}
+6:null

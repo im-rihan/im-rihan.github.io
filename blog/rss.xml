@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Rihan Mohammed — Blog</title>
+    <link>https://im-rihan.github.io/blog/</link>
+    <atom:link href="https://im-rihan.github.io/blog/rss.xml" rel="self" type="application/rss+xml" />
+    <description>I build production fintech &amp; real-estate platforms — from AI-powered property search and NestJS APIs to data pipelines and cloud infrastructure.</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 08 Jul 2026 20:38:46 GMT</lastBuildDate>
+    <item>
+      <title>Phases A–E + cross-browser hardening: analytics, CI, and Safari/mobile support</title>
+      <link>https://im-rihan.github.io/blog/enhancement-phases-a-through-e/</link>
+      <guid isPermaLink="true">https://im-rihan.github.io/blog/enhancement-phases-a-through-e/</guid>
+      <pubDate>Thu, 09 Jul 2026 00:00:00 GMT</pubDate>
+      <description>A full pass across debt clearance, visitor geo inference, Supabase backfill, and test coverage — followed by six cross-browser phases: backdrop-filter fallbacks, multi-browser CI, WebGL/low-memory gating, PWA install, and browser analytics.</description>
+      <category>Analytics</category>
+      <category>CI/CD</category>
+      <category>Supabase</category>
+      <category>Next.js</category>
+      <category>Cross-browser</category>
+      <category>Safari</category>
+    </item>
+    <item>
+      <title>Portfolio v2 hardening: CI gates, bundle budgets, and a SPA navigation bug</title>
+      <link>https://im-rihan.github.io/blog/portfolio-v2-hardening-spa-navigation/</link>
+      <guid isPermaLink="true">https://im-rihan.github.io/blog/portfolio-v2-hardening-spa-navigation/</guid>
+      <pubDate>Wed, 08 Jul 2026 00:00:00 GMT</pubDate>
+      <description>A three-phase pass on reliability and performance — deploy gated on CI, server-component sections, Playwright smoke tests — and the subtle opacity bugs that broke the homepage on client-side navigation back from other routes.</description>
+      <category>Next.js</category>
+      <category>Performance</category>
+      <category>CI/CD</category>
+      <category>Debugging</category>
+    </item>
+    <item>
+      <title>One HTML source, three exports: resume PDF and Word with Playwright</title>
+      <link>https://im-rihan.github.io/blog/resume-generation-with-playwright/</link>
+      <guid isPermaLink="true">https://im-rihan.github.io/blog/resume-generation-with-playwright/</guid>
+      <pubDate>Wed, 08 Jul 2026 00:00:00 GMT</pubDate>
+      <description>How resume.html becomes pixel-matched PDF and DOCX exports, syncs to public/ for Next.js, and auto-bumps RESUME_VERSION from git.</description>
+      <category>Python</category>
+      <category>Playwright</category>
+      <category>Resume</category>
+      <category>Tooling</category>
+    </item>
+    <item>
+      <title>Fixing unknown visitor countries: multi-provider geo and sibling inference</title>
+      <link>https://im-rihan.github.io/blog/visitor-geo-inference-and-multi-provider-lookup/</link>
+      <guid isPermaLink="true">https://im-rihan.github.io/blog/visitor-geo-inference-and-multi-provider-lookup/</guid>
+      <pubDate>Wed, 08 Jul 2026 00:00:00 GMT</pubDate>
+      <description>When ipwho.is fails, every visit becomes countryCode XX. Here is the fallback chain, iOS UA parsing fix, and how unresolved rows get backfilled from sibling visits.</description>
+      <category>Analytics</category>
+      <category>Supabase</category>
+      <category>Debugging</category>
+    </item>
+    <item>
+      <title>Debugging a GPU compositing bug: blank glass cards on Android tablets</title>
+      <link>https://im-rihan.github.io/blog/debugging-backdrop-filter-android-tablets/</link>
+      <guid isPermaLink="true">https://im-rihan.github.io/blog/debugging-backdrop-filter-android-tablets/</guid>
+      <pubDate>Tue, 02 Jun 2026 00:00:00 GMT</pubDate>
+      <description>A Redmi Pad Pro user reported &apos;skeleton-like&apos; pages and misplaced shadows while scrolling. The root cause: backdrop-filter and 3D transforms don&apos;t composite reliably together on some Android GPUs.</description>
+      <category>CSS</category>
+      <category>Performance</category>
+      <category>Mobile</category>
+      <category>Debugging</category>
+    </item>
+    <item>
+      <title>From tangled lines to a hub-and-spoke visitor map</title>
+      <link>https://im-rihan.github.io/blog/hub-and-spoke-visitor-world-map/</link>
+      <guid isPermaLink="true">https://im-rihan.github.io/blog/hub-and-spoke-visitor-world-map/</guid>
+      <pubDate>Mon, 18 May 2026 00:00:00 GMT</pubDate>
+      <description>The status page&apos;s world map connected visitor countries sequentially, producing a tangled zig-zag instead of readable arcs. Here&apos;s how a hub-and-spoke projection fixed it.</description>
+      <category>Data Viz</category>
+      <category>SVG</category>
+      <category>UX</category>
+    </item>
+    <item>
+      <title>Building a fully static portfolio with client-only visitor analytics</title>
+      <link>https://im-rihan.github.io/blog/static-portfolio-with-client-only-analytics/</link>
+      <guid isPermaLink="true">https://im-rihan.github.io/blog/static-portfolio-with-client-only-analytics/</guid>
+      <pubDate>Sat, 14 Mar 2026 00:00:00 GMT</pubDate>
+      <description>How this site runs entirely as a Next.js static export on GitHub Pages, yet still ships a live visitor map, uptime dashboard, and system telemetry — with no server at all.</description>
+      <category>Next.js</category>
+      <category>Static Export</category>
+      <category>Supabase</category>
+      <category>Architecture</category>
+    </item>
+  </channel>
+</rss>

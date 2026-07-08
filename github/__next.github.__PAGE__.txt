@@ -1,0 +1,9 @@
+1:"$Sreact.fragment"
+2:I[22706,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js","/_next/static/chunks/2pml_zpt3p8v4.js"],"PageHeader"]
+3:I[74503,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js","/_next/static/chunks/2pml_zpt3p8v4.js"],"FadeIn"]
+4:I[43474,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js","/_next/static/chunks/2pml_zpt3p8v4.js"],"ContributionGraph"]
+5:I[97367,["/_next/static/chunks/1uqaiwd00iw08.js","/_next/static/chunks/0v2xcr43o0hx8.js","/_next/static/chunks/3q7re7il720ag.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/031d4hdncmqdj.js"],"OutletBoundary"]
+6:"$Sreact.suspense"
+:HL["/_next/static/chunks/2s-u585cwspxa.css","style"]
+0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{"title":"GitHub Activity","description":["Public contribution graph and rule-based suggestions from"," ",["$","a",null,{"href":"https://github.com/im-rihan","target":"_blank","rel":"noopener noreferrer","data-cursor":"pointer","children":"@im-rihan"}],"."]}],["$","$L3",null,{"children":["$","div",null,{"className":"container page-content","children":["$","$L4",null,{}]}]}]],[["$","link","0",{"rel":"stylesheet","href":"/_next/static/chunks/2s-u585cwspxa.css","precedence":"next"}],["$","script","script-0",{"src":"/_next/static/chunks/2pml_zpt3p8v4.js","async":true}]],["$","$L5",null,{"children":["$","$6",null,{"name":"Next.MetadataOutlet","children":"$@7"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"T4zp67QXh_IK4G5iVcXV3"}
+7:null
