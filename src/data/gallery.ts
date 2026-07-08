@@ -31,7 +31,7 @@ export const galleryItems: GalleryItem[] = [
         id: "3",
         title: "Certification Milestones",
         category: "Learning",
-        description: "15 credentials across Udemy, freeCodeCamp, and institute programs — continuous upskilling.",
+        description: "14 credentials across Udemy, freeCodeCamp, and institute programs — continuous upskilling.",
         gradient: "linear-gradient(135deg, #22c55e 0%, #0d5c56 100%)",
         image: "/gallery/certifications.svg",
     },

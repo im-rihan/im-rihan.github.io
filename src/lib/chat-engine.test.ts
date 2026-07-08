@@ -33,7 +33,7 @@ describe("getChatResponse", () => {
     it("handles simple plural/tense variation via fuzzy prefix match", () => {
         const answer = getChatResponse("certifications please");
         expect(answer).not.toBe(offTopicMessage);
-        expect(answer).toContain("15 certifications");
+        expect(answer).toContain("14 certifications");
     });
 
     it("does not let a single short token inflate unrelated scores", () => {

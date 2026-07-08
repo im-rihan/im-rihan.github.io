@@ -111,6 +111,10 @@ function AdaptiveFog({ viewportRef, isLight }: { viewportRef: ViewportRef; isLig
     const { scene } = useThree();
     const theme = getSceneTheme(isLight);
 
+    // Fog lives on the shared three.js scene object and must be mutated
+    // imperatively inside the frame loop — never during React render. The
+    // React Compiler immutability rule can't model r3f's mutable scene graph.
+    /* eslint-disable react-hooks/immutability */
     useFrame(() => {
         const v = viewportRef.current;
         if (!v) return;
@@ -129,6 +133,7 @@ function AdaptiveFog({ viewportRef, isLight }: { viewportRef: ViewportRef; isLig
         scene.fog.far = far;
         scene.fog.color.set(theme.fog);
     });
+    /* eslint-enable react-hooks/immutability */
 
     return null;
 }

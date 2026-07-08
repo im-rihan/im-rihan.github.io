@@ -78,7 +78,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["certification", "cert", "udemy", "freecodecamp", "course"],
-        answer: "Rihan holds **15 certifications**:\n\n- **12 from Udemy** — Web Dev, React, Node.js, Python, databases, and more\n- **2 from freeCodeCamp** — JS Algorithms & Responsive Web Design\n- **PGDCA** — Utkal University (HDVSc Degree College, Panaspada, Puri)",
+        answer: "Rihan holds **14 certifications**:\n\n- **11 from Udemy** — Web Dev, React, Node.js, Python, databases, and more\n- **2 from freeCodeCamp** — JS Algorithms & Responsive Web Design\n- **PGDCA** — Utkal University (HDVSc Degree College, Panaspada, Puri)",
     },
     {
         keywords: ["education", "degree", "pgdca", "diploma", "college"],
