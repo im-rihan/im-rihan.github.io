@@ -55,6 +55,11 @@ export function useViewportTracker(
     const prevTarget = useRef(-1);
     const lastAppliedRef = useRef({ width: 0, height: 0 });
 
+    // Keep the latest callback in a ref so the resize effect doesn't need it in
+    // its dependency array (which would re-subscribe observers on every render).
+    const onTargetChangeRef = useRef(onTargetChange);
+    onTargetChangeRef.current = onTargetChange;
+
     useEffect(() => {
         if (!container) return;
 
@@ -71,7 +76,7 @@ export function useViewportTracker(
 
             if (prevTarget.current !== snap.mobileTarget) {
                 prevTarget.current = snap.mobileTarget;
-                onTargetChange?.(snap.mobileTarget);
+                onTargetChangeRef.current?.(snap.mobileTarget);
             }
 
             if (settleRef.current) clearTimeout(settleRef.current);

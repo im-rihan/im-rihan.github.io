@@ -7,11 +7,10 @@ import styles from "./BackgroundFX.module.css";
 /** CSS-only ambient effects — aurora, grid, scanlines, glow orbs, vignette. */
 export function BackgroundFX() {
     const pointerRef = useRef({ nx: 0, ny: 0 });
-    const [reduced, setReduced] = useState(true);
-
-    useEffect(() => {
-        setReduced(prefersReducedEffects());
-    }, []);
+    // Loaded via dynamic import with ssr:false, so this initializer only ever
+    // runs in the browser — safe to read matchMedia during the first render
+    // without a hydration mismatch, avoiding a setState-in-effect cascade.
+    const [reduced] = useState(() => prefersReducedEffects());
 
     useEffect(() => {
         if (reduced) return;

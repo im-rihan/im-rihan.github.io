@@ -4,7 +4,6 @@ export function PageJsonLd({ data }: { data: object | object[] }) {
     return (
         <>
             {items.map((item, i) => (
-                // eslint-disable-next-line react/no-array-index-key
                 <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }} />
             ))}
         </>

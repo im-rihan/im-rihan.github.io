@@ -69,8 +69,6 @@ export function GalleryGrid() {
 
             <AnimatePresence>
                 {lightbox && (
-                    // Backdrop is a mouse-only convenience — keyboard users close via Escape or the Close button.
-                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                     <m.div
                         className={styles.lightbox}
                         initial={{ opacity: 0 }}
@@ -79,8 +77,6 @@ export function GalleryGrid() {
                         transition={{ duration: 0.2 }}
                         onClick={() => setLightbox(null)}
                     >
-                        {/* Stops backdrop dismiss from bubbling — not a primary interaction. */}
-                        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
                         <m.div
                             className={`glass-card ${styles.lightboxInner}`}
                             role="dialog"

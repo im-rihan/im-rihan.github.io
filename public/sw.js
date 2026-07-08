@@ -15,7 +15,7 @@
 const CACHE_VERSION = "v2";
 const CACHE_NAME = `portfolio-${CACHE_VERSION}`;
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", () => {
     self.skipWaiting();
 });
 
