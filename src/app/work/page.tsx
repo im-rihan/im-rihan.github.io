@@ -7,7 +7,7 @@ import styles from "./work.module.css";
 
 export const metadata = createPageMetadata(
     "Case Studies",
-    "Deep dives into production fintech and real-estate projects — Ziffy.ai, NestJS APIs, integrations, and data pipelines.",
+    "Deep dives into production fintech and real-estate projects — Ziffy.ai, the agent platform, NestJS APIs, rental AVM, and data pipelines.",
     "/work",
 );
 

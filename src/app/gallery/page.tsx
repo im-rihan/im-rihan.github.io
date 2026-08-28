@@ -1,3 +1,11 @@
+import { notFound } from "next/navigation";
+
+/** Temporarily hidden from nav — restore the GalleryGrid render below. */
+export default function GalleryPage() {
+    notFound();
+}
+
+/*
 import { GalleryGrid } from "@/components/gallery/GalleryGrid";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { createPageMetadata } from "@/lib/site-metadata";
@@ -21,3 +29,4 @@ export default function GalleryPage() {
         </>
     );
 }
+*/

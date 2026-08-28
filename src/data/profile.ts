@@ -24,7 +24,7 @@ export const stats = [
 
 export const aboutParagraphs = [
     "Passionate Full Stack Developer with nearly 4 years at HomeAbroad Inc. and Ziffy.ai, building production fintech and real-estate platforms at scale.",
-    "Skilled across React, Next.js, TypeScript, NestJS, Node.js, and Python — from AI-native property search and SSE streaming to PHP webhook backends, data pipelines, and AWS deployments.",
+    "Skilled across React, Next.js, TypeScript, NestJS, Node.js, PHP, and Python — from AI-native property search and SSE streaming to webhook backends, data pipelines, CatBoost rent models, and AWS deployments.",
     "Committed to delivering innovative, user-focused solutions through effective collaboration and continuous learning.",
 ];
 
@@ -33,14 +33,16 @@ export const skillGroups = [
         title: "Frontend",
         tags: [
             "React 19",
-            "Next.js 16",
+            "Next.js 15",
             "TypeScript",
             "JavaScript",
-            "CSS Modules",
-            "Framer Motion",
-            "React Three Fiber",
-            "Three.js",
-            "Web Vitals",
+            "Tailwind CSS",
+            "Webpack",
+            "Zustand",
+            "TanStack Query",
+            "Formik",
+            "PrimeReact",
+            "Leaflet",
         ],
     },
     {
@@ -48,10 +50,12 @@ export const skillGroups = [
         tags: [
             "NestJS",
             "Node.js",
-            "PHP 8",
-            "REST APIs",
+            "PHP 8.3",
+            "FastAPI",
+            "Express",
             "TypeORM",
             "BullMQ",
+            "REST APIs",
             "SSE Streaming",
             "Puppeteer",
         ],
@@ -61,10 +65,11 @@ export const skillGroups = [
         tags: [
             "MySQL",
             "Redis",
-            "Supabase",
             "Typesense",
             "Python",
-            "Data Pipelines",
+            "CatBoost",
+            "pandas",
+            "DuckDB",
             "Data Ingestion",
         ],
     },
@@ -72,8 +77,10 @@ export const skillGroups = [
         title: "AI & Integrations",
         tags: [
             "LangChain",
+            "LangGraph",
             "OpenAI",
             "Google Gemini",
+            "MCP",
             "Zoho CRM",
             "Twilio",
             "SendGrid",
@@ -83,12 +90,14 @@ export const skillGroups = [
         title: "DevOps & Cloud",
         tags: [
             "GitHub Actions",
-            "GitHub Pages",
             "AWS Lambda",
-            "Amazon EC2",
+            "AWS S3",
+            "Serverless",
             "Docker",
             "Vercel",
+            "Hetzner",
             "Cloudflare",
+            "Nginx",
             "CI/CD",
         ],
     },
@@ -101,7 +110,7 @@ export const experience = [
         period: "Jan 2025 – Present · Remote",
         subtitle: "AI-native real estate investment platform — ziffy.ai",
         bullets: [
-            "Architected Next.js 16 / React 19 frontend with dual-brand support, deployed on Vercel with ISR and BunnyCDN sitemaps.",
+            "Architected Next.js 15 / React 19 frontend with dual-brand support, deployed on Vercel with ISR, TanStack Query, and BunnyCDN sitemaps.",
             "Built AI property search with SSE streaming, Zustand state sync, and Typesense full-text search.",
             "Delivered SEO programmatic listings, DSCR calculators, and mortgage pre-approval portal with document uploads.",
             "Integrated GA4, Google Ads, Facebook Pixel, LogRocket, and Fingerprint.js fraud detection.",
@@ -113,11 +122,11 @@ export const experience = [
         period: "Apr 2022 – Present · Remote",
         subtitle: "Fintech/real-estate platform — full-stack application development",
         bullets: [
-            "Built core NestJS REST API — auth, property search, loan estimates, CRM sync, LangChain AI with TypeORM/MySQL and BullMQ.",
-            "Developed React multi-app frontend with Webpack/Tailwind — agent dashboard, property maps, loan calculators.",
-            "Owned PHP integration backend — 60+ webhooks, 40+ cron jobs, 12+ internal AI agent tools.",
+            "Built core NestJS REST API — auth, property search, loan estimates, CRM sync, LangChain/LangGraph AI with TypeORM/MySQL and BullMQ.",
+            "Developed React multi-app frontend (ha-realtor-plat) with Webpack/Tailwind — agent dashboard, Leaflet maps, loan calculators.",
+            "Owned PHP 8.3 integration backend — 60+ webhooks, 40+ cron jobs, 12+ internal AI agent tools.",
             "Shipped AWS Lambda mortgage pricer with Puppeteer scrapers for 11 lender portals.",
-            "Built Python/Node.js data pipelines and led AWS → Hetzner zero-downtime migration.",
+            "Built Python/Node.js data pipelines, a CatBoost rental AVM (FastAPI), and led AWS → Hetzner zero-downtime migration.",
         ],
     },
 ];
@@ -147,7 +156,7 @@ export const projects: Project[] = [
     {
         icon: "🏠",
         title: "Ziffy.ai Platform",
-        stack: "Next.js 16 · React 19 · Zustand · SSE · Vercel",
+        stack: "Next.js 15 · React 19 · Zustand · TanStack Query · Vercel",
         description:
             "AI-native investor platform with streaming NLP search, SEO listings, DSCR calculators, and dual-brand deployment.",
         url: "https://ziffy.ai",
@@ -155,11 +164,21 @@ export const projects: Project[] = [
         caseStudySlug: "ziffy-ai-search",
     },
     {
+        icon: "🗺️",
+        title: "ha-realtor-plat",
+        stack: "React · Webpack · Tailwind · Leaflet · Zustand",
+        description:
+            "Multi-app agent/MLO platform — dashboards, property maps, loan workflows, and role-based routing for RE agents, MLOs, and clients.",
+        url: "https://homeabroadinc.com",
+        category: "frontend",
+        caseStudySlug: "ha-realtor-plat",
+    },
+    {
         icon: "⚡",
         title: "appi — Core API",
-        stack: "NestJS · TypeORM · Redis · Typesense · LangChain",
+        stack: "NestJS · TypeORM · Redis · Typesense · LangGraph",
         description:
-            "Modular REST API powering property search, loan estimates, auth, CRM sync, and AI-assisted SEO content.",
+            "Modular REST API powering property search, loan estimates, auth, CRM sync, LangChain/LangGraph AI, and MCP tooling.",
         url: "https://homeabroadinc.com",
         category: "backend",
         caseStudySlug: "nestjs-appi-api",
@@ -167,18 +186,18 @@ export const projects: Project[] = [
     {
         icon: "🔗",
         title: "3rdpartycomms",
-        stack: "PHP 8 · MySQL · Redis · Cloudflare Zero Trust",
+        stack: "PHP 8.3 · MySQL · Redis · Cloudflare Zero Trust",
         description:
-            "Webhook-driven integration hub with agent AI tools, nurture campaigns, and multi-channel comms orchestration.",
+            "Webhook-driven integration hub with agent AI tools (ClearPath, Match AI, dialer), nurture campaigns, and Twilio/Zoho/SendGrid orchestration.",
         category: "integrations",
         caseStudySlug: "php-3rdpartycomms",
     },
     {
         icon: "💰",
         title: "mortgage-pricer",
-        stack: "TypeScript · Puppeteer · AWS Lambda · Serverless",
+        stack: "TypeScript · Puppeteer · Express · AWS Lambda",
         description:
-            "Headless browser microservice scraping live rates from 11 lender portals with pluggable scraper registry.",
+            "Headless Chromium microservice scraping live rates from 11 lender portals with a pluggable scraper registry and S3 audit screenshots.",
         category: "backend",
         caseStudySlug: "lambda-mortgage-pricer",
     },
@@ -194,11 +213,20 @@ export const projects: Project[] = [
     {
         icon: "🔄",
         title: "data-pipelines",
-        stack: "Python · Node.js · Typesense · AWS S3",
+        stack: "Python · Node.js · Typesense · MySQL",
         description:
-            "End-to-end property data acquisition — multi-source scrapers with chunked/resumable ingestion to MySQL.",
+            "Property acquisition from Zillow, Homes.com, HouseCanary, Roofstock, HUD, and demographics — scrape to MySQL/Typesense ingest.",
         category: "data",
         caseStudySlug: "property-data-pipelines",
+    },
+    {
+        icon: "🏡",
+        title: "Rental-Estimate-AVM",
+        stack: "Python · FastAPI · CatBoost · DuckDB · S3",
+        description:
+            "Rent estimates from real asking prices and comps — CatBoost training pipeline with SHAP explanations served over FastAPI.",
+        category: "data",
+        caseStudySlug: "rental-estimate-avm",
     },
 ];
 

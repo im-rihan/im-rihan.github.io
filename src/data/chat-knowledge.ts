@@ -58,15 +58,15 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["stack", "tech", "skills", "technologies", "framework", "aws", "devops", "langchain", "ai", "cloud", "lambda", "docker"],
-        answer: "Rihan's core stack:\n\n- **Frontend:** React, Next.js, TypeScript, CSS Modules, Framer Motion, React Three Fiber\n- **Backend:** NestJS, Node.js, PHP 8, REST APIs, BullMQ, SSE streaming\n- **Data:** MySQL, Redis, Supabase, Typesense, Python data pipelines\n- **AI / cloud:** LangChain, AWS Lambda, Docker, GitHub Actions, Vercel\n\nHe specializes in **fintech and real-estate platforms** at production scale.",
+        answer: "Rihan's core stack:\n\n- **Frontend:** React 19, Next.js 15, TypeScript, Tailwind, Webpack, Zustand, TanStack Query, PrimeReact, Leaflet\n- **Backend:** NestJS, Node.js, PHP 8.3, FastAPI, Express, TypeORM, BullMQ, SSE streaming\n- **Data:** MySQL, Redis, Typesense, Python, CatBoost, DuckDB, pandas\n- **AI / cloud:** LangChain, LangGraph, OpenAI, Gemini, MCP, AWS Lambda, Docker, Vercel, Hetzner\n\nHe specializes in **fintech and real-estate platforms** at production scale.",
     },
     {
         keywords: ["ziffy", "ziffy.ai"],
-        answer: "**Full Stack Engineer @ Ziffy.ai** (Jan 2025 – Present)\n\n- Next.js 16 / React 19 frontend with dual-brand support\n- AI property search with **SSE streaming**\n- SEO programmatic listings & DSCR calculators\n- Multi-channel analytics integration",
+        answer: "**Full Stack Engineer @ Ziffy.ai** (Jan 2025 – Present)\n\n- Next.js 15 / React 19 frontend with dual-brand support\n- AI property search with **SSE streaming**\n- SEO programmatic listings & DSCR calculators\n- Multi-channel analytics integration",
     },
     {
         keywords: ["homeabroad", "home abroad"],
-        answer: "**Full Stack Developer @ HomeAbroad Inc.** (Apr 2022 – Present)\n\n- Core **NestJS API** and React multi-app frontend\n- PHP webhook backend (**60+ webhooks**)\n- AWS Lambda mortgage pricer & data pipelines\n- Led **AWS → Hetzner** infrastructure migration",
+        answer: "**Full Stack Developer @ HomeAbroad Inc.** (Apr 2022 – Present)\n\n- Core **NestJS API** and React multi-app frontend (ha-realtor-plat)\n- PHP 8.3 webhook backend (**60+ webhooks**)\n- AWS Lambda mortgage pricer, data pipelines, and **CatBoost rental AVM**\n- Led **AWS → Hetzner** infrastructure migration",
     },
     {
         keywords: ["experience", "years", "career", "work", "summarize", "summary"],
@@ -74,7 +74,7 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["project", "portfolio", "built"],
-        answer: "Key projects — browse [all case studies](/work/):\n\n- **Ziffy.ai** — [Case study](/work/ziffy-ai-search/)\n- **appi Core API** — [Case study](/work/nestjs-appi-api/)\n- **3rdpartycomms** — [Case study](/work/php-3rdpartycomms/)\n- **mortgage-pricer** — [Case study](/work/lambda-mortgage-pricer/)\n- **data-pipelines** — [Case study](/work/property-data-pipelines/)\n- **estimate-calculator** — [Case study](/work/estimate-calculator/)",
+        answer: "Key projects — browse [all case studies](/work/):\n\n- **Ziffy.ai** — [Case study](/work/ziffy-ai-search/)\n- **ha-realtor-plat** — [Case study](/work/ha-realtor-plat/)\n- **appi Core API** — [Case study](/work/nestjs-appi-api/)\n- **3rdpartycomms** — [Case study](/work/php-3rdpartycomms/)\n- **mortgage-pricer** — [Case study](/work/lambda-mortgage-pricer/)\n- **data-pipelines** — [Case study](/work/property-data-pipelines/)\n- **Rental-Estimate-AVM** — [Case study](/work/rental-estimate-avm/)\n- **estimate-calculator** — [Case study](/work/estimate-calculator/)",
     },
     {
         keywords: ["certification", "cert", "udemy", "freecodecamp", "course"],
@@ -97,8 +97,8 @@ export const knowledgeBase: KnowledgeEntry[] = [
         answer: "View Rihan's resume from the **Contact** section — **HTML**, **PDF**, and **Word** downloads. Regenerate from `resume/` in the portfolio repo (`npm run generate:resume`).",
     },
     {
-        keywords: ["nestjs", "next.js", "react", "python", "php"],
-        answer: "Rihan uses **NestJS** and **PHP** for backend APIs, **React/Next.js** for frontends, **Python** for data pipelines and scrapers, and **TypeScript** across the stack.",
+        keywords: ["nestjs", "next.js", "react", "python", "php", "fastapi", "catboost"],
+        answer: "Rihan uses **NestJS**, **PHP 8.3**, and **FastAPI** for backend APIs, **React/Next.js 15** for frontends, **Python** (scrapers, CatBoost AVM) for data, and **TypeScript** across the stack.",
     },
     {
         keywords: ["available", "open", "opportunity", "job"],

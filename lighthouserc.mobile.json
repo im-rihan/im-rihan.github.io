@@ -5,9 +5,7 @@
             "url": [
                 "/index.html",
                 "/work/index.html",
-                "/blog/index.html",
-                "/status/index.html",
-                "/gallery/index.html"
+                "/blog/index.html"
             ],
             "numberOfRuns": 3,
             "settings": {
