@@ -1,3 +1,11 @@
+import { notFound } from "next/navigation";
+
+/** Temporarily hidden from nav — restore the StatusDashboard render below. */
+export default function StatusPage() {
+    notFound();
+}
+
+/*
 import { StatusDashboard } from "@/components/status/StatusDashboard";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { createPageMetadata } from "@/lib/site-metadata";
@@ -21,3 +29,4 @@ export default function StatusPage() {
         </>
     );
 }
+*/

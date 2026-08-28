@@ -7,7 +7,7 @@ export const dynamic = "force-static";
 const siteUrl = "https://im-rihan.github.io";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const staticRoutes = ["", "work/", "blog/", "chat/", "github/", "gallery/", "status/"];
+    const staticRoutes = ["", "work/", "blog/", "chat/", "github/" /* , "gallery/", "status/" */];
     const now = new Date();
 
     return [

@@ -10,8 +10,8 @@ import {
     Newspaper,
     MessageSquare,
     Github,
-    Images,
-    Activity,
+    // Images,
+    // Activity,
     User,
     Wrench,
     Layers,
@@ -79,8 +79,8 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
             { id: "page-blog", label: "Blog", group: "Pages", icon: Newspaper, perform: () => router.push("/blog") },
             { id: "page-chat", label: "Chat", group: "Pages", icon: MessageSquare, perform: () => router.push("/chat") },
             { id: "page-github", label: "GitHub Activity", group: "Pages", icon: Github, perform: () => router.push("/github") },
-            { id: "page-gallery", label: "Gallery", group: "Pages", icon: Images, perform: () => router.push("/gallery") },
-            { id: "page-status", label: "Analytics / Status", group: "Pages", icon: Activity, perform: () => router.push("/status") },
+            // { id: "page-gallery", label: "Gallery", group: "Pages", icon: Images, perform: () => router.push("/gallery") },
+            // { id: "page-status", label: "Analytics / Status", group: "Pages", icon: Activity, perform: () => router.push("/status") },
         ];
 
         const sections: PaletteItem[] = [

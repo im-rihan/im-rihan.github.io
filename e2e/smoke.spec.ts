@@ -13,11 +13,11 @@ test.describe("portfolio smoke", () => {
         await expect(page.getByRole("link", { name: /Ziffy/i }).first()).toBeVisible();
     });
 
-    test("status page renders analytics dashboard", async ({ page }) => {
-        await page.goto("/status/");
-        await expect(page.getByRole("heading", { name: /Portfolio Stats/i })).toBeVisible();
-        await expect(page.getByText(/Recent activity|Recent sessions/i).first()).toBeVisible();
-    });
+    // test("status page renders analytics dashboard", async ({ page }) => {
+    //     await page.goto("/status/");
+    //     await expect(page.getByRole("heading", { name: /Portfolio Stats/i })).toBeVisible();
+    //     await expect(page.getByText(/Recent activity|Recent sessions/i).first()).toBeVisible();
+    // });
 
     test("chat returns a portfolio answer", async ({ page }) => {
         await page.goto("/chat/");
