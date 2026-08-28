@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Certification milestones">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#0d5c56"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#g)"/>
+  <rect x="250" y="130" width="300" height="220" rx="12" fill="#064e3b" opacity="0.75"/>
+  <circle cx="400" cy="210" r="42" fill="#bbf7d0" opacity="0.9"/>
+  <path d="M382 210 L395 223 L420 195" stroke="#065f46" stroke-width="8" fill="none" stroke-linecap="round"/>
+</svg>
