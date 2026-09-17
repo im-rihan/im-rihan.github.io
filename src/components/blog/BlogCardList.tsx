@@ -48,7 +48,7 @@ export function BlogCardList({ posts }: { posts: BlogPost[] }) {
             ) : (
                 <div key={activeTag} className={styles.grid}>
                     {visible.map((post, i) => (
-                        <FadeIn key={post.slug} delay={i * 0.06}>
+                        <FadeIn key={post.slug} delay={i * 0.06} className={styles.cardCell}>
                             <Link
                                 href={`/blog/${post.slug}/`}
                                 prefetch={false}

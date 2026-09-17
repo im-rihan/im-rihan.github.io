@@ -1,25 +1,45 @@
 ﻿.page {
-    padding-bottom: 80px;
+    padding-bottom: 48px;
 }
 
 .toolbar {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .listWrap {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     gap: 20px;
 }
 
 .filters {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 6px;
+    margin: 0 -4px;
+    padding-left: 4px;
+    padding-right: 4px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+}
+
+.filters::-webkit-scrollbar {
+    height: 4px;
+}
+
+.filters::-webkit-scrollbar-thumb {
+    background: rgba(20, 184, 166, 0.35);
+    border-radius: 999px;
 }
 
 .filterChip {
+    flex: 0 0 auto;
     padding: 7px 14px;
     border-radius: 999px;
     border: 1px solid var(--glass-border);
@@ -29,6 +49,7 @@
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
+    white-space: nowrap;
     transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
@@ -46,7 +67,7 @@
 .empty {
     color: var(--text-muted);
     font-size: 0.92rem;
-    padding: 24px 0;
+    padding: 24px 0 8px;
 }
 
 .rssLink {
@@ -74,6 +95,13 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 20px;
+    align-items: stretch;
+}
+
+.cardCell {
+    display: flex;
+    min-width: 0;
+    height: 100%;
 }
 
 .card {
@@ -83,6 +111,8 @@
     padding: 28px;
     text-decoration: none;
     color: inherit;
+    width: 100%;
+    height: 100%;
     transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
 }
 
@@ -164,6 +194,10 @@
 }
 
 @media (max-width: 640px) {
+    .page {
+        padding-bottom: 40px;
+    }
+
     .grid {
         grid-template-columns: 1fr;
     }
