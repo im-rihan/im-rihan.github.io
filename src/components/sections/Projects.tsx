@@ -88,6 +88,13 @@ export function Projects() {
                                 <h3>{p.title}</h3>
                                 <div className={styles.stack}>{p.stack}</div>
                                 <p>{p.description}</p>
+                                {p.features && p.features.length > 0 && (
+                                    <ul className={styles.featureList} aria-label={`${p.title} features`}>
+                                        {p.features.map((feature) => (
+                                            <li key={feature}>{feature}</li>
+                                        ))}
+                                    </ul>
+                                )}
                                 <ProjectActions project={p} />
                             </TiltCard>
                         </FadeIn>

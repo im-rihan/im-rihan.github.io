@@ -1,3 +1,8 @@
+export interface CaseStudyFeature {
+    name: string;
+    detail: string;
+}
+
 export interface CaseStudy {
     slug: string;
     title: string;
@@ -6,6 +11,12 @@ export interface CaseStudy {
     problem: string;
     approach: string[];
     results: string[];
+    /** Key capabilities shown as a feature → detail table. */
+    features?: CaseStudyFeature[];
+    /** Short metrics / proof points under the header. */
+    highlights?: string[];
+    /** Optional role label, e.g. "Full Stack Engineer". */
+    role?: string;
     links: { label: string; href: string }[];
     /** Optional social preview image (path under public/). */
     ogImage?: string;
@@ -17,6 +28,14 @@ export const caseStudies: CaseStudy[] = [
         title: "Ziffy.ai AI Property Search",
         subtitle: "SSE streaming search on a dual-brand Next.js 15 platform",
         stack: ["Next.js 15", "React 19", "Zustand", "TanStack Query", "Typesense", "Vercel"],
+        role: "Full Stack Engineer",
+        highlights: ["SSE NLP search", "ISR SEO listings", "Dual-brand Vercel", "DSCR + pre-approval"],
+        features: [
+            { name: "NLP search", detail: "Token-by-token SSE streaming with Typesense full-text indexing" },
+            { name: "SEO listings", detail: "ISR programmatic pages with dual-brand routing and CDN sitemaps" },
+            { name: "DSCR / pre-approval", detail: "Investor calculators and mortgage intake with document uploads" },
+            { name: "Analytics", detail: "GA4, Ads, Pixel, LogRocket, and Fingerprint.js fraud detection" },
+        ],
         problem:
             "Investors needed natural-language property search with live streaming results, fast SEO listings, and dual-brand theming — without sacrificing Core Web Vitals on Vercel.",
         approach: [
@@ -39,6 +58,14 @@ export const caseStudies: CaseStudy[] = [
         title: "appi — Core NestJS API",
         subtitle: "Modular REST platform for property, loans, and CRM sync",
         stack: ["NestJS", "TypeORM", "MySQL", "Redis", "BullMQ", "LangGraph", "Typesense"],
+        role: "Full Stack Developer",
+        highlights: ["Auth + CRM", "Typesense search", "BullMQ jobs", "LangGraph AI"],
+        features: [
+            { name: "Auth + CRM", detail: "Modular REST with Zoho sync and multi-app clients" },
+            { name: "Search + loans", detail: "Typesense property search and estimate endpoints" },
+            { name: "Jobs + AI", detail: "BullMQ workers with LangChain/LangGraph SEO content tools" },
+            { name: "Scale", detail: "Redis cache, MySQL, and production fintech traffic patterns" },
+        ],
         problem:
             "HomeAbroad's fintech platform needed a unified API for auth, property search, loan estimates, CRM sync, and AI-assisted content — with reliable background jobs and search.",
         approach: [
@@ -61,6 +88,14 @@ export const caseStudies: CaseStudy[] = [
         title: "3rdpartycomms — Integration Hub",
         subtitle: "PHP webhook orchestration and internal AI agent tooling",
         stack: ["PHP 8.3", "MySQL", "Redis", "Cloudflare Zero Trust", "Twilio", "Google Gemini"],
+        role: "Full Stack Developer",
+        highlights: ["60+ webhooks", "40+ crons", "12+ AI agent tools", "Zero Trust"],
+        features: [
+            { name: "Webhooks", detail: "60+ event handlers across Twilio, Zoho, SendGrid, Floify, and Gemini" },
+            { name: "Crons + agents", detail: "40+ scheduled jobs and 12+ internal browser AI tools" },
+            { name: "Reliability", detail: "Idempotency keys, Redis queues, and dead-letter logging" },
+            { name: "Security", detail: "Cloudflare Zero Trust gate for agent tooling and sessions" },
+        ],
         problem:
             "Loan operations relied on dozens of third-party systems (Zoho CRM, Twilio, SendGrid, Floify, Retell AI) with no unified event layer — agents needed AI tools inside one comms center.",
         approach: [
@@ -88,6 +123,14 @@ export const caseStudies: CaseStudy[] = [
         title: "mortgage-pricer — Lambda Scrapers",
         subtitle: "Headless browser service for live Non-QM / DSCR lender rates",
         stack: ["TypeScript", "Puppeteer", "AWS Lambda", "API Gateway", "S3", "Serverless"],
+        role: "Full Stack Developer",
+        highlights: ["11 lender portals", "Puppeteer on Lambda", "S3 audit trail", "OpenAPI"],
+        features: [
+            { name: "Live rates", detail: "Headless scrapers across 11 Non-QM / DSCR lender portals" },
+            { name: "Registry", detail: "Pluggable scraper modules — one portal per adapter" },
+            { name: "Audit", detail: "S3 screenshot trail for compliance and debugging" },
+            { name: "API", detail: "Typed REST (OpenAPI) consumed by the NestJS estimate pipeline" },
+        ],
         problem:
             "Loan officers needed live pricing from 11 Non-QM and DSCR lender portals — each with different login flows, DOM structures, and rate tables updated daily.",
         approach: [
@@ -107,6 +150,14 @@ export const caseStudies: CaseStudy[] = [
         title: "data-pipelines — Property Ingestion",
         subtitle: "Multi-source scrapers with chunked ingest to MySQL and Typesense",
         stack: ["Python", "Node.js", "MySQL", "Typesense", "AWS S3", "Zillow", "HouseCanary"],
+        role: "Full Stack Developer",
+        highlights: ["Multi-source scrape", "Resumable batches", "MySQL + Typesense", "S3 staging"],
+        features: [
+            { name: "Sources", detail: "Zillow, Roofstock, Homes.com, HouseCanary, HUD, demographics" },
+            { name: "Ingest", detail: "Chunked/resumable writes to MySQL with Typesense sync" },
+            { name: "Recovery", detail: "S3 intermediates and SSH tunnel staging for large state runs" },
+            { name: "Search quality", detail: "Index kept aligned with relational property data" },
+        ],
         problem:
             "Property search quality depended on fresh listings, rental inventory, and demographics from Zillow, Roofstock, Homes.com, HouseCanary, HUD, and city-level data — manual imports could not keep pace.",
         approach: [
@@ -126,6 +177,14 @@ export const caseStudies: CaseStudy[] = [
         title: "estimate-calculator — Loan Math Library",
         subtitle: "Zero-dependency TypeScript engine for mortgage scenarios",
         stack: ["TypeScript", "Jest", "Excel rate sheets", "DSCR", "Liquidity"],
+        role: "Full Stack Developer",
+        highlights: ["Shared loan math", "Jest fixtures", "Excel mapping", "Zero deps"],
+        features: [
+            { name: "Scenarios", detail: "Fees, liquidity, DSCR, points/pricing tables as typed inputs" },
+            { name: "Excel mapping", detail: "Rate-sheet columns mapped to pure functions" },
+            { name: "Consumers", detail: "Used by appi, mortgage-pricer, and React calculators" },
+            { name: "Safety", detail: "Named Jest fixtures catch Excel column drift before prod" },
+        ],
         problem:
             "Loan estimates, DSCR checks, and pricing scenarios were duplicated across NestJS APIs, React calculators, and Lambda scrapers — each with slightly different fee and points logic.",
         approach: [
@@ -153,6 +212,14 @@ export const caseStudies: CaseStudy[] = [
         title: "ha-realtor-plat — Agent / MLO Platform",
         subtitle: "Multi-app React frontend for agents, MLOs, and investors",
         stack: ["React", "Webpack", "Tailwind CSS", "Leaflet", "Zustand", "Formik"],
+        role: "Full Stack Developer",
+        highlights: ["Multi-app shell", "Leaflet maps", "RBAC roles", "Loan workflows"],
+        features: [
+            { name: "Multi-app shell", detail: "Webpack entries for RE, MLO, processor, partner, and client" },
+            { name: "Maps + calc", detail: "Leaflet property maps with DSCR and cash-to-close tools" },
+            { name: "Workflows", detail: "Loan dashboards, documents, referrals, and messaging" },
+            { name: "Analytics", detail: "GA4, LogRocket, and Fingerprint.js on production traffic" },
+        ],
         problem:
             "HomeAbroad needed one production frontend for real-estate agents, mortgage loan officers, processors, and clients — maps, loan workflows, referrals, and documents — without forking a separate codebase per role.",
         approach: [
@@ -176,6 +243,14 @@ export const caseStudies: CaseStudy[] = [
         title: "Rental-Estimate-AVM — CatBoost Rent Model",
         subtitle: "Rent estimates from real asking prices, comps, and SHAP explanations",
         stack: ["Python", "FastAPI", "CatBoost", "DuckDB", "pandas", "AWS S3"],
+        role: "Full Stack Developer",
+        highlights: ["CatBoost AVM", "SHAP explain", "FastAPI serve", "S3 datasets"],
+        features: [
+            { name: "Training", detail: "CatBoost on observed for-rent asking prices with comps and HUD FMR" },
+            { name: "Serving", detail: "FastAPI champion model with IAM-separated train vs serve" },
+            { name: "Explain", detail: "SHAP factor dollars so loan officers can defend the rent" },
+            { name: "Rollout", detail: "State enablement via config (AVM_STATES), not new scrapers" },
+        ],
         problem:
             "DSCR and yield underwriting used Zillow rent Zestimates scaled by a constant — those numbers drifted from real for-rent asking prices and could not be explained to loan officers.",
         approach: [

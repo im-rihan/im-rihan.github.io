@@ -8,7 +8,20 @@ import styles from "@/app/work/[slug]/case-study.module.css";
 export function CaseStudyContent({ study }: { study: CaseStudy }) {
     return (
         <div className={`container ${styles.page}`}>
-            <FadeIn>
+            {(study.role || (study.highlights && study.highlights.length > 0)) && (
+                <FadeIn>
+                    <div className={styles.metaRow}>
+                        {study.role && <span className={styles.role}>{study.role}</span>}
+                        {study.highlights?.map((item) => (
+                            <span key={item} className={styles.highlight}>
+                                {item}
+                            </span>
+                        ))}
+                    </div>
+                </FadeIn>
+            )}
+
+            <FadeIn delay={0.04}>
                 <div className={styles.stack}>
                     {study.stack.map((item) => (
                         <span key={item} className={styles.tag}>
@@ -18,14 +31,34 @@ export function CaseStudyContent({ study }: { study: CaseStudy }) {
                 </div>
             </FadeIn>
 
-            <FadeIn delay={0.08}>
+            {study.features && study.features.length > 0 && (
+                <FadeIn delay={0.08}>
+                    <section className={`glass-card ${styles.block}`}>
+                        <h2>Key features</h2>
+                        <div className={styles.featureTable} role="table" aria-label="Key features">
+                            <div className={styles.featureHead} role="row">
+                                <span role="columnheader">Feature</span>
+                                <span role="columnheader">What it does</span>
+                            </div>
+                            {study.features.map((feature) => (
+                                <div key={feature.name} className={styles.featureRow} role="row">
+                                    <strong role="cell">{feature.name}</strong>
+                                    <span role="cell">{feature.detail}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                </FadeIn>
+            )}
+
+            <FadeIn delay={0.12}>
                 <section className={`glass-card ${styles.block}`}>
                     <h2>Problem</h2>
                     <p>{study.problem}</p>
                 </section>
             </FadeIn>
 
-            <FadeIn delay={0.16}>
+            <FadeIn delay={0.18}>
                 <section className={`glass-card ${styles.block}`}>
                     <h2>Approach</h2>
                     <ul>

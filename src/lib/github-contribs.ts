@@ -17,7 +17,13 @@ type ApiDay = {
     contributionLevel?: string;
     count?: number;
     intensity?: number;
+    level?: number;
 };
+
+const CONTRIB_SOURCES = [
+    (username: string) => `https://github-contributions-api.jogruber.de/v4/${username}?y=last`,
+    (username: string) => `https://github-contributions-api.jogruber.de/v4/${username}`,
+] as const;
 
 function levelFromCount(count: number): number {
     if (count === 0) return 0;
@@ -46,9 +52,16 @@ function levelFromContributionLevel(level?: string): number {
 
 function parseDay(d: ApiDay): ContributionDay {
     const count = d.contributionCount ?? d.count ?? 0;
-    const level = d.contributionLevel
-        ? levelFromContributionLevel(d.contributionLevel)
-        : (d.intensity ?? levelFromCount(count));
+    let level = 0;
+    if (typeof d.level === "number") {
+        level = d.level;
+    } else if (d.contributionLevel) {
+        level = levelFromContributionLevel(d.contributionLevel);
+    } else if (typeof d.intensity === "number") {
+        level = d.intensity;
+    } else {
+        level = levelFromCount(count);
+    }
     return {
         date: d.date ?? "",
         count,
@@ -62,47 +75,6 @@ function padWeek(week: ContributionDay[], weekIndex: number): ContributionDay[] 
         padded.push({ date: `pad-w${weekIndex}-d${padded.length}`, count: 0, level: 0 });
     }
     return padded.slice(0, 7);
-}
-
-function parseDenoResponse(data: Record<string, unknown>): ContributionData | null {
-    const raw = data.contributions;
-    if (!Array.isArray(raw) || raw.length === 0) return null;
-
-    let weeks: ContributionDay[][] = [];
-    let contributions: ContributionDay[] = [];
-
-    // GitHub calendar format: contributions[][] (week columns, 7 rows each)
-    if (Array.isArray(raw[0])) {
-        weeks = (raw as ApiDay[][]).map((week, wi) => padWeek(week.map(parseDay), wi));
-        contributions = weeks.flat();
-    } else {
-        // Legacy flat array: contributions[]
-        contributions = (raw as ApiDay[]).map(parseDay);
-        contributions = normalizeYear(contributions);
-        weeks = groupIntoWeeks(contributions);
-    }
-
-    const validDays = contributions.filter((d) => d.date.length === 10 && !d.date.startsWith("pad"));
-    if (validDays.length < 28) return null;
-
-    const totalContributions =
-        (data.totalContributions as number | undefined) ??
-        validDays.reduce((sum, d) => sum + d.count, 0);
-
-    return {
-        contributions: validDays,
-        weeks,
-        totalContributions,
-        yearLabel: yearRangeLabel(validDays),
-    };
-}
-
-function yearRangeLabel(days: ContributionDay[]): string {
-    if (days.length === 0) return "Past year";
-    const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
-    const first = sorted[0].date.slice(0, 7);
-    const last = sorted[sorted.length - 1].date.slice(0, 7);
-    return first === last ? first : `${first} – ${last}`;
 }
 
 /** Keep the most recent ~371 days (53 weeks) for a full GitHub-style year view. */
@@ -136,25 +108,77 @@ function groupIntoWeeks(days: ContributionDay[]): ContributionDay[][] {
     return weeks;
 }
 
+function yearRangeLabel(days: ContributionDay[]): string {
+    if (days.length === 0) return "Past year";
+    const sorted = [...days].sort((a, b) => a.date.localeCompare(b.date));
+    const first = sorted[0].date.slice(0, 7);
+    const last = sorted[sorted.length - 1].date.slice(0, 7);
+    return first === last ? first : `${first} – ${last}`;
+}
+
+function totalFromPayload(data: Record<string, unknown>, days: ContributionDay[]): number {
+    const total = data.total;
+    if (typeof total === "number") return total;
+    if (total && typeof total === "object") {
+        const map = total as Record<string, number>;
+        if (typeof map.lastYear === "number") return map.lastYear;
+        const sum = Object.values(map).reduce((acc, n) => acc + (typeof n === "number" ? n : 0), 0);
+        if (sum > 0) return sum;
+    }
+    if (typeof data.totalContributions === "number") return data.totalContributions;
+    return days.reduce((sum, d) => sum + d.count, 0);
+}
+
+/** Parse jogruber / Deno-style contribution JSON into calendar weeks. */
+export function parseContributionPayload(data: Record<string, unknown>): ContributionData | null {
+    const raw = data.contributions;
+    if (!Array.isArray(raw) || raw.length === 0) return null;
+
+    let weeks: ContributionDay[][] = [];
+    let contributions: ContributionDay[] = [];
+
+    // GitHub calendar format: contributions[][] (week columns, 7 rows each)
+    if (Array.isArray(raw[0])) {
+        weeks = (raw as ApiDay[][]).map((week, wi) => padWeek(week.map(parseDay), wi));
+        contributions = weeks.flat();
+    } else {
+        contributions = (raw as ApiDay[]).map(parseDay);
+        contributions = normalizeYear(contributions);
+        weeks = groupIntoWeeks(contributions);
+    }
+
+    const validDays = contributions.filter((d) => d.date.length === 10 && !d.date.startsWith("pad"));
+    if (validDays.length < 28) return null;
+
+    return {
+        contributions: validDays,
+        weeks,
+        totalContributions: totalFromPayload(data, validDays),
+        yearLabel: yearRangeLabel(validDays),
+    };
+}
+
 export function getContributionWeeks(data: ContributionData): ContributionDay[][] {
     return data.weeks.length > 0 ? data.weeks : groupIntoWeeks(data.contributions);
 }
 
-async function fetchDenoContributions(username: string): Promise<ContributionData | null> {
+async function fetchFromUrl(url: string): Promise<ContributionData | null> {
     try {
-        const res = await fetch(`https://github-contributions-api.deno.dev/${username}.json`, {
-            cache: "no-store",
-        });
+        const res = await fetch(url, { cache: "no-store" });
         if (!res.ok) return null;
         const data = (await res.json()) as Record<string, unknown>;
-        return parseDenoResponse(data);
+        return parseContributionPayload(data);
     } catch {
         return null;
     }
 }
 
 export async function fetchContributions(username: string): Promise<ContributionData | null> {
-    return fetchDenoContributions(username);
+    for (const buildUrl of CONTRIB_SOURCES) {
+        const data = await fetchFromUrl(buildUrl(username));
+        if (data) return data;
+    }
+    return null;
 }
 
 export function generateGitHubInsights(data: ContributionData): string[] {
@@ -164,8 +188,11 @@ export function generateGitHubInsights(data: ContributionData): string[] {
     const recentTotal = recent.reduce((s, d) => s + d.count, 0);
     const last7 = sorted.slice(-7).reduce((s, d) => s + d.count, 0);
     const weeks = getContributionWeeks(data);
+    const activeDays = sorted.filter((d) => d.count > 0).length;
 
-    insights.push(`${data.totalContributions.toLocaleString()} contributions over the past year (${weeks.length} weeks tracked).`);
+    insights.push(
+        `${data.totalContributions.toLocaleString()} contributions over the past year (${weeks.length} weeks tracked).`,
+    );
 
     if (last7 >= 10) {
         insights.push("Strong recent activity — keep the momentum going with consistent commits.");
@@ -178,9 +205,19 @@ export function generateGitHubInsights(data: ContributionData): string[] {
     if (recentTotal >= 50) {
         insights.push("Excellent monthly rhythm — your profile shows sustained engineering discipline.");
     } else if (recentTotal >= 15) {
-        insights.push("Steady contributor. Pairing feature work with README or test commits strengthens your public profile.");
+        insights.push(
+            "Steady contributor. Pairing feature work with README or test commits strengthens your public profile.",
+        );
     } else {
-        insights.push("Opportunity to increase visibility: even 2–3 commits per week improves recruiter-facing signals.");
+        insights.push(
+            "Opportunity to increase visibility: even 2–3 commits per week improves recruiter-facing signals.",
+        );
+    }
+
+    if (activeDays > 0) {
+        insights.push(
+            `${activeDays} active days in the window — ${Math.round((activeDays / sorted.length) * 100)}% of calendar days had commits.`,
+        );
     }
 
     const maxDay = [...sorted].sort((a, b) => b.count - a.count)[0];
@@ -190,3 +227,8 @@ export function generateGitHubInsights(data: ContributionData): string[] {
 
     return insights;
 }
+
+export const GITHUB_SNAKE = {
+    light: "https://raw.githubusercontent.com/im-rihan/im-rihan/output/github-snake.svg",
+    dark: "https://raw.githubusercontent.com/im-rihan/im-rihan/output/github-snake-dark.svg",
+} as const;
