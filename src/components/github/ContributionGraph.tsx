@@ -29,6 +29,7 @@ function ContributionSnake() {
                     className={`${styles.snakeImg} ${styles.snakeDark}`}
                     width={880}
                     height={192}
+                    decoding="async"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -38,6 +39,7 @@ function ContributionSnake() {
                     className={`${styles.snakeImg} ${styles.snakeLight}`}
                     width={880}
                     height={192}
+                    decoding="async"
                 />
             </div>
             <p className={styles.fallbackNote}>

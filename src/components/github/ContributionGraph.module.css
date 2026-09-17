@@ -19,7 +19,7 @@
 }
 
 .graphCard {
-    padding: 22px;
+    padding: 20px;
     min-width: 0;
     overflow: hidden;
 }
@@ -169,26 +169,36 @@
 
 .snakeCard,
 .statsStrip {
-    padding: 22px;
+    padding: 20px;
     min-width: 0;
     overflow: hidden;
 }
 
 .snakeWrap {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     overflow-x: auto;
+    overflow-y: hidden;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--bg-elevated);
-    padding: 8px;
+    /* Even inset — avoid empty side gutters from a fixed 880px image */
+    padding: 12px;
+    line-height: 0;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
 }
 
 .snakeImg {
     width: 100%;
-    max-width: 880px;
+    max-width: 100%;
     height: auto;
     display: block;
-    margin: 0 auto;
+    margin: 0;
+    /* SVG letterboxes less when the card is wide */
+    object-fit: contain;
+    object-position: left center;
 }
 
 .snakeDark {
@@ -250,13 +260,15 @@
 
 .fallbackNote {
     margin-top: 12px;
+    margin-bottom: 0;
     font-size: 0.82rem;
+    line-height: 1.5;
     color: var(--text-muted);
     word-break: break-word;
 }
 
 .insights {
-    padding: 22px;
+    padding: 20px;
     min-width: 0;
 }
 
@@ -284,9 +296,27 @@
     color: var(--primary-light);
 }
 
+/* Tablet */
+@media (max-width: 900px) {
+    .statsStrip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .snakeWrap {
+        padding: 10px;
+    }
+}
+
 @media (max-width: 640px) {
     .wrapper {
-        margin-bottom: 16px;
+        gap: 14px;
+        margin-bottom: 8px;
     }
 
     .graphCard,
@@ -298,6 +328,11 @@
 
     .statsStrip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .statItem {
+        padding: 8px 10px;
     }
 
     .statValue {
@@ -308,6 +343,7 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
+        margin-bottom: 12px;
     }
 
     .header h2 {
@@ -317,6 +353,16 @@
     .header span {
         font-size: 0.72rem;
         line-height: 1.45;
+    }
+
+    .snakeWrap {
+        padding: 8px;
+        border-radius: 8px;
+    }
+
+    .fallbackNote {
+        margin-top: 10px;
+        font-size: 0.75rem;
     }
 
     .insights h3 {
@@ -364,4 +410,10 @@
     .monthRow {
         gap: 2px;
     }
+
+    .scroll {
+        margin-bottom: 8px;
+        padding-bottom: 6px;
+    }
 }
+
