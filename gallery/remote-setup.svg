@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Remote dev setup">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#g)"/>
+  <rect x="180" y="120" width="440" height="260" rx="16" fill="#0f172a" opacity="0.55"/>
+  <rect x="210" y="150" width="380" height="200" rx="8" fill="#134e4a" opacity="0.8"/>
+  <text x="400" y="270" text-anchor="middle" fill="#99f6e4" font-family="ui-monospace, monospace" font-size="28">&lt;/&gt;</text>
+</svg>
