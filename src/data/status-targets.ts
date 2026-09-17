@@ -25,7 +25,7 @@ const corePages: StatusTarget[] = [
     { name: "Portfolio Chat", url: `${SITE_BASE}/chat/`, type: "internal", group: "page" },
     { name: "GitHub Activity", url: `${SITE_BASE}/github/`, type: "internal", group: "page" },
     // { name: "Gallery", url: `${SITE_BASE}/gallery/`, type: "internal", group: "page" },
-    // { name: "Analytics", url: `${SITE_BASE}/status/`, type: "internal", group: "page" },
+    { name: "Analytics", url: `${SITE_BASE}/status/`, type: "internal", group: "page" },
 ];
 
 const assets: StatusTarget[] = [

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { parseMarkdownBlocks } from "@/lib/markdown-blocks";
+import { slugifyHeading } from "@/data/blog-posts";
 import { CodeBlock } from "./CodeBlock";
 import styles from "./BlogMarkdown.module.css";
 
@@ -23,7 +24,7 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
             nodes.push(
                 <code key={`${keyPrefix}-c-${idx++}`} className={styles.inlineCode}>
                     {token.slice(1, -1)}
-                </code>
+                </code>,
             );
         } else if (token.startsWith("[")) {
             const m = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(token);
@@ -36,7 +37,7 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
                         {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                     >
                         {m[1]}
-                    </a>
+                    </a>,
                 );
             } else {
                 nodes.push(token);
@@ -54,12 +55,35 @@ function renderInline(text: string, keyPrefix: string): ReactNode[] {
 
 export function BlogMarkdown({ source }: { source: string }) {
     const blocks = parseMarkdownBlocks(source.trim());
+    const usedIds = new Map<string, number>();
+
+    function headingId(text: string): string {
+        let id = slugifyHeading(text);
+        const count = usedIds.get(id) ?? 0;
+        usedIds.set(id, count + 1);
+        if (count > 0) id = `${id}-${count + 1}`;
+        return id;
+    }
 
     return (
         <div className={styles.markdown}>
             {blocks.map((block, i) => {
-                if (block.type === "h2") return <h2 key={i}>{renderInline(block.text, `h2-${i}`)}</h2>;
-                if (block.type === "h3") return <h3 key={i}>{renderInline(block.text, `h3-${i}`)}</h3>;
+                if (block.type === "h2") {
+                    const id = headingId(block.text);
+                    return (
+                        <h2 key={i} id={id}>
+                            {renderInline(block.text, `h2-${i}`)}
+                        </h2>
+                    );
+                }
+                if (block.type === "h3") {
+                    const id = headingId(block.text);
+                    return (
+                        <h3 key={i} id={id}>
+                            {renderInline(block.text, `h3-${i}`)}
+                        </h3>
+                    );
+                }
                 if (block.type === "ul") {
                     return (
                         <ul key={i}>

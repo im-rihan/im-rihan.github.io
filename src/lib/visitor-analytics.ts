@@ -1,5 +1,5 @@
 import { countryNames } from "@/data/country-coordinates";
-import { isCountApiEnabled } from "@/lib/count-api";
+import { countApiGet, countApiHit, isCountApiEnabled } from "@/lib/count-api";
 import { normalizeBrowserLabel, parseDevice } from "@/lib/device-parse";
 import { inferUnresolvedVisits } from "@/lib/geo-inference";
 import { fetchGeo, isUnknownCountryCode } from "@/lib/geo-lookup";
@@ -60,56 +60,14 @@ export interface VisitorStats {
 }
 
 const STORAGE_KEY = "rm-portfolio-visits";
-const SESSION_KEY = "rm-portfolio-tracked";
 const SEEN_COUNTRIES_KEY = "rm-seen-countries";
 const BACKFILL_KEY = "rm-portfolio-geo-backfill";
 const DEDUP_WINDOW_MS = 30 * 60 * 1000; // 30 minutes
-const COUNTAPI_NS = "im-rihan-portfolio";
-const FETCH_TIMEOUT_MS = 5000;
-const COUNTAPI_TIMEOUT_MS = 3000;
+
+/** In-flight page paths — prevents Strict Mode double-mount double writes. */
+const trackingPages = new Set<string>();
 
 export const VISITOR_UPDATE_EVENT = "rm-visitor-update";
-
-async function fetchWithTimeout(
-    input: RequestInfo | URL,
-    init: RequestInit = {},
-    timeoutMs = FETCH_TIMEOUT_MS
-): Promise<Response> {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-        return await fetch(input, { ...init, signal: controller.signal });
-    } finally {
-        clearTimeout(timer);
-    }
-}
-
-async function countApiHit(key: string): Promise<void> {
-    try {
-        await fetchWithTimeout(
-            `https://api.countapi.xyz/hit/${COUNTAPI_NS}/${key}`,
-            {},
-            COUNTAPI_TIMEOUT_MS
-        );
-    } catch {
-        /* optional */
-    }
-}
-
-async function countApiGet(key: string): Promise<number> {
-    try {
-        const res = await fetchWithTimeout(
-            `https://api.countapi.xyz/get/${COUNTAPI_NS}/${key}`,
-            {},
-            COUNTAPI_TIMEOUT_MS
-        );
-        if (!res.ok) return 0;
-        const data = (await res.json()) as { value?: number };
-        return data.value ?? 0;
-    } catch {
-        return 0;
-    }
-}
 
 function addSeenCountry(code: string): void {
     try {
@@ -300,52 +258,61 @@ function isDuplicateVisit(page: string, visits: VisitRecord[]): boolean {
 
 export async function trackVisit(page: string): Promise<VisitRecord | null> {
     if (typeof window === "undefined") return null;
-    if (sessionStorage.getItem(SESSION_KEY)) return null;
-    sessionStorage.setItem(SESSION_KEY, "1");
+
+    const normalizedPage = normalizePagePath(page);
+    if (trackingPages.has(normalizedPage)) return null;
 
     const existing = readVisits();
-    if (isDuplicateVisit(page, existing)) return null;
+    if (isDuplicateVisit(normalizedPage, existing)) return null;
 
-    const geo = await fetchGeo();
-    const device = parseDevice(navigator.userAgent, {
-        maxTouchPoints: navigator.maxTouchPoints,
-    });
+    trackingPages.add(normalizedPage);
+    try {
+        const geo = await fetchGeo();
+        const device = parseDevice(navigator.userAgent, {
+            maxTouchPoints: navigator.maxTouchPoints,
+        });
 
-    const visit: VisitRecord = {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        countryCode: geo?.countryCode ?? UNRESOLVED_COUNTRY_CODE,
-        countryName: geo?.countryName ?? UNRESOLVED_COUNTRY_NAME,
-        city: geo?.city ?? "",
-        region: geo?.region ?? "",
-        deviceType: device.deviceType,
-        deviceLabel: device.deviceLabel,
-        browser: device.browser,
-        os: device.os,
-        page: normalizePagePath(page),
-        timestamp: new Date().toISOString(),
-    };
+        const visit: VisitRecord = {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            countryCode: geo?.countryCode ?? UNRESOLVED_COUNTRY_CODE,
+            countryName: geo?.countryName ?? UNRESOLVED_COUNTRY_NAME,
+            city: geo?.city ?? "",
+            region: geo?.region ?? "",
+            deviceType: device.deviceType,
+            deviceLabel: device.deviceLabel,
+            browser: device.browser,
+            os: device.os,
+            page: normalizedPage,
+            timestamp: new Date().toISOString(),
+        };
 
-    const visits = readVisits();
-    visits.push(visit);
-    writeVisits(visits);
-    await pushSupabaseVisit(visit);
+        // Re-check after await — another navigation may have written the same page.
+        if (isDuplicateVisit(normalizedPage, readVisits())) return null;
 
-    const code = visit.countryCode.toLowerCase();
-    if (!isUnknownCountryCode(visit.countryCode)) {
-        addSeenCountry(visit.countryCode);
-    }
-    if (isCountApiEnabled()) {
-        const hits = [
-            countApiHit("visits"),
-            countApiHit(`device-${visit.deviceType}`),
-        ];
+        const visits = readVisits();
+        visits.push(visit);
+        writeVisits(visits);
+        await pushSupabaseVisit(visit);
+
+        const code = visit.countryCode.toLowerCase();
         if (!isUnknownCountryCode(visit.countryCode)) {
-            hits.push(countApiHit(`country-${code}`));
+            addSeenCountry(visit.countryCode);
         }
-        await Promise.all(hits);
+        if (isCountApiEnabled()) {
+            const hits = [
+                countApiHit("visits"),
+                countApiHit(`device-${visit.deviceType}`),
+            ];
+            if (!isUnknownCountryCode(visit.countryCode)) {
+                hits.push(countApiHit(`country-${code}`));
+            }
+            await Promise.all(hits);
+        }
+        window.dispatchEvent(new CustomEvent(VISITOR_UPDATE_EVENT));
+        return visit;
+    } finally {
+        trackingPages.delete(normalizedPage);
     }
-    window.dispatchEvent(new CustomEvent(VISITOR_UPDATE_EVENT));
-    return visit;
 }
 
 async function fetchGlobalStats(localVisits: VisitRecord[]): Promise<{

@@ -38,7 +38,7 @@ import styles from "./StatusDashboard.module.css";
 const siteStack = [
     { label: "Framework", value: "Next.js 16 · static export" },
     { label: "Hosting", value: "GitHub Pages" },
-    { label: "Analytics", value: "Plausible + Supabase (optional)" },
+    { label: "Analytics", value: "localStorage + free geo + free hit API" },
     { label: "3D", value: "React Three Fiber" },
     { label: "Monitoring", value: "Client-side probes (this browser)" },
 ];
@@ -188,6 +188,17 @@ export function StatusDashboard() {
 
     return (
         <div className={styles.wrapper}>
+            <div className={`glass-card ${styles.privacyNote}`} role="note">
+                <Shield size={18} aria-hidden />
+                <div>
+                    <strong>Free analytics (no paid API required)</strong>
+                    <p>
+                        Each visit stores approximate country/region/city (free IP geo), device, browser, OS, and page in{" "}
+                        <code>localStorage</code> on this browser. Global totals use a free public hit API (no database of
+                        ours). Optional Supabase sync only when configured at build time. No cookies, no personal accounts.
+                    </p>
+                </div>
+            </div>
             <SystemMetrics networkLatencyMs={avgMs} />
             <WebVitalsPanel />
             <VisitorMonitor />

@@ -18,7 +18,7 @@ const pageLinks = [
     { href: "/chat", label: "Chat" },
     { href: "/github", label: "GitHub" },
     // { href: "/gallery", label: "Gallery" },
-    // { href: "/status", label: "Status" },
+    { href: "/status", label: "Status" },
 ];
 
 const sectionLinks = [
