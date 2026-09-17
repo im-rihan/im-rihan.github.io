@@ -183,7 +183,6 @@
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--bg-elevated);
-    /* Even inset — avoid empty side gutters from a fixed 880px image */
     padding: 12px;
     line-height: 0;
     -webkit-overflow-scrolling: touch;
@@ -191,14 +190,17 @@
 }
 
 .snakeImg {
+    /* Fill the wrap — do not keep the SVG's intrinsic 880px box */
+    box-sizing: border-box;
     width: 100%;
-    max-width: 100%;
+    max-width: none;
+    min-width: 100%;
     height: auto;
+    aspect-ratio: 880 / 192;
     display: block;
     margin: 0;
-    /* SVG letterboxes less when the card is wide */
-    object-fit: contain;
-    object-position: left center;
+    padding: 0;
+    border: 0;
 }
 
 .snakeDark {

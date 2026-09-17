@@ -21,14 +21,13 @@ function ContributionSnake() {
                 <span>Animated from public commits · updates daily</span>
             </div>
             <div className={styles.snakeWrap}>
-                {/* Theme via html.light / html.dark — avoids hydration mismatch */}
+                {/* Theme via html.light / html.dark — avoids hydration mismatch.
+                    No width/height attrs — those locked the box at 880px and left side gutters. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={GITHUB_SNAKE.dark}
                     alt={`${USERNAME} contribution snake animation`}
                     className={`${styles.snakeImg} ${styles.snakeDark}`}
-                    width={880}
-                    height={192}
                     decoding="async"
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -37,8 +36,6 @@ function ContributionSnake() {
                     alt=""
                     aria-hidden
                     className={`${styles.snakeImg} ${styles.snakeLight}`}
-                    width={880}
-                    height={192}
                     decoding="async"
                 />
             </div>
