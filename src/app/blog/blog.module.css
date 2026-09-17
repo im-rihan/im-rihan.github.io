@@ -1,4 +1,4 @@
-.page {
+﻿.page {
     padding-bottom: 80px;
 }
 
@@ -6,6 +6,47 @@
     display: flex;
     justify-content: flex-end;
     margin-bottom: 20px;
+}
+
+.listWrap {
+    display: grid;
+    gap: 20px;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filterChip {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--glass-border);
+    background: transparent;
+    color: var(--text-muted);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.filterChip:hover {
+    border-color: rgba(20, 184, 166, 0.35);
+    color: var(--text);
+}
+
+.filterActive {
+    background: rgba(20, 184, 166, 0.14);
+    border-color: rgba(20, 184, 166, 0.45);
+    color: var(--primary-light);
+}
+
+.empty {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    padding: 24px 0;
 }
 
 .rssLink {
@@ -112,8 +153,14 @@
 }
 
 :global(html.light) .icon,
-:global(html.light) .cta {
+:global(html.light) .cta,
+:global(html.light) .filterActive {
     color: var(--primary-dark);
+}
+
+:global(html.light) .filterActive {
+    background: rgba(15, 118, 110, 0.1);
+    border-color: rgba(15, 118, 110, 0.35);
 }
 
 @media (max-width: 640px) {

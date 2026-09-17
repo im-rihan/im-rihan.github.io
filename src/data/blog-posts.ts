@@ -11,6 +11,34 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: "free-visitor-analytics-and-blog-ux",
+        title: "Free visitor analytics on GitHub Pages — and a sharper blog UX",
+        excerpt:
+            "Restore /status for visit counts, country/region maps, and localStorage-first analytics without a paid API — plus blog tag filters, TOC, and related posts.",
+        date: "2026-09-17",
+        tags: ["Analytics", "GitHub Pages", "Blog", "UX", "Privacy"],
+        content: `
+The portfolio already tracked visits in the browser. The missing piece was making that dashboard reachable again — and making sure SPA navigations count as real page views.
+
+## What “free” means here
+
+- **Visit log** — country, region, city (approximate), device, browser, OS, and page path in \`localStorage\`
+- **Geo** — free providers (ipwho.is → ipapi.co → geojs.io), no API key
+- **Optional** — Supabase sync and CountAPI totals only when build-time env is set
+- **No cookies / no accounts** for the core path
+
+## Multi-page tracking
+
+Previously a session flag recorded only the **first** page in a tab. That hid funnels like Home → Work → Blog. Tracking now uses a **30-minute per-page dedup** so each route can count once without double-writing on React remounts.
+
+## Blog UX
+
+The blog index now filters by tag. Post pages add a table of contents, previous/next navigation, and related posts by shared tags — all static, no backend.
+
+Open **[/status/](/status/)** to see the visitor map and **[/blog/](/blog/)** for the new filters.
+`,
+    },
+    {
         slug: "enhancement-phases-a-through-e",
         title: "Phases A–E + cross-browser hardening: analytics, CI, and Safari/mobile support",
         excerpt:
@@ -410,4 +438,67 @@ export function formatBlogDate(iso: string): string {
 export function estimateReadingMinutes(content: string): number {
     const words = content.trim().split(/\s+/).length;
     return Math.max(1, Math.round(words / 220));
+}
+
+export function getAllBlogTags(): string[] {
+    const counts = new Map<string, number>();
+    for (const post of blogPosts) {
+        for (const tag of post.tags) {
+            counts.set(tag, (counts.get(tag) ?? 0) + 1);
+        }
+    }
+    return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([tag]) => tag);
+}
+
+export function getRelatedPosts(slug: string, limit = 3): BlogPost[] {
+    const current = getBlogPost(slug);
+    if (!current) return [];
+    const tagSet = new Set(current.tags);
+    return sortedBlogPosts()
+        .filter((post) => post.slug !== slug)
+        .map((post) => ({
+            post,
+            score: post.tags.reduce((sum, tag) => sum + (tagSet.has(tag) ? 1 : 0), 0),
+        }))
+        .filter((entry) => entry.score > 0)
+        .sort((a, b) => b.score - a.score || (a.post.date < b.post.date ? 1 : -1))
+        .slice(0, limit)
+        .map((entry) => entry.post);
+}
+
+export function getAdjacentPosts(slug: string): { prev: BlogPost | null; next: BlogPost | null } {
+    const posts = sortedBlogPosts();
+    const index = posts.findIndex((post) => post.slug === slug);
+    if (index < 0) return { prev: null, next: null };
+    return {
+        prev: posts[index + 1] ?? null,
+        next: posts[index - 1] ?? null,
+    };
+}
+
+export function slugifyHeading(text: string): string {
+    return text
+        .toLowerCase()
+        .replace(/[`*_\[\]]/g, "")
+        .replace(/[^a-z0-9\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .slice(0, 64);
+}
+
+export function extractBlogToc(content: string): { id: string; text: string; level: 2 | 3 }[] {
+    const toc: { id: string; text: string; level: 2 | 3 }[] = [];
+    const used = new Map<string, number>();
+    for (const line of content.split("\n")) {
+        const match = /^(#{2,3})\s+(.+)$/.exec(line.trim());
+        if (!match) continue;
+        const level = match[1].length === 2 ? 2 : 3;
+        const text = match[2].replace(/\*\*/g, "").replace(/`/g, "").trim();
+        let id = slugifyHeading(text);
+        const count = used.get(id) ?? 0;
+        used.set(id, count + 1);
+        if (count > 0) id = `${id}-${count + 1}`;
+        toc.push({ id, text, level });
+    }
+    return toc;
 }

@@ -1,18 +1,10 @@
-import { notFound } from "next/navigation";
-
-/** Temporarily hidden from nav — restore the StatusDashboard render below. */
-export default function StatusPage() {
-    notFound();
-}
-
-/*
 import { StatusDashboard } from "@/components/status/StatusDashboard";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
     "Status & Analytics",
-    "Live visitor map, system telemetry, endpoint health checks, uptime history, and service status.",
+    "Live visitor map, system telemetry, endpoint health checks, uptime history, and service status — works on static GitHub Pages with free geo lookups and localStorage.",
     "/status",
 );
 
@@ -21,7 +13,7 @@ export default function StatusPage() {
         <>
             <PageHeader
                 title="Status & Analytics"
-                description="Live visitor map, browser telemetry, endpoint probes with uptime history, and backend service status."
+                description="Visitor count, country/region map, browser telemetry, and endpoint probes. Core analytics work without a paid API — localStorage plus free geo lookups; Supabase and CountAPI are optional."
             />
             <div className="container page-content">
                 <StatusDashboard />
@@ -29,4 +21,3 @@ export default function StatusPage() {
         </>
     );
 }
-*/

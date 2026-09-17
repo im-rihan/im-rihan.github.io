@@ -1,11 +1,20 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
-import { blogPosts, estimateReadingMinutes, formatBlogDate, getBlogPost } from "@/data/blog-posts";
+import {
+    blogPosts,
+    estimateReadingMinutes,
+    extractBlogToc,
+    formatBlogDate,
+    getAdjacentPosts,
+    getBlogPost,
+    getRelatedPosts,
+} from "@/data/blog-posts";
 import { createPageMetadata, siteUrl } from "@/lib/site-metadata";
 import { siteMeta } from "@/data/profile";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { BlogMarkdown } from "@/components/blog/BlogMarkdown";
+import { BlogPostNav, BlogToc } from "@/components/blog/BlogPostExtras";
 import { PageJsonLd } from "@/components/seo/PageJsonLd";
 import styles from "./post.module.css";
 
@@ -29,6 +38,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     if (!post) notFound();
 
     const postUrl = `${siteUrl}/blog/${slug}/`;
+    const toc = extractBlogToc(post.content);
+    const related = getRelatedPosts(slug, 3);
+    const { prev, next } = getAdjacentPosts(slug);
 
     const blogPosting = {
         "@context": "https://schema.org",
@@ -78,9 +90,21 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                     ))}
                 </div>
 
+                <BlogToc items={toc} />
+
                 <section className={`glass-card ${styles.block}`}>
                     <BlogMarkdown source={post.content} />
                 </section>
+
+                <BlogPostNav
+                    prev={prev ? { slug: prev.slug, title: prev.title } : null}
+                    next={next ? { slug: next.slug, title: next.title } : null}
+                    related={related.map((item) => ({
+                        slug: item.slug,
+                        title: item.title,
+                        excerpt: item.excerpt,
+                    }))}
+                />
 
                 <Link href="/blog/" prefetch={false} className={styles.back} data-cursor="pointer">
                     <ArrowLeft size={16} aria-hidden />
