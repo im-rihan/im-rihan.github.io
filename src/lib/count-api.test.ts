@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { isCountApiEnabled } from "./count-api";
+import { countApiKey, isCountApiEnabled } from "./count-api";
 
 describe("isCountApiEnabled", () => {
     afterEach(() => {
@@ -14,5 +14,12 @@ describe("isCountApiEnabled", () => {
     it("is disabled when explicitly set to false", () => {
         vi.stubEnv("NEXT_PUBLIC_COUNTAPI_ENABLED", "false");
         expect(isCountApiEnabled()).toBe(false);
+    });
+});
+
+describe("countApiKey", () => {
+    it("prefixes keys for the public free hit API", () => {
+        expect(countApiKey("visits")).toBe("im-rihan-portfolio-visits");
+        expect(countApiKey("device-desktop")).toBe("im-rihan-portfolio-device-desktop");
     });
 });

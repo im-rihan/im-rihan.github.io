@@ -4,7 +4,7 @@ import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
     "Status & Analytics",
-    "Live visitor map, system telemetry, endpoint health checks, uptime history, and service status — works on static GitHub Pages with free geo lookups and localStorage.",
+    "Live visitor map, system telemetry, endpoint health checks, uptime history, and service status — free geo, localStorage, and a free public hit API (no database of yours).",
     "/status",
 );
 
@@ -13,7 +13,7 @@ export default function StatusPage() {
         <>
             <PageHeader
                 title="Status & Analytics"
-                description="Visitor count, country/region map, browser telemetry, and endpoint probes. Core analytics work without a paid API — localStorage plus free geo lookups; Supabase and CountAPI are optional."
+                description="Visitor count, country/region map, browser telemetry, and endpoint probes. Core analytics need no paid API and no database of yours — localStorage, free geo, and a free public hit counter."
             />
             <div className="container page-content">
                 <StatusDashboard />
