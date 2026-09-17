@@ -8,8 +8,8 @@ describe("resume HTML contact icons", () => {
     const html = readFileSync(RESUME_HTML, "utf-8");
 
     it("uses unified stroke icons in screen CSS", () => {
-        expect(html).toMatch(/\.contact-item \.icon svg\s*\{[^}]*width:\s*12px/);
-        expect(html).toMatch(/stroke-width:\s*2/);
+        expect(html).toMatch(/\.contact-item \.icon svg\s*\{[^}]*width:\s*10px/);
+        expect(html).toMatch(/stroke-width:\s*2\.25/);
     });
 
     it("includes all contact channels with labels", () => {
