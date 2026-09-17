@@ -180,23 +180,23 @@
     min-width: 0;
     overflow-x: auto;
     overflow-y: hidden;
+    /* No outer padding — Platane SVG already has internal inset */
+    padding: 0;
+    margin: 0;
+    line-height: 0;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--bg-elevated);
-    padding: 12px;
-    line-height: 0;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
 }
 
 .snakeImg {
-    /* Fill the wrap — do not keep the SVG's intrinsic 880px box */
     box-sizing: border-box;
-    width: 100%;
-    max-width: none;
+    width: 100% !important;
+    max-width: none !important;
     min-width: 100%;
-    height: auto;
-    aspect-ratio: 880 / 192;
+    height: auto !important;
     display: block;
     margin: 0;
     padding: 0;
@@ -309,10 +309,6 @@
         align-items: flex-start;
         gap: 4px;
     }
-
-    .snakeWrap {
-        padding: 10px;
-    }
 }
 
 @media (max-width: 640px) {
@@ -358,7 +354,6 @@
     }
 
     .snakeWrap {
-        padding: 8px;
         border-radius: 8px;
     }
 

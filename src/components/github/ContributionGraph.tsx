@@ -21,14 +21,14 @@ function ContributionSnake() {
                 <span>Animated from public commits · updates daily</span>
             </div>
             <div className={styles.snakeWrap}>
-                {/* Theme via html.light / html.dark — avoids hydration mismatch.
-                    No width/height attrs — those locked the box at 880px and left side gutters. */}
+                {/* Theme via html.light / html.dark. Flush to wrap — SVG has its own inset. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                     src={GITHUB_SNAKE.dark}
                     alt={`${USERNAME} contribution snake animation`}
                     className={`${styles.snakeImg} ${styles.snakeDark}`}
                     decoding="async"
+                    style={{ width: "100%", height: "auto", display: "block", margin: 0, padding: 0 }}
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -37,6 +37,7 @@ function ContributionSnake() {
                     aria-hidden
                     className={`${styles.snakeImg} ${styles.snakeLight}`}
                     decoding="async"
+                    style={{ width: "100%", height: "auto", display: "block", margin: 0, padding: 0 }}
                 />
             </div>
             <p className={styles.fallbackNote}>
