@@ -26,70 +26,72 @@
             box-sizing: border-box;
         }
 
+        /* Base styles = PDF/print density so HTML preview matches PDF/Word */
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--text);
             background: #f1f5f9;
-            line-height: 1.55;
-            font-size: 10.5pt;
+            line-height: 1.32;
+            font-size: 8pt;
         }
 
         .page {
-            max-width: 900px;
+            width: 210mm;
+            height: 297mm;
             margin: 24px auto;
             background: var(--bg);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .15);
             display: grid;
-            grid-template-columns: 280px 1fr;
-            min-height: 1120px;
+            grid-template-columns: 220px 1fr;
+            overflow: hidden;
         }
 
         /* Sidebar */
         .sidebar {
             background: linear-gradient(175deg, var(--sidebar) 0%, #1e293b 100%);
             color: var(--sidebar-text);
-            padding: 36px 28px;
+            padding: 14px 16px;
         }
 
         .sidebar h1 {
-            font-size: 22px;
+            font-size: 17px;
             font-weight: 800;
             color: #fff;
             line-height: 1.2;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .sidebar .title {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 600;
             color: var(--accent);
             text-transform: uppercase;
             letter-spacing: 1.5px;
-            margin-bottom: 28px;
+            margin-bottom: 14px;
         }
 
         .sidebar-section {
-            margin-bottom: 26px;
+            margin-bottom: 12px;
         }
 
         .sidebar-section h2 {
-            font-size: 9px;
+            font-size: 7.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--primary);
-            margin-bottom: 12px;
-            padding-bottom: 6px;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
             border-bottom: 1px solid rgba(255, 255, 255, .12);
         }
 
         .contact-item {
             display: flex;
             align-items: center;
-            gap: 9px;
-            margin-bottom: 10px;
-            font-size: 10px;
-            line-height: 1.4;
+            gap: 7px;
+            margin-bottom: 5px;
+            font-size: 8px;
+            line-height: 1.38;
         }
 
         .contact-item--wrap {
@@ -97,9 +99,9 @@
         }
 
         .contact-item .icon {
-            width: 12px;
-            height: 12px;
-            flex: 0 0 12px;
+            width: 10px;
+            height: 10px;
+            flex: 0 0 10px;
             color: var(--accent);
             display: flex;
             align-items: center;
@@ -107,12 +109,12 @@
         }
 
         .contact-item--wrap .icon {
-            margin-top: 0.1em;
+            margin-top: 0.08em;
         }
 
         .contact-item .icon svg {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             display: block;
         }
 
@@ -120,7 +122,7 @@
         .contact-item .icon svg * {
             fill: none;
             stroke: currentColor;
-            stroke-width: 2;
+            stroke-width: 2.25;
             stroke-linecap: round;
             stroke-linejoin: round;
         }
@@ -136,14 +138,14 @@
         }
 
         .skill-group {
-            margin-bottom: 14px;
+            margin-bottom: 8px;
         }
 
         .skill-group h3 {
-            font-size: 9.5px;
+            font-size: 8px;
             font-weight: 600;
             color: #94a3b8;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
         }
 
         .skill-tags {
@@ -156,39 +158,39 @@
             background: rgba(255, 255, 255, .08);
             border: 1px solid rgba(255, 255, 255, .12);
             border-radius: 4px;
-            padding: 3px 8px;
-            font-size: 8.5px;
+            padding: 2px 5px;
+            font-size: 7px;
             font-weight: 500;
             color: #e2e8f0;
         }
 
         /* Main content */
         .main {
-            padding: 36px 36px 36px 32px;
+            padding: 14px 18px 10px 16px;
         }
 
         .summary {
-            font-size: 10.5px;
+            font-size: 8px;
             color: var(--text-muted);
-            line-height: 1.65;
-            margin-bottom: 28px;
-            padding-bottom: 24px;
+            line-height: 1.45;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 2px solid var(--border);
         }
 
         .section {
-            margin-bottom: 26px;
+            margin-bottom: 10px;
         }
 
         .section-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 6px;
+            margin-bottom: 8px;
         }
 
         .section-header h2 {
-            font-size: 13px;
+            font-size: 10px;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 1.2px;
@@ -204,7 +206,7 @@
 
         /* Experience */
         .job {
-            margin-bottom: 22px;
+            margin-bottom: 8px;
         }
 
         .job-header {
@@ -215,20 +217,20 @@
         }
 
         .job-title {
-            font-size: 12.5px;
+            font-size: 10px;
             font-weight: 700;
             color: var(--text);
         }
 
         .job-company {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 600;
             color: var(--primary);
         }
 
         .job-meta {
             text-align: right;
-            font-size: 9.5px;
+            font-size: 8px;
             color: var(--text-muted);
             white-space: nowrap;
         }
@@ -239,9 +241,9 @@
         }
 
         .job-desc {
-            font-size: 10px;
+            font-size: 8px;
             color: var(--text-muted);
-            margin: 6px 0 8px;
+            margin: 3px 0 4px;
             font-style: italic;
         }
 
@@ -252,10 +254,10 @@
 
         .job ul li {
             position: relative;
-            padding-left: 14px;
-            margin-bottom: 5px;
-            font-size: 10px;
-            line-height: 1.55;
+            padding-left: 11px;
+            margin-bottom: 2px;
+            font-size: 7.8px;
+            line-height: 1.35;
             color: var(--text);
         }
 
@@ -276,37 +278,37 @@
         .projects-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 4px;
         }
 
         .project-card {
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 12px 14px;
+            padding: 4px 6px;
             background: #fafbfc;
         }
 
         .project-card h3 {
-            font-size: 10.5px;
+            font-size: 8px;
             font-weight: 700;
             color: var(--primary-dark);
-            margin-bottom: 4px;
+            margin-bottom: 1px;
         }
 
         .project-card .stack {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 7.5px;
+            font-size: 6px;
             color: var(--accent);
-            margin-bottom: 6px;
+            margin-bottom: 2px;
         }
 
         .project-card p {
-            font-size: 9px;
+            font-size: 6.8px;
             color: var(--text-muted);
-            line-height: 1.5;
+            line-height: 1.3;
         }
 
-        /* Education placeholder */
+        /* Education */
         .edu-item {
             display: flex;
             justify-content: space-between;
@@ -315,11 +317,11 @@
 
         .edu-item .degree {
             font-weight: 600;
-            font-size: 11px;
+            font-size: 8.5px;
         }
 
         .edu-item .school {
-            font-size: 10px;
+            font-size: 7.5px;
             color: var(--primary);
         }
 
@@ -330,15 +332,15 @@
 
         .cert-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px 16px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px 8px;
         }
 
         .cert-item {
-            font-size: 9px;
-            line-height: 1.4;
+            font-size: 6.8px;
+            line-height: 1.28;
             color: var(--text);
-            padding-left: 10px;
+            padding-left: 8px;
             position: relative;
         }
 
@@ -348,205 +350,23 @@
             left: 0;
             color: var(--primary);
             font-weight: 700;
-            font-size: 8px;
+            font-size: 6.5px;
         }
 
         @media print {
-
             html,
             body {
                 width: 210mm;
                 height: 297mm;
                 overflow: hidden;
-            }
-
-            body {
                 background: #fff;
-                font-size: 8pt;
-                line-height: 1.32;
             }
 
             .page {
                 margin: 0;
                 box-shadow: none;
-                max-width: 100%;
-                width: 210mm;
-                height: 297mm;
-                display: grid;
-                grid-template-columns: 220px 1fr;
-                min-height: auto;
-                overflow: hidden;
                 page-break-after: avoid;
                 page-break-inside: avoid;
-            }
-
-            .sidebar {
-                padding: 14px 16px;
-                break-inside: auto;
-                page-break-inside: auto;
-            }
-
-            .sidebar h1 {
-                font-size: 17px;
-                margin-bottom: 2px;
-            }
-
-            .sidebar .title {
-                font-size: 9px;
-                margin-bottom: 14px;
-            }
-
-            .sidebar-section {
-                margin-bottom: 12px;
-            }
-
-            .sidebar-section h2 {
-                font-size: 7.5px;
-                margin-bottom: 6px;
-                padding-bottom: 4px;
-            }
-
-            .contact-item {
-                margin-bottom: 5px;
-                font-size: 8px;
-                gap: 7px;
-                line-height: 1.38;
-            }
-
-            .contact-item .icon {
-                width: 10px;
-                height: 10px;
-                flex-basis: 10px;
-            }
-
-            .contact-item .icon svg {
-                width: 10px;
-                height: 10px;
-            }
-
-            .contact-item .icon svg,
-            .contact-item .icon svg * {
-                stroke-width: 2.25;
-            }
-
-            .contact-item--wrap .icon {
-                margin-top: 0.08em;
-            }
-
-            .skill-group {
-                margin-bottom: 8px;
-            }
-
-            .skill-group h3 {
-                font-size: 8px;
-                margin-bottom: 3px;
-            }
-
-            .skill-tag {
-                font-size: 7px;
-                padding: 2px 5px;
-            }
-
-            .main {
-                padding: 14px 18px 10px 16px;
-            }
-
-            .summary {
-                font-size: 8px;
-                line-height: 1.45;
-                margin-bottom: 10px;
-                padding-bottom: 8px;
-            }
-
-            .section {
-                margin-bottom: 10px;
-            }
-
-            .section-header {
-                margin-bottom: 8px;
-                gap: 6px;
-            }
-
-            .section-header h2 {
-                font-size: 10px;
-            }
-
-            .job {
-                margin-bottom: 8px;
-                break-inside: auto;
-                page-break-inside: auto;
-            }
-
-            .job-title {
-                font-size: 10px;
-            }
-
-            .job-company {
-                font-size: 9px;
-            }
-
-            .job-meta {
-                font-size: 8px;
-            }
-
-            .job-desc {
-                font-size: 8px;
-                margin: 3px 0 4px;
-            }
-
-            .job ul li {
-                margin-bottom: 2px;
-                font-size: 7.8px;
-                line-height: 1.35;
-                padding-left: 11px;
-            }
-
-            .projects-grid {
-                gap: 5px;
-            }
-
-            .project-card {
-                padding: 5px 7px;
-                break-inside: auto;
-                page-break-inside: auto;
-            }
-
-            .project-card h3 {
-                font-size: 8.5px;
-                margin-bottom: 2px;
-            }
-
-            .project-card .stack {
-                font-size: 6.5px;
-                margin-bottom: 3px;
-            }
-
-            .project-card p {
-                font-size: 7.2px;
-                line-height: 1.35;
-            }
-
-            .edu-item .degree {
-                font-size: 9px;
-            }
-
-            .edu-item .school {
-                font-size: 8px;
-            }
-
-            .cert-grid {
-                grid-template-columns: 1fr 1fr 1fr;
-                gap: 1px 8px;
-            }
-
-            .cert-item {
-                font-size: 6.8px;
-                line-height: 1.28;
-                padding-left: 8px;
-            }
-
-            .cert-item::before {
-                font-size: 6.5px;
             }
         }
 
@@ -608,20 +428,22 @@
                 <div class="skill-group">
                     <h3>Frontend</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">React</span><span class="skill-tag">Next.js 16</span>
+                        <span class="skill-tag">React 19</span><span class="skill-tag">Next.js 15</span>
                         <span class="skill-tag">TypeScript</span><span class="skill-tag">JavaScript</span>
                         <span class="skill-tag">Tailwind CSS</span><span class="skill-tag">Webpack</span>
                         <span class="skill-tag">Zustand</span><span class="skill-tag">TanStack Query</span>
                         <span class="skill-tag">Formik</span><span class="skill-tag">PrimeReact</span>
+                        <span class="skill-tag">Leaflet</span>
                     </div>
                 </div>
                 <div class="skill-group">
                     <h3>Backend</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">NestJS</span><span class="skill-tag">Node.js</span>
-                        <span class="skill-tag">PHP 8</span><span class="skill-tag">TypeORM</span>
-                        <span class="skill-tag">Express</span><span class="skill-tag">REST APIs</span>
-                        <span class="skill-tag">BullMQ</span><span class="skill-tag">SSE Streaming</span>
+                        <span class="skill-tag">PHP 8.3</span><span class="skill-tag">FastAPI</span>
+                        <span class="skill-tag">TypeORM</span><span class="skill-tag">Express</span>
+                        <span class="skill-tag">REST APIs</span><span class="skill-tag">BullMQ</span>
+                        <span class="skill-tag">SSE Streaming</span><span class="skill-tag">Puppeteer</span>
                     </div>
                 </div>
                 <div class="skill-group">
@@ -629,14 +451,16 @@
                     <div class="skill-tags">
                         <span class="skill-tag">MySQL</span><span class="skill-tag">Redis</span>
                         <span class="skill-tag">Typesense</span><span class="skill-tag">Python</span>
-                        <span class="skill-tag">Data Analysis</span><span class="skill-tag">Data Ingestion</span>
+                        <span class="skill-tag">CatBoost</span><span class="skill-tag">pandas</span>
+                        <span class="skill-tag">DuckDB</span><span class="skill-tag">Data Ingestion</span>
                     </div>
                 </div>
                 <div class="skill-group">
                     <h3>AI & Integrations</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag">LangChain</span><span class="skill-tag">OpenAI</span>
-                        <span class="skill-tag">Google Gemini</span><span class="skill-tag">Zoho CRM</span>
+                        <span class="skill-tag">LangChain</span><span class="skill-tag">LangGraph</span>
+                        <span class="skill-tag">OpenAI</span><span class="skill-tag">Google Gemini</span>
+                        <span class="skill-tag">MCP</span><span class="skill-tag">Zoho CRM</span>
                         <span class="skill-tag">Twilio</span><span class="skill-tag">SendGrid</span>
                     </div>
                 </div>
@@ -645,8 +469,8 @@
                     <div class="skill-tags">
                         <span class="skill-tag">CI/CD</span><span class="skill-tag">GitHub Actions</span>
                         <span class="skill-tag">Docker</span><span class="skill-tag">AWS Lambda</span>
-                        <span class="skill-tag">Amazon EC2</span><span class="skill-tag">Vercel</span><span
-                            class="skill-tag">Hetzner</span>
+                        <span class="skill-tag">AWS S3</span><span class="skill-tag">Serverless</span>
+                        <span class="skill-tag">Vercel</span><span class="skill-tag">Hetzner</span>
                         <span class="skill-tag">Cloudflare</span><span class="skill-tag">Nginx</span>
                     </div>
                 </div>
@@ -663,11 +487,11 @@
         <main class="main">
             <p class="summary">
                 Passionate Full Stack Developer with nearly 4 years at HomeAbroad Inc. and Ziffy.ai,
-                building production fintech and real-estate platforms at scale. Skilled in JavaScript,
-                React, Next.js, Node.js, Python, and cloud infrastructure — from AI-native property search
-                and NestJS APIs to PHP webhook backends, data ingestion pipelines, and AWS deployments.
-                Committed to delivering innovative, user-focused solutions through effective collaboration
-                and continuous learning.
+                building production fintech and real-estate platforms at scale. Skilled across React,
+                Next.js, TypeScript, NestJS, Node.js, PHP, and Python — from AI-native property search
+                and SSE streaming to webhook backends, data pipelines, CatBoost rent models, and AWS
+                deployments. Committed to delivering innovative, user-focused solutions through effective
+                collaboration and continuous learning.
             </p>
 
             <section class="section">
@@ -684,12 +508,12 @@
                         </div>
                         <div class="job-meta">
                             <div class="duration">Jan 2025 – Present</div>
-                            <div>1 yr 6 mos · Remote</div>
+                            <div>1 yr 9 mos · Remote</div>
                         </div>
                     </div>
                     <p class="job-desc">AI-native real estate investment platform — ziffy.ai</p>
                     <ul>
-                        <li>Architected and shipped the <strong>Next.js 16 / React 19</strong> frontend for Ziffy.ai
+                        <li>Architected and shipped the <strong>Next.js 15 / React 19</strong> frontend for Ziffy.ai
                             with dual-brand support (Ziffy + HomeAbroad), deployed on <strong>Vercel</strong> with ISR,
                             BunnyCDN sitemaps, and brand-specific analytics.</li>
                         <li>Built <strong>AI-powered property search</strong> with Server-Sent Events (SSE) streaming,
@@ -713,7 +537,7 @@
                         </div>
                         <div class="job-meta">
                             <div class="duration">Apr 2022 – Present</div>
-                            <div>4 yrs 3 mos · Remote</div>
+                            <div>4 yrs 6 mos · Remote</div>
                         </div>
                     </div>
                     <p class="job-desc">Fintech/real-estate platform — software design and full-stack application
@@ -721,13 +545,13 @@
                     <ul>
                         <li>Built and maintained the core <strong>NestJS REST API</strong> (appi) — auth (JWT, OAuth,
                             magic links), property search, loan estimates, pre-approval, CRM sync, document management,
-                            and AI features via LangChain/LangGraph with TypeORM/MySQL, Redis throttling, and BullMQ
+                            and AI features via LangChain/LangGraph/MCP with TypeORM/MySQL, Redis throttling, and BullMQ
                             email queues.</li>
                         <li>Developed the <strong>React multi-app frontend</strong> (ha-realtor-plat) with
                             Webpack/Tailwind — agent dashboard, investor portal, property maps (Leaflet), loan
                             calculators, term sheets, and document portal with role-based routing for RE agents, MLOs,
                             and clients.</li>
-                        <li>Owned the <strong>PHP integration backend</strong> (3rdpartycomms) — 60+ webhook receivers,
+                        <li>Owned the <strong>PHP 8.3 integration backend</strong> (3rdpartycomms) — 60+ webhook receivers,
                             40+ cron jobs, and 12+ internal agent tools (ClearPath AI, Match AI, Power Dialer, comms
                             centers) integrating Twilio, Zoho CRM, SendGrid, Retell AI, Floify, and Google Gemini.</li>
                         <li>Authored reusable <strong>TypeScript loan estimate library</strong> (estimate-calculator) —
@@ -735,9 +559,9 @@
                         <li>Shipped <strong>AWS Lambda headless browser service</strong> (mortgage-pricer) — Puppeteer
                             scrapers for 11 Non-QM/DSCR lender pricing portals with S3 audit screenshots and API Gateway
                             deployment.</li>
-                        <li>Built <strong>property data pipelines</strong> — Python scrapers (Zillow, Roofstock,
-                            Homes.com, HouseCanary) + Node.js ingestion to MySQL/Typesense with SSH tunnel staging
-                            workflows.</li>
+                        <li>Built <strong>property data pipelines</strong> and a <strong>CatBoost rental AVM</strong>
+                            (FastAPI/DuckDB) — Python scrapers (Zillow, Roofstock, Homes.com, HouseCanary) + Node.js
+                            ingestion to MySQL/Typesense with SSH tunnel staging workflows.</li>
                         <li>Led <strong>AWS Lightsail → Hetzner infrastructure migration</strong> with xtrabackup
                             streaming, automated bash tooling, and zero-downtime DNS cutover procedures.</li>
                         <li>Implemented <strong>GitHub Actions CI/CD</strong> pipelines — build, SFTP upload, SSH deploy
@@ -756,25 +580,31 @@
                 <div class="projects-grid">
                     <div class="project-card">
                         <h3>Ziffy.ai Platform</h3>
-                        <div class="stack">Next.js 16 · React 19 · Zustand · SSE · Vercel</div>
+                        <div class="stack">Next.js 15 · React 19 · Zustand · TanStack Query · Vercel</div>
                         <p>AI-native investor platform with streaming NLP search, SEO listings, DSCR calculators, and
                             dual-brand deployment.</p>
                     </div>
                     <div class="project-card">
+                        <h3>ha-realtor-plat</h3>
+                        <div class="stack">React · Webpack · Tailwind · Leaflet · Zustand</div>
+                        <p>Multi-app agent/MLO platform — dashboards, property maps, loan workflows, and role-based
+                            routing for RE agents, MLOs, and clients.</p>
+                    </div>
+                    <div class="project-card">
                         <h3>appi — Core API</h3>
-                        <div class="stack">NestJS · TypeORM · Redis · Typesense · LangChain</div>
-                        <p>Modular REST API powering property search, loan estimates, auth, CRM sync, and AI-assisted
-                            SEO content.</p>
+                        <div class="stack">NestJS · TypeORM · Redis · Typesense · LangGraph</div>
+                        <p>Modular REST API powering property search, loan estimates, auth, CRM sync, LangChain/LangGraph
+                            AI, and MCP tooling.</p>
                     </div>
                     <div class="project-card">
                         <h3>3rdpartycomms</h3>
-                        <div class="stack">PHP 8 · MySQL · Redis · Cloudflare Zero Trust</div>
+                        <div class="stack">PHP 8.3 · MySQL · Redis · Cloudflare Zero Trust</div>
                         <p>Webhook-driven integration hub with agent AI tools, nurture campaigns, and multi-channel
                             comms orchestration.</p>
                     </div>
                     <div class="project-card">
                         <h3>mortgage-pricer</h3>
-                        <div class="stack">TypeScript · Puppeteer · AWS Lambda · Serverless</div>
+                        <div class="stack">TypeScript · Puppeteer · Express · AWS Lambda</div>
                         <p>Headless browser microservice scraping live rates from 11 lender portals with pluggable
                             scraper registry.</p>
                     </div>
@@ -786,9 +616,15 @@
                     </div>
                     <div class="project-card">
                         <h3>data-pipelines</h3>
-                        <div class="stack">Python · Node.js · Typesense · AWS S3</div>
+                        <div class="stack">Python · Node.js · Typesense · MySQL</div>
                         <p>End-to-end property data acquisition — multi-source scrapers with chunked/resumable ingestion
                             to MySQL.</p>
+                    </div>
+                    <div class="project-card">
+                        <h3>Rental-Estimate-AVM</h3>
+                        <div class="stack">Python · FastAPI · CatBoost · DuckDB · S3</div>
+                        <p>Rent estimates from real asking prices and comps — CatBoost training with SHAP explanations
+                            served over FastAPI.</p>
                     </div>
                 </div>
             </section>
@@ -805,6 +641,7 @@
                         <div class="school" style="margin-top: 2px; font-size: 9.5px; color: var(--text-muted);">HDVSc
                             Degree College, Panaspada, Puri</div>
                     </div>
+                    <div class="year">2020 – 2021</div>
                 </div>
                 <div class="edu-item">
                     <div>
