@@ -167,21 +167,85 @@
     flex-shrink: 0;
 }
 
-.fallbackWrap {
+.snakeCard,
+.statsStrip {
+    padding: 22px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.snakeWrap {
     width: 100%;
-    max-width: 100%;
     overflow-x: auto;
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--bg-elevated);
-    padding: 12px;
+    padding: 8px;
 }
 
-.fallbackImg {
+.snakeImg {
     width: 100%;
-    max-width: 100%;
+    max-width: 880px;
     height: auto;
     display: block;
+    margin: 0 auto;
+}
+
+.snakeDark {
+    display: block;
+}
+
+.snakeLight {
+    display: none;
+}
+
+:global(html.light) .snakeDark {
+    display: none;
+}
+
+:global(html.light) .snakeLight {
+    display: block;
+}
+
+.statsStrip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--glass-border);
+    min-width: 0;
+}
+
+.statValue {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-light);
+    font-variant-numeric: tabular-nums;
+}
+
+.statLabel {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.errorBox {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    padding: 8px 0 4px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-size: 0.9rem;
 }
 
 .fallbackNote {
@@ -226,8 +290,18 @@
     }
 
     .graphCard,
-    .insights {
+    .insights,
+    .snakeCard,
+    .statsStrip {
         padding: 14px;
+    }
+
+    .statsStrip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .statValue {
+        font-size: 1rem;
     }
 
     .header {

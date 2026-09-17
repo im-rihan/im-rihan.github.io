@@ -5,7 +5,7 @@ import { createPageMetadata } from "@/lib/site-metadata";
 
 export const metadata = createPageMetadata(
     "GitHub Activity",
-    "Public contribution graph and activity insights for @im-rihan.",
+    "Contribution graph, animated snake, and activity insights for @im-rihan.",
     "/github",
 );
 
@@ -16,9 +16,23 @@ export default function GitHubPage() {
                 title="GitHub Activity"
                 description={
                     <>
-                        Public contribution graph and rule-based suggestions from{" "}
-                        <a href="https://github.com/im-rihan" target="_blank" rel="noopener noreferrer" data-cursor="pointer">
+                        Public contribution heatmap, daily snake animation, and rule-based insights from{" "}
+                        <a
+                            href="https://github.com/im-rihan"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-cursor="pointer"
+                        >
                             @im-rihan
+                        </a>
+                        . Full profile README →{" "}
+                        <a
+                            href="https://github.com/im-rihan"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-cursor="pointer"
+                        >
+                            github.com/im-rihan
                         </a>
                         .
                     </>

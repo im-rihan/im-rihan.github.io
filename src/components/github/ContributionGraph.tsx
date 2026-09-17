@@ -5,6 +5,7 @@ import {
     fetchContributions,
     generateGitHubInsights,
     getContributionWeeks,
+    GITHUB_SNAKE,
     type ContributionData,
 } from "@/lib/github-contribs";
 import styles from "./ContributionGraph.module.css";
@@ -12,15 +13,96 @@ import styles from "./ContributionGraph.module.css";
 const USERNAME = "im-rihan";
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+function ContributionSnake() {
+    return (
+        <div className={`glass-card ${styles.snakeCard}`}>
+            <div className={styles.header}>
+                <h2>Contribution Snake</h2>
+                <span>Animated from public commits · updates daily</span>
+            </div>
+            <div className={styles.snakeWrap}>
+                {/* Theme via html.light / html.dark — avoids hydration mismatch */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src={GITHUB_SNAKE.dark}
+                    alt={`${USERNAME} contribution snake animation`}
+                    className={`${styles.snakeImg} ${styles.snakeDark}`}
+                    width={880}
+                    height={192}
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                    src={GITHUB_SNAKE.light}
+                    alt=""
+                    aria-hidden
+                    className={`${styles.snakeImg} ${styles.snakeLight}`}
+                    width={880}
+                    height={192}
+                />
+            </div>
+            <p className={styles.fallbackNote}>
+                Generated with{" "}
+                <a
+                    href="https://github.com/Platane/snk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cursor="pointer"
+                >
+                    Platane/snk
+                </a>
+                . Source SVGs live on the profile{" "}
+                <a
+                    href="https://github.com/im-rihan/im-rihan/tree/output"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-cursor="pointer"
+                >
+                    output
+                </a>{" "}
+                branch.
+            </p>
+        </div>
+    );
+}
+
+function StatsStrip({ data }: { data: ContributionData }) {
+    const weeks = getContributionWeeks(data);
+    const activeDays = data.contributions.filter((d) => d.count > 0).length;
+    const maxDay = [...data.contributions].sort((a, b) => b.count - a.count)[0];
+
+    const items = [
+        { label: "Contributions", value: data.totalContributions.toLocaleString() },
+        { label: "Weeks", value: String(weeks.length) },
+        { label: "Active days", value: String(activeDays) },
+        { label: "Peak day", value: maxDay?.count ? String(maxDay.count) : "—" },
+    ];
+
+    return (
+        <div className={`glass-card ${styles.statsStrip}`} aria-label="Contribution stats">
+            {items.map((item) => (
+                <div key={item.label} className={styles.statItem}>
+                    <span className={styles.statValue}>{item.value}</span>
+                    <span className={styles.statLabel}>{item.label}</span>
+                </div>
+            ))}
+        </div>
+    );
+}
+
 export function ContributionGraph() {
     const [data, setData] = useState<ContributionData | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let cancelled = false;
         fetchContributions(USERNAME).then((d) => {
+            if (cancelled) return;
             setData(d);
             setLoading(false);
         });
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     if (loading) {
@@ -30,25 +112,27 @@ export function ContributionGraph() {
     if (!data) {
         return (
             <div className={styles.wrapper}>
+                <ContributionSnake />
                 <div className={`glass-card ${styles.graphCard}`}>
                     <div className={styles.header}>
                         <h2>Contribution Graph</h2>
                         <span>Full year · GitHub</span>
                     </div>
-                    <div className={styles.fallbackWrap}>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                            src={`https://github.com/users/${USERNAME}/contributions`}
-                            alt={`${USERNAME} GitHub contributions`}
-                            className={styles.fallbackImg}
-                        />
-                    </div>
-                    <p className={styles.fallbackNote}>
-                        Interactive graph unavailable — showing GitHub&apos;s full-year calendar.{" "}
-                        <a href={`https://github.com/${USERNAME}`} target="_blank" rel="noopener noreferrer" data-cursor="pointer">
-                            View profile →
+                    <div className={styles.errorBox}>
+                        <p>
+                            The live contribution API is temporarily unavailable. The snake above still
+                            reflects recent public activity.
+                        </p>
+                        <a
+                            href={`https://github.com/${USERNAME}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-primary"
+                            data-cursor="pointer"
+                        >
+                            Open GitHub profile →
                         </a>
-                    </p>
+                    </div>
                 </div>
             </div>
         );
@@ -69,11 +153,14 @@ export function ContributionGraph() {
 
     return (
         <div className={styles.wrapper}>
+            <StatsStrip data={data} />
+            <ContributionSnake />
             <div className={`glass-card ${styles.graphCard}`}>
                 <div className={styles.header}>
                     <h2>Contribution Graph</h2>
                     <span>
-                        {data.totalContributions.toLocaleString()} contributions · {data.yearLabel} · {weeks.length} weeks
+                        {data.totalContributions.toLocaleString()} contributions · {data.yearLabel} ·{" "}
+                        {weeks.length} weeks
                     </span>
                 </div>
                 <div className={styles.scroll}>
@@ -119,7 +206,7 @@ export function ContributionGraph() {
                 </div>
             </div>
             <div className={`glass-card ${styles.insights}`}>
-                <h3>AI-style suggestions</h3>
+                <h3>Activity insights</h3>
                 <ul>
                     {insights.map((tip) => (
                         <li key={tip.slice(0, 40)}>{tip}</li>

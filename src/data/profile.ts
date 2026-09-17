@@ -139,6 +139,8 @@ export interface Project {
     stack: string;
     description: string;
     category: ProjectCategory;
+    /** Short capability chips shown on the home project card. */
+    features?: string[];
     url?: string;
     caseStudySlug?: string;
 }
@@ -159,6 +161,7 @@ export const projects: Project[] = [
         stack: "Next.js 15 · React 19 · Zustand · TanStack Query · Vercel",
         description:
             "AI-native investor platform with streaming NLP search, SEO listings, DSCR calculators, and dual-brand deployment.",
+        features: ["SSE NLP search", "ISR SEO", "DSCR calculators", "Dual-brand Vercel"],
         url: "https://ziffy.ai",
         category: "frontend",
         caseStudySlug: "ziffy-ai-search",
@@ -169,6 +172,7 @@ export const projects: Project[] = [
         stack: "React · Webpack · Tailwind · Leaflet · Zustand",
         description:
             "Multi-app agent/MLO platform — dashboards, property maps, loan workflows, and role-based routing for RE agents, MLOs, and clients.",
+        features: ["Multi-app RBAC", "Leaflet maps", "Loan workflows", "CRM referrals"],
         url: "https://homeabroadinc.com",
         category: "frontend",
         caseStudySlug: "ha-realtor-plat",
@@ -179,6 +183,7 @@ export const projects: Project[] = [
         stack: "NestJS · TypeORM · Redis · Typesense · LangGraph",
         description:
             "Modular REST API powering property search, loan estimates, auth, CRM sync, LangChain/LangGraph AI, and MCP tooling.",
+        features: ["Auth + CRM", "Typesense search", "BullMQ jobs", "LangGraph AI"],
         url: "https://homeabroadinc.com",
         category: "backend",
         caseStudySlug: "nestjs-appi-api",
@@ -189,6 +194,7 @@ export const projects: Project[] = [
         stack: "PHP 8.3 · MySQL · Redis · Cloudflare Zero Trust",
         description:
             "Webhook-driven integration hub with agent AI tools (ClearPath, Match AI, dialer), nurture campaigns, and Twilio/Zoho/SendGrid orchestration.",
+        features: ["60+ webhooks", "40+ crons", "12+ AI tools", "Zero Trust"],
         category: "integrations",
         caseStudySlug: "php-3rdpartycomms",
     },
@@ -198,6 +204,7 @@ export const projects: Project[] = [
         stack: "TypeScript · Puppeteer · Express · AWS Lambda",
         description:
             "Headless Chromium microservice scraping live rates from 11 lender portals with a pluggable scraper registry and S3 audit screenshots.",
+        features: ["11 lender portals", "Lambda Puppeteer", "S3 audits", "OpenAPI"],
         category: "backend",
         caseStudySlug: "lambda-mortgage-pricer",
     },
@@ -207,6 +214,7 @@ export const projects: Project[] = [
         stack: "TypeScript · Jest · Zero-dep library",
         description:
             "Reusable mortgage calculation engine — fees, liquidity, DSCR, points/pricing scenarios, Excel rate sheets.",
+        features: ["Shared loan math", "DSCR + fees", "Excel mapping", "Jest fixtures"],
         category: "library",
         caseStudySlug: "estimate-calculator",
     },
@@ -216,6 +224,7 @@ export const projects: Project[] = [
         stack: "Python · Node.js · Typesense · MySQL",
         description:
             "Property acquisition from Zillow, Homes.com, HouseCanary, Roofstock, HUD, and demographics — scrape to MySQL/Typesense ingest.",
+        features: ["Multi-source scrape", "Resumable ingest", "MySQL + Typesense", "S3 staging"],
         category: "data",
         caseStudySlug: "property-data-pipelines",
     },
@@ -225,6 +234,7 @@ export const projects: Project[] = [
         stack: "Python · FastAPI · CatBoost · DuckDB · S3",
         description:
             "Rent estimates from real asking prices and comps — CatBoost training pipeline with SHAP explanations served over FastAPI.",
+        features: ["CatBoost AVM", "SHAP explain", "FastAPI serve", "State rollout"],
         category: "data",
         caseStudySlug: "rental-estimate-avm",
     },
