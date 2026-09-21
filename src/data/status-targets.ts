@@ -48,6 +48,12 @@ const caseStudyTargets: StatusTarget[] = caseStudies.map((study) => ({
 
 const external: StatusTarget[] = [
     {
+        name: "Catalog Search demo",
+        url: "https://catalog-search-g7l4.onrender.com/api/health",
+        type: "external",
+        group: "external",
+    },
+    {
         name: "GitHub API",
         url: "https://api.github.com/users/im-rihan",
         type: "external",

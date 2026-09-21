@@ -74,7 +74,11 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["project", "portfolio", "built"],
-        answer: "Key projects — browse [all case studies](/work/):\n\n- **Ziffy.ai** — [Case study](/work/ziffy-ai-search/)\n- **ha-realtor-plat** — [Case study](/work/ha-realtor-plat/)\n- **appi Core API** — [Case study](/work/nestjs-appi-api/)\n- **3rdpartycomms** — [Case study](/work/php-3rdpartycomms/)\n- **mortgage-pricer** — [Case study](/work/lambda-mortgage-pricer/)\n- **data-pipelines** — [Case study](/work/property-data-pipelines/)\n- **Rental-Estimate-AVM** — [Case study](/work/rental-estimate-avm/)\n- **estimate-calculator** — [Case study](/work/estimate-calculator/)",
+        answer: "Key projects — browse [all case studies](/work/):\n\n- **Catalog Search Kit** (live demo) — [Case study](/work/catalog-search/) · [Open demo](https://catalog-search-g7l4.onrender.com)\n- **Ziffy.ai** — [Case study](/work/ziffy-ai-search/)\n- **ha-realtor-plat** — [Case study](/work/ha-realtor-plat/)\n- **appi Core API** — [Case study](/work/nestjs-appi-api/)\n- **3rdpartycomms** — [Case study](/work/php-3rdpartycomms/)\n- **mortgage-pricer** — [Case study](/work/lambda-mortgage-pricer/)\n- **data-pipelines** — [Case study](/work/property-data-pipelines/)\n- **Rental-Estimate-AVM** — [Case study](/work/rental-estimate-avm/)\n- **estimate-calculator** — [Case study](/work/estimate-calculator/)",
+    },
+    {
+        keywords: ["catalog", "demo", "freelance", "upwork", "webhook", "sse"],
+        answer: "**Catalog Search Kit** is Rihan's public NestJS demo for SaaS backends — product search, SSE AI rewrite, and signed webhooks.\n\n- Live: [catalog-search-g7l4.onrender.com](https://catalog-search-g7l4.onrender.com)\n- Case study: [/work/catalog-search/](/work/catalog-search/)\n- Code: [github.com/im-rihan/catalog-search](https://github.com/im-rihan/catalog-search)",
     },
     {
         keywords: ["certification", "cert", "udemy", "freecodecamp", "course"],

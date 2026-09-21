@@ -32,7 +32,7 @@ This repository is the source for **Rihan Mohammed's** developer portfolio — a
 
 | Highlight | Detail |
 |-----------|--------|
-| **Experience** | 4+ years, 9+ production projects |
+| **Experience** | 4+ years, 10+ production projects |
 | **Focus** | React, Next.js, NestJS, TypeScript, AWS |
 | **Deployment** | Static HTML on GitHub Pages (`gh-pages` branch) |
 | **Runtime** | 100% client-side after build — no Node server in production |
