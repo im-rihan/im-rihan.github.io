@@ -24,6 +24,50 @@ export interface CaseStudy {
 
 export const caseStudies: CaseStudy[] = [
     {
+        slug: "catalog-search",
+        title: "Catalog Search Kit",
+        subtitle: "Public NestJS demo — search, SSE rewrite, signed webhooks",
+        stack: ["NestJS", "Typesense", "SSE", "HMAC", "Render"],
+        role: "Personal / freelance demo",
+        highlights: ["Live demo", "SSE { type } envelope", "engine=memory|ts", "Signed webhooks"],
+        features: [
+            {
+                name: "Search",
+                detail: "In-memory index by default; Typesense when connected via engine=ts",
+            },
+            {
+                name: "SSE rewrite",
+                detail: "Streaming query rewrite with token → rewrite → hits → done envelope",
+            },
+            {
+                name: "Webhooks",
+                detail: "HMAC signatures, 5-minute skew, duplicate-safe inbox, retry path",
+            },
+            {
+                name: "Deploy",
+                detail: "Single Nest process serves API + UI on Render free tier",
+            },
+        ],
+        problem:
+            "Clients evaluating NestJS backend work need a clickable proof of search, streaming AI, and signed webhooks — without access to private production systems.",
+        approach: [
+            "Built one NestJS app with a fake electronics catalog (no employer domain data).",
+            "Exposed keyword search and SSE AI rewrite with zero-hit fallback to the original query.",
+            "Implemented Stripe-style HMAC webhooks with idempotency and an on-page event inbox.",
+            "Shipped a focused UI (Search / Webhooks / API) and deployed to Render.",
+        ],
+        results: [
+            "Public URL clients can open in under a minute: catalog search, AI stream, webhook sample.",
+            "Patterns mirror production habits (dedicated search engine toggle, SSE envelope, isolated webhooks) without copying proprietary data.",
+            "GitHub + Render links ready for Upwork portfolio and proposals.",
+        ],
+        links: [
+            { label: "Live demo", href: "https://catalog-search-g7l4.onrender.com" },
+            { label: "GitHub", href: "https://github.com/im-rihan/catalog-search" },
+            { label: "Back to projects", href: "/#projects" },
+        ],
+    },
+    {
         slug: "ziffy-ai-search",
         title: "Ziffy.ai AI Property Search",
         subtitle: "SSE streaming search on a dual-brand Next.js 15 platform",

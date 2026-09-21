@@ -17,7 +17,7 @@ export const siteMeta = {
 
 export const stats = [
     { num: "4+", label: "Years Experience" },
-    { num: "9+", label: "Production Projects" },
+    { num: "10+", label: "Production Projects" },
     { num: "2", label: "Companies" },
     { num: "60+", label: "Webhooks Built" },
 ];
@@ -155,6 +155,17 @@ export const projectCategories: { id: ProjectCategory | "all"; label: string }[]
 ];
 
 export const projects: Project[] = [
+    {
+        icon: "⌕",
+        title: "Catalog Search Kit",
+        stack: "NestJS · Typesense · SSE · HMAC webhooks · Render",
+        description:
+            "Public NestJS demo for SaaS backends — product search, streaming AI query rewrite, and signed webhooks with idempotency and replay.",
+        features: ["SSE rewrite", "engine=memory|ts", "Signed webhooks", "Live on Render"],
+        url: "https://catalog-search-g7l4.onrender.com",
+        category: "backend",
+        caseStudySlug: "catalog-search",
+    },
     {
         icon: "🏠",
         title: "Ziffy.ai Platform",
