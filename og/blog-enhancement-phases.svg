@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Phases A-E enhancement">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <text x="80" y="280" fill="#f8fafc" font-family="ui-sans-serif, system-ui, sans-serif" font-size="52" font-weight="700">Phases AE</text>
+  <text x="80" y="350" fill="#99f6e4" font-family="ui-sans-serif, system-ui, sans-serif" font-size="32">Analytics · CI · Tests · Content</text>
+</svg>
