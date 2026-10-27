@@ -167,43 +167,96 @@
     flex-shrink: 0;
 }
 
-.snakeCard,
+.arcade,
 .statsStrip {
     padding: 22px;
     min-width: 0;
     overflow: hidden;
 }
 
-.snakeWrap {
+.arcade {
+    padding: 0;
+}
+
+.arcadeBar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-elevated);
+}
+
+.arcadeTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.arcadeTitle h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.arcadeBar > span {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    max-width: 100%;
+    word-break: break-word;
+}
+
+.arcadePips {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.arcadePips span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.pipYellow { background: #facc15; }
+.pipPink { background: #fb7185; }
+.pipCyan { background: #22d3ee; }
+
+.arcadeStage {
     width: 100%;
     overflow-x: auto;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    background: var(--bg-elevated);
-    padding: 8px;
+    overflow-y: hidden;
+    line-height: 0;
+    background: #0d1117;
+    -webkit-overflow-scrolling: touch;
 }
 
-.snakeImg {
+:global(html.light) .arcadeStage {
+    background: #ffffff;
+}
+
+.arcadeImg {
     width: 100%;
-    max-width: 880px;
+    min-width: 640px;
     height: auto;
     display: block;
-    margin: 0 auto;
 }
 
-.snakeDark {
+.arcadeDark {
     display: block;
 }
 
-.snakeLight {
+.arcadeLight {
     display: none;
 }
 
-:global(html.light) .snakeDark {
+:global(html.light) .arcadeDark {
     display: none;
 }
 
-:global(html.light) .snakeLight {
+:global(html.light) .arcadeLight {
     display: block;
 }
 
@@ -249,10 +302,12 @@
 }
 
 .fallbackNote {
-    margin-top: 12px;
+    margin: 0;
+    padding: 12px 22px 16px;
     font-size: 0.82rem;
     color: var(--text-muted);
     word-break: break-word;
+    border-top: 1px solid var(--border);
 }
 
 .insights {
@@ -291,9 +346,33 @@
 
     .graphCard,
     .insights,
-    .snakeCard,
     .statsStrip {
         padding: 14px;
+    }
+
+    .arcadeBar {
+        padding: 14px 14px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .arcadeTitle h2 {
+        font-size: 0.92rem;
+    }
+
+    .arcadeBar > span {
+        font-size: 0.72rem;
+        line-height: 1.45;
+    }
+
+    .fallbackNote {
+        padding: 10px 14px 14px;
+        font-size: 0.76rem;
+    }
+
+    .arcadeImg {
+        min-width: 520px;
     }
 
     .statsStrip {

@@ -64,6 +64,7 @@ export const caseStudies: CaseStudy[] = [
         links: [
             { label: "Live demo", href: "https://catalog-search-g7l4.onrender.com" },
             { label: "GitHub", href: "https://github.com/im-rihan/catalog-search" },
+            { label: "How it works (blog)", href: "/blog/catalog-search-kit-nestjs-sse-webhooks/" },
             { label: "Back to projects", href: "/#projects" },
         ],
     },

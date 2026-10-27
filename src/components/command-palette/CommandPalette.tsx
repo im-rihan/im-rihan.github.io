@@ -11,7 +11,7 @@ import {
     MessageSquare,
     Github,
     // Images,
-    Activity,
+    // Activity,
     User,
     Wrench,
     Layers,
@@ -77,10 +77,28 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
             { id: "page-home", label: "Home", group: "Pages", icon: Home, perform: () => router.push("/") },
             { id: "page-work", label: "Work / Case Studies", group: "Pages", icon: Briefcase, perform: () => router.push("/work") },
             { id: "page-blog", label: "Blog", group: "Pages", icon: Newspaper, perform: () => router.push("/blog") },
+            {
+                id: "page-catalog-blog",
+                label: "Blog: Catalog Search Kit",
+                group: "Pages",
+                hint: "NestJS",
+                keywords: "catalog search nestjs sse webhook typesense freelance kit",
+                icon: Newspaper,
+                perform: () => router.push("/blog/catalog-search-kit-nestjs-sse-webhooks"),
+            },
+            {
+                id: "page-catalog-work",
+                label: "Case study: Catalog Search",
+                group: "Pages",
+                hint: "Work",
+                keywords: "catalog search nestjs sse webhook typesense demo",
+                icon: Briefcase,
+                perform: () => router.push("/work/catalog-search"),
+            },
             { id: "page-chat", label: "Chat", group: "Pages", icon: MessageSquare, perform: () => router.push("/chat") },
             { id: "page-github", label: "GitHub Activity", group: "Pages", icon: Github, perform: () => router.push("/github") },
             // { id: "page-gallery", label: "Gallery", group: "Pages", icon: Images, perform: () => router.push("/gallery") },
-            { id: "page-status", label: "Analytics / Status", group: "Pages", icon: Activity, perform: () => router.push("/status") },
+            // { id: "page-status", label: "Analytics / Status", group: "Pages", icon: Activity, perform: () => router.push("/status") },
         ];
 
         const sections: PaletteItem[] = [
