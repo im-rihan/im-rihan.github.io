@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none" role="img" aria-label="Rihan Mohammed - Full Stack Developer">
+  <!-- Default export alias: dark theme. See og-image-dark.svg and og-image-light.svg -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#070d18"/>
+      <stop offset="0.45" stop-color="#0f172a"/>
+      <stop offset="1" stop-color="#0c4a6e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="380" y1="0" x2="1120" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14b8a6"/>
+      <stop offset="0.55" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="cardShine" x1="88" y1="165" x2="388" y2="465" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="logoGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(238 315) scale(220)">
+      <stop stop-color="#14b8a6" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#14b8a6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="topGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1020 80) scale(300)">
+      <stop stop-color="#22d3ee" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#logoGlow)"/>
+  <rect width="1200" height="630" fill="url(#topGlow)"/>
+  <rect x="1" y="1" width="1198" height="628" rx="22" stroke="rgba(20,184,166,0.16)" stroke-width="2"/>
+
+  <g opacity="0.055" stroke="#14b8a6" stroke-width="1">
+    <path d="M0 105 H1200 M0 210 H1200 M0 315 H1200 M0 420 H1200 M0 525 H1200"/>
+    <path d="M120 0 V630 M240 0 V630 M360 0 V630 M480 0 V630 M600 0 V630 M720 0 V630 M840 0 V630 M960 0 V630 M1080 0 V630"/>
+  </g>
+
+  <g opacity="0.07" fill="#14b8a6" font-family="Consolas, ui-monospace, monospace" font-size="18" font-weight="600">
+    <text x="1040" y="560">&lt;/&gt;</text>
+    <text x="56" y="72">{ }</text>
+  </g>
+
+  <ellipse cx="238" cy="315" rx="190" ry="175" fill="#14b8a6" opacity="0.06"/>
+
+  <g transform="translate(88 165)" filter="url(#softShadow)">
+    <rect width="300" height="300" rx="30" fill="rgba(10,16,28,0.88)" stroke="rgba(20,184,166,0.34)" stroke-width="2"/>
+    <rect width="300" height="300" rx="30" fill="url(#cardShine)"/>
+    <rect x="10" y="10" width="280" height="280" rx="24" stroke="rgba(255,255,255,0.05)" stroke-width="1" fill="none"/>
+    <rect x="24" y="24" width="252" height="252" rx="20" stroke="rgba(20,184,166,0.12)" stroke-width="1" fill="none"/>
+
+    <g transform="translate(38 38) scale(4.65)">
+      <rect x="4" y="6" width="40" height="36" rx="6" stroke="#2dd4bf" stroke-width="1.65" fill="rgba(6,10,18,0.95)"/>
+      <line x1="4" y1="14" x2="44" y2="14" stroke="#14b8a6" stroke-width="1" opacity="0.4"/>
+      <circle cx="10" cy="10" r="1.5" fill="#ef4444"/>
+      <circle cx="15" cy="10" r="1.5" fill="#f59e0b"/>
+      <circle cx="20" cy="10" r="1.5" fill="#22c55e"/>
+      <path d="M17 18 V36 M17 18 H22 C25.5 18 27 20.5 27 23 C27 25.5 25.5 27 22 27 H17 M22 27 L27 36" stroke="#2dd4bf" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M29 36 V18 L32 26 L35 18 V36" stroke="#2dd4bf" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+
+  <g transform="translate(430 168)">
+    <rect width="132" height="34" rx="17" fill="rgba(20,184,166,0.14)" stroke="rgba(45,212,191,0.35)" stroke-width="1"/>
+    <circle cx="22" cy="17" r="5" fill="#22c55e"/>
+    <text x="36" y="23" fill="#99f6e4" font-family="Segoe UI, system-ui, sans-serif" font-size="14" font-weight="700" letter-spacing="2.5">PORTFOLIO</text>
+
+    <text y="88" fill="#f8fafc" font-family="Segoe UI, system-ui, sans-serif" font-size="66" font-weight="800" letter-spacing="-2.5">Rihan Mohammed</text>
+    <text y="168" fill="#2dd4bf" font-family="Segoe UI, system-ui, sans-serif" font-size="46" font-weight="700">Full Stack Developer</text>
+
+    <rect y="192" width="700" height="1" fill="rgba(45,212,191,0.32)"/>
+
+    <rect y="214" width="700" height="52" rx="12" fill="rgba(15,23,42,0.55)" stroke="rgba(20,184,166,0.18)" stroke-width="1"/>
+    <text x="24" y="248" fill="#e2e8f0" font-family="Consolas, ui-monospace, monospace" font-size="26" font-weight="600">React  |  Next.js  |  NestJS  |  TypeScript  |  AWS</text>
+
+    <text y="304" fill="#cbd5e1" font-family="Segoe UI, system-ui, sans-serif" font-size="26" font-weight="500">Fintech and real-estate platforms</text>
+    <text y="352" fill="#5eead4" font-family="Consolas, ui-monospace, monospace" font-size="24" font-weight="700">im-rihan.github.io</text>
+
+    <rect y="372" width="700" height="5" rx="2.5" fill="url(#accent)"/>
+    <rect y="372" width="700" height="5" rx="2.5" fill="#2dd4bf" opacity="0.25"/>
+  </g>
+</svg>

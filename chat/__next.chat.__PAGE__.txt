@@ -1,0 +1,7 @@
+1:"$Sreact.fragment"
+2:I[22706,["/_next/static/chunks/1clmojw1od6n8.js","/_next/static/chunks/0_1h9y9ujnhu3.js","/_next/static/chunks/0l9pkvizg_kqt.js","/_next/static/chunks/3_pdbxyvxu6vp.js","/_next/static/chunks/27jw-wxdqv11c.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/3bhyh81v6ykhh.js"],"PageHeader"]
+3:I[11772,["/_next/static/chunks/1clmojw1od6n8.js","/_next/static/chunks/0_1h9y9ujnhu3.js","/_next/static/chunks/0l9pkvizg_kqt.js","/_next/static/chunks/3_pdbxyvxu6vp.js","/_next/static/chunks/27jw-wxdqv11c.js","/_next/static/chunks/3vbg4qmdq8wyk.js","/_next/static/chunks/3bhyh81v6ykhh.js"],"ChatWindow"]
+4:I[97367,["/_next/static/chunks/1clmojw1od6n8.js","/_next/static/chunks/0_1h9y9ujnhu3.js","/_next/static/chunks/0l9pkvizg_kqt.js","/_next/static/chunks/3_pdbxyvxu6vp.js","/_next/static/chunks/27jw-wxdqv11c.js","/_next/static/chunks/3vbg4qmdq8wyk.js"],"OutletBoundary"]
+5:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[[["$","$L2",null,{"title":"Portfolio Chat","description":"Chat with a portfolio assistant trained on Rihan's resume — skills, experience, projects, and certifications. Answers are keyword-matched and run entirely in your browser."}],["$","div",null,{"className":"container page-content","children":["$","$L3",null,{}]}]],[["$","script","script-0",{"src":"/_next/static/chunks/3bhyh81v6ykhh.js","async":true}]],["$","$L4",null,{"children":["$","$5",null,{"name":"Next.MetadataOutlet","children":"$@6"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"iwduKfmXeAzquRZKXqQHV"}
+6:null

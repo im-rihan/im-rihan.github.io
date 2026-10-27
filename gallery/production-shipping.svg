@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Production shipping">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#g)"/>
+  <path d="M400 110 L520 170 L520 330 L400 390 L280 330 L280 170 Z" fill="#581c87" opacity="0.7"/>
+  <path d="M400 170 L470 205 L470 295 L400 330 L330 295 L330 205 Z" fill="#c084fc" opacity="0.85"/>
+</svg>
