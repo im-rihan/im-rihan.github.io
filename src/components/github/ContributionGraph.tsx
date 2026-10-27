@@ -5,7 +5,7 @@ import {
     fetchContributions,
     generateGitHubInsights,
     getContributionWeeks,
-    GITHUB_SNAKE,
+    GITHUB_PACMAN,
     type ContributionData,
 } from "@/lib/github-contribs";
 import styles from "./ContributionGraph.module.css";
@@ -13,42 +13,49 @@ import styles from "./ContributionGraph.module.css";
 const USERNAME = "im-rihan";
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-function ContributionSnake() {
+function ContributionPacman() {
     return (
-        <div className={`glass-card ${styles.snakeCard}`}>
-            <div className={styles.header}>
-                <h2>Contribution Snake</h2>
-                <span>Animated from public commits · updates daily</span>
+        <div className={`glass-card ${styles.arcade}`}>
+            <div className={styles.arcadeBar}>
+                <div className={styles.arcadeTitle}>
+                    <span className={styles.arcadePips} aria-hidden>
+                        <span className={styles.pipYellow} />
+                        <span className={styles.pipPink} />
+                        <span className={styles.pipCyan} />
+                    </span>
+                    <h2>Pac-Man chart</h2>
+                </div>
+                <span>Last 12 months · public commits · updates daily</span>
             </div>
-            <div className={styles.snakeWrap}>
+            <div className={styles.arcadeStage}>
                 {/* Theme via html.light / html.dark — avoids hydration mismatch */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                    src={GITHUB_SNAKE.dark}
-                    alt={`${USERNAME} contribution snake animation`}
-                    className={`${styles.snakeImg} ${styles.snakeDark}`}
-                    width={880}
-                    height={192}
+                    src={GITHUB_PACMAN.dark}
+                    alt={`${USERNAME} Pac-Man contribution chart`}
+                    className={`${styles.arcadeImg} ${styles.arcadeDark}`}
+                    width={1166}
+                    height={184}
                 />
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                    src={GITHUB_SNAKE.light}
+                    src={GITHUB_PACMAN.light}
                     alt=""
                     aria-hidden
-                    className={`${styles.snakeImg} ${styles.snakeLight}`}
-                    width={880}
-                    height={192}
+                    className={`${styles.arcadeImg} ${styles.arcadeLight}`}
+                    width={1166}
+                    height={184}
                 />
             </div>
             <p className={styles.fallbackNote}>
                 Generated with{" "}
                 <a
-                    href="https://github.com/Platane/snk"
+                    href="https://github.com/abozanona/pacman-contribution-graph"
                     target="_blank"
                     rel="noopener noreferrer"
                     data-cursor="pointer"
                 >
-                    Platane/snk
+                    pacman-contribution-graph
                 </a>
                 . Source SVGs live on the profile{" "}
                 <a
@@ -105,41 +112,8 @@ export function ContributionGraph() {
         };
     }, []);
 
-    if (loading) {
-        return <div className={styles.loading}>Loading contribution graph...</div>;
-    }
-
-    if (!data) {
-        return (
-            <div className={styles.wrapper}>
-                <ContributionSnake />
-                <div className={`glass-card ${styles.graphCard}`}>
-                    <div className={styles.header}>
-                        <h2>Contribution Graph</h2>
-                        <span>Full year · GitHub</span>
-                    </div>
-                    <div className={styles.errorBox}>
-                        <p>
-                            The live contribution API is temporarily unavailable. The snake above still
-                            reflects recent public activity.
-                        </p>
-                        <a
-                            href={`https://github.com/${USERNAME}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-primary"
-                            data-cursor="pointer"
-                        >
-                            Open GitHub profile →
-                        </a>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    const weeks = getContributionWeeks(data);
-    const insights = generateGitHubInsights(data);
+    const weeks = data ? getContributionWeeks(data) : [];
+    const insights = data ? generateGitHubInsights(data) : [];
 
     const monthCells: { label: string; show: boolean }[] = weeks.map((week, wi) => {
         const first = week.find((d) => d.date && d.date.length === 10);
@@ -153,8 +127,34 @@ export function ContributionGraph() {
 
     return (
         <div className={styles.wrapper}>
-            <StatsStrip data={data} />
-            <ContributionSnake />
+            <ContributionPacman />
+            {data ? <StatsStrip data={data} /> : null}
+            {loading ? <div className={styles.loading}>Loading heatmap…</div> : null}
+            {!loading && !data ? (
+                <div className={`glass-card ${styles.graphCard}`}>
+                    <div className={styles.header}>
+                        <h2>Contribution Graph</h2>
+                        <span>Full year · GitHub</span>
+                    </div>
+                    <div className={styles.errorBox}>
+                        <p>
+                            The live contribution API is temporarily unavailable. The Pac-Man chart above still
+                            reflects recent public activity.
+                        </p>
+                        <a
+                            href={`https://github.com/${USERNAME}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-primary"
+                            data-cursor="pointer"
+                        >
+                            Open GitHub profile →
+                        </a>
+                    </div>
+                </div>
+            ) : null}
+            {data ? (
+            <>
             <div className={`glass-card ${styles.graphCard}`}>
                 <div className={styles.header}>
                     <h2>Contribution Graph</h2>
@@ -213,6 +213,8 @@ export function ContributionGraph() {
                     ))}
                 </ul>
             </div>
+            </>
+            ) : null}
         </div>
     );
 }

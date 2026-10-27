@@ -228,7 +228,7 @@ export function generateGitHubInsights(data: ContributionData): string[] {
     return insights;
 }
 
-export const GITHUB_SNAKE = {
-    light: "https://raw.githubusercontent.com/im-rihan/im-rihan/output/github-snake.svg",
-    dark: "https://raw.githubusercontent.com/im-rihan/im-rihan/output/github-snake-dark.svg",
+export const GITHUB_PACMAN = {
+    light: "https://raw.githubusercontent.com/im-rihan/im-rihan/output/pacman-contribution-graph.svg",
+    dark: "https://raw.githubusercontent.com/im-rihan/im-rihan/output/pacman-contribution-graph-dark.svg",
 } as const;

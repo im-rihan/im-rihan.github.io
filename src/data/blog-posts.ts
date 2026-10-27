@@ -11,6 +11,72 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
     {
+        slug: "catalog-search-kit-nestjs-sse-webhooks",
+        title: "Catalog Search Kit: a public NestJS demo for search, SSE, and signed webhooks",
+        excerpt:
+            "Why the freelance kit exists, how the SSE { type } envelope and zero-hit fallback work, and how HMAC webhooks stay honest on a $0 Render box.",
+        date: "2026-10-27",
+        tags: ["NestJS", "SSE", "Webhooks", "Typesense", "Freelance"],
+        content: `
+The case study at [/work/catalog-search/](/work/catalog-search/) is the sales page: problem, approach, results. This post is the how — the contracts I would rather a client click than hear described.
+
+Live demo: [catalog-search-g7l4.onrender.com](https://catalog-search-g7l4.onrender.com) · source: [github.com/im-rihan/catalog-search](https://github.com/im-rihan/catalog-search)
+
+## Why a public kit at all
+
+Day-job NestJS, Typesense, and webhook work lives behind private repos. A proposal that says "I have done this" without a URL is a claim. A proposal that links a running search box, a streaming rewrite, and a signed inbox is a test.
+
+The catalog is **64 fake electronics SKUs**. No listings, loans, CRM payloads, or employer schemas. One Nest process serves the API and the UI so a stranger can judge the work in under a minute.
+
+## Two engines, one query
+
+\`GET /api/search?q=studio+headphones\` hits an in-memory index by default. Pass \`engine=ts\` and, if Typesense is actually connected, the same handler swaps the backend. If Typesense is missing, the request does not 500 — it logs a warning and stays on memory. Render stays on the free tier when those env vars are unset.
+
+That toggle is the point. Clients evaluating search work usually ask "can this talk to Typesense later?" The honest answer is a query param, not a rewrite.
+
+## SSE is an envelope, not a token dump
+
+\`GET /api/search/stream\` is \`text/event-stream\`. Each line is \`data: { "type": "...", ... }\`. Types, in order:
+
+| \`type\` | Meaning |
+| --- | --- |
+| \`token\` | One word of the rewritten query, ~40ms apart so the UI can type |
+| \`rewrite\` | Full rewritten string plus \`source: local \\| openai\` |
+| \`hits\` | Search payload (engine used, tookMs, products) |
+| \`error\` | Rewrite or search failed; stream still closes cleanly |
+| \`done\` | Terminal event — the client can stop reading |
+
+Without an OpenAI key the rewrite is **local**: stopwords stripped, a small synonym map (\`ssd → storage\`, \`cans → headphones\`), then the same index. With a key it calls the vendor and falls back to local if the vendor fails. The stream shape does not change.
+
+## Zero hits are not an empty page
+
+If the rewritten query returns nothing and it differs from the original text, search runs again on the original and sets \`fallback: true\`. A rewrite that is "smarter" but empties the grid is worse than no rewrite. The UI can say "showing results for your original query" instead of a blank state that looks like a bug.
+
+## Webhooks copy the Stripe habit, not Stripe
+
+\`POST /api/webhooks/demo\` expects:
+
+\`\`\`text
+x-catalog-signature: t=<unix>,v1=<hex>
+\`\`\`
+
+\`hex\` is HMAC-SHA256 of \`{timestamp}.{rawBody}\` with the shared secret. Verification:
+
+- missing or malformed header → reject
+- \`|now - t| > 300s\` → \`expired\` (replay window)
+- digest compared with \`timingSafeEqual\` → \`mismatch\` is \`401\`
+- same event \`id\` after a successful accept → \`duplicate\` / **200** (idempotent, not a client error)
+
+Bad HMAC still lands in the on-page inbox so you can see *why* it failed. Retries are a button, not a lecture about queues.
+
+## What this is not
+
+Not a SaaS, not a starter-kit company, not a real-estate tool. It exists so a NestJS + search + webhook proposal can link a running example instead of private production code. If two clients buy the same shape, *then* extract modules. Until then the kit stays one repo, one process, one URL.
+
+Read the [case study](/work/catalog-search/) for the client-facing summary, or open the [demo](https://catalog-search-g7l4.onrender.com) and hit Search / Webhooks / API.
+`,
+    },
+    {
         slug: "free-visitor-analytics-and-blog-ux",
         title: "Free visitor analytics on GitHub Pages — and a sharper blog UX",
         excerpt:
