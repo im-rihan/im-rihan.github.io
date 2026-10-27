@@ -48,6 +48,10 @@ describe("resume HTML content sync", () => {
 
     it("includes PGDCA years and updated tenure", () => {
         expect(html).toContain("2020 – 2021");
+        expect(html).toContain("Survey Institute Gulf Training");
+        expect(html).toContain("Jamshedpur");
+        expect(html).toContain("HDVSc Degree College, Panaspada, Puri");
+        expect(html).toContain("Utkal University");
         expect(html).toContain("1 yr 9 mos");
         expect(html).toContain("4 yrs 6 mos");
     });

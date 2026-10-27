@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import { ChevronDown, Mail, ArrowUpRight, Terminal } from "lucide-react";
+import { Magnetic } from "@/components/effects/Magnetic";
 import { Logo } from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { siteMeta } from "@/data/profile";
@@ -234,14 +235,16 @@ export function Navbar() {
                 </div>
 
                 <div className={styles.actions}>
-                    <a
-                        href={`mailto:${siteMeta.email}`}
-                        className={styles.contactCta}
-                        data-cursor="pointer"
-                    >
-                        <Mail size={16} />
-                        <span className={styles.contactLabel}>Contact</span>
-                    </a>
+                    <Magnetic>
+                        <a
+                            href={`mailto:${siteMeta.email}`}
+                            className={styles.contactCta}
+                            data-cursor="pointer"
+                        >
+                            <Mail size={16} />
+                            <span className={styles.contactLabel}>Contact</span>
+                        </a>
+                    </Magnetic>
                     <ThemeToggle />
                     <button
                         type="button"
