@@ -33,7 +33,18 @@ export function ThemeToggle() {
             <button
                 type="button"
                 className={styles.toggle}
-                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                onClick={() => {
+                    const next = resolvedTheme === "dark" ? "light" : "dark";
+                    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                    const doc = document as Document & {
+                        startViewTransition?: (update: () => void) => void;
+                    };
+                    if (!reduce && typeof doc.startViewTransition === "function") {
+                        doc.startViewTransition(() => setTheme(next));
+                        return;
+                    }
+                    setTheme(next);
+                }}
                 aria-label="Toggle theme"
             >
                 {resolvedTheme === "dark" ? <Sun size={18} /> : <Moon size={18} />}

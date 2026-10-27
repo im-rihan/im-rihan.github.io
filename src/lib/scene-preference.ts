@@ -1,18 +1,19 @@
 import { isLowMemoryDevice, isWebGLAvailable } from "@/lib/browser-capabilities";
 
-const SCENE_KEY = "portfolio-scene-enabled";
+const SCENE_KEY = "portfolio-scene-opt-in";
+const LEGACY_KEY = "portfolio-scene-enabled";
 
 export function isSceneEnabled(): boolean {
     if (typeof window === "undefined") return false;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
     if (!isWebGLAvailable()) return false;
     if (isLowMemoryDevice()) return false;
-    const stored = localStorage.getItem(SCENE_KEY);
-    if (stored === "false") return false;
-    if (stored === "true") return true;
-    // Off by default: the 3D background is opt-in via the toggle button
-    // since it's the single heaviest contributor to page load/scroll cost.
-    return false;
+    // Forget the previous key so an old "on" value cannot override the default.
+    if (localStorage.getItem(LEGACY_KEY) !== null) {
+        localStorage.removeItem(LEGACY_KEY);
+    }
+    // Off unless the visitor explicitly opts in from the toggle or command palette.
+    return localStorage.getItem(SCENE_KEY) === "true";
 }
 
 export function setSceneEnabled(enabled: boolean): void {

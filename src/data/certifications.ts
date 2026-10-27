@@ -117,7 +117,7 @@ export const certifications: Certification[] = [
     {
         title: "Post Graduate Diploma In Computer Application",
         issuer: "institute",
-        issuerLabel: "Survey Institute",
+        issuerLabel: "Survey Institute Gulf Training, Jamshedpur",
         date: "2020-10",
         dateLabel: "Oct 2020",
     },

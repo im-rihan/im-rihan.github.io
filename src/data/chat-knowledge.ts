@@ -82,11 +82,11 @@ export const knowledgeBase: KnowledgeEntry[] = [
     },
     {
         keywords: ["certification", "cert", "udemy", "freecodecamp", "course"],
-        answer: "Rihan holds **14 certifications**:\n\n- **11 from Udemy** — Web Dev, React, Node.js, Python, databases, and more\n- **2 from freeCodeCamp** — JS Algorithms & Responsive Web Design\n- **PGDCA** — Utkal University (HDVSc Degree College, Panaspada, Puri)",
+        answer: "Rihan holds **14 certifications**:\n\n- **11 from Udemy** — Web Dev, React, Node.js, Python, databases, and more\n- **2 from freeCodeCamp** — JS Algorithms & Responsive Web Design\n- **PGDCA** — Survey Institute Gulf Training, Jamshedpur (Oct 2020)",
     },
     {
         keywords: ["education", "degree", "pgdca", "diploma", "college"],
-        answer: "**Education**\n\n- PGDCA — Utkal University (HDVSc Degree College, Panaspada, Puri) · 2020–2021\n- Honors / Regents High School Diploma (2016–2019)",
+        answer: "**Education**\n\n- PGDCA — Survey Institute Gulf Training, Jamshedpur · 2020–2021\n- Honors / Regents High School Diploma — HDVSc Degree College, Panaspada, Puri · Utkal University · 2016–2019",
     },
     {
         keywords: ["contact", "email", "phone", "reach", "hire", "linkedin"],

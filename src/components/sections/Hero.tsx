@@ -5,6 +5,7 @@ import { siteMeta } from "@/data/profile";
 import { SectionScrollLink } from "@/components/layout/SectionScrollLink";
 import { resumeHtmlUrl } from "@/lib/resume";
 import { FadeIn } from "@/components/effects/FadeIn";
+import { Magnetic } from "@/components/effects/Magnetic";
 import { TiltCard } from "@/components/effects/TiltCard";
 import { SocialLinks } from "@/components/ui/SocialLinks";
 import { LogoMark } from "@/components/layout/LogoMark";
@@ -96,9 +97,11 @@ export function Hero() {
                         <p className={styles.subtitle}>{siteMeta.tagline}</p>
                         <p className={styles.desc}>{siteMeta.description}</p>
                         <div className={styles.actions}>
-                            <SectionScrollLink sectionId="projects" className="btn btn-primary">
-                                View My Work
-                            </SectionScrollLink>
+                            <Magnetic>
+                                <SectionScrollLink sectionId="projects" className="btn btn-primary">
+                                    View My Work
+                                </SectionScrollLink>
+                            </Magnetic>
                             <Link href="/work/" prefetch={false} className="btn btn-outline" data-cursor="pointer">
                                 Case Studies
                             </Link>

@@ -254,14 +254,14 @@ export const projects: Project[] = [
 export const education = [
     {
         degree: "Post Graduate Diploma in Computer Application (PGDCA)",
-        school: "Utkal University",
-        campus: "HDVSc Degree College, Panaspada, Puri",
+        school: "Survey Institute Gulf Training",
+        campus: "Jamshedpur",
         year: "2020 – 2021",
     },
     {
         degree: "Honors / Regents High School Diploma",
         school: "HDVSc Degree College, Panaspada, Puri",
-        campus: "",
+        campus: "Utkal University",
         year: "2016 – 2019",
     },
 ];
